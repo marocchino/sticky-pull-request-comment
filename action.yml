@@ -1,10 +1,11 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: "Your name here"
+description: "Provide a description here"
+author: "Your name or organization here"
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+  message:
+    description: "comment message"
+  GITHUB_TOKEN:
+    description: "set secrets.GITHUB_TOKEN here"
 runs:
-  using: 'node12'
-  main: 'lib/main.js'
+  using: "node12"
+  main: "lib/main.js"
