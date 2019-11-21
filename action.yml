@@ -1,6 +1,6 @@
-name: "Your name here"
-description: "Provide a description here"
-author: "Your name or organization here"
+name: "Sticky Pull Request Comment"
+description: "Create comment on pull request, if exists update that comment."
+author: "marocchino"
 inputs:
   message:
     description: "comment message"

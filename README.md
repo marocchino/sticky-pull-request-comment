@@ -2,6 +2,16 @@
 
 Create comment on pull request, if exists update that comment.
 
+## Usage:
+
+```yaml
+uses: marocchino/sticky-pull-request-comment@v1
+with:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  message: |
+    Release ${{ github.sha }} to <https://pr-${{ github.event.number }}.example.com>
+```
+
 ## Development
 
 Install the dependencies
@@ -55,13 +65,3 @@ $ git push origin releases/v1
 Your action is now published! :rocket:
 
 See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Usage:
-
-```yaml
-uses: marocchino/sticky-pull-request-comment@v1
-with:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  message: |
-    Release ${{ github.sha }} to <https://pr-${{ github.event.number }}.example.com>
-```
