@@ -4,17 +4,18 @@ import {
   updateComment
 } from "../src/comment";
 const repo = {};
-const body = "some message";
 it("findPreviousComment", async () => {
   const comment = {
     user: {
       login: "github-actions[bot]"
-    }
+    },
+    body: "<!-- Sticky Pull Request Comment -->\nprevious message"
   };
   const otherComment = {
     user: {
       login: "some-user"
-    }
+    },
+    body: "lgtm"
   };
   const octokit = {
     issues: {
@@ -35,10 +36,12 @@ it("updateComment", async () => {
       updateComment: jest.fn(() => Promise.resolve())
     }
   };
-  expect(await updateComment(octokit, repo, 456, body)).toBeUndefined();
+  expect(
+    await updateComment(octokit, repo, 456, "hello there")
+  ).toBeUndefined();
   expect(octokit.issues.updateComment).toBeCalledWith({
     comment_id: 456,
-    body
+    body: "<!-- Sticky Pull Request Comment -->\nhello there"
   });
 });
 it("createComment", async () => {
@@ -47,9 +50,11 @@ it("createComment", async () => {
       createComment: jest.fn(() => Promise.resolve())
     }
   };
-  expect(await createComment(octokit, repo, 456, body)).toBeUndefined();
+  expect(
+    await createComment(octokit, repo, 456, "hello there")
+  ).toBeUndefined();
   expect(octokit.issues.createComment).toBeCalledWith({
     issue_number: 456,
-    body
+    body: "<!-- Sticky Pull Request Comment -->\nhello there"
   });
 });
