@@ -4,8 +4,13 @@ author: "marocchino"
 inputs:
   message:
     description: "comment message"
+    required: true
+  number:
+    description: "pull request number for push event"
+    required: false
   GITHUB_TOKEN:
     description: "set secrets.GITHUB_TOKEN here"
+    required: true
 runs:
   using: "node12"
   main: "lib/main.js"
