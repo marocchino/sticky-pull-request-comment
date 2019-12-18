@@ -1,0 +1,19 @@
+name: Comment on Push
+on:
+  - push
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: jwalton/gh-find-current-pr@v1
+        id: finder
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ./
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ steps.finder.outputs.pr }}
+          message: |
+            Test ${{ github.sha }} is successfully ended.

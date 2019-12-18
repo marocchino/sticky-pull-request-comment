@@ -4,11 +4,12 @@ import { findPreviousComment, createComment, updateComment } from "./comment";
 async function run() {
   try {
     const repo = context.repo;
-    const number = context?.payload?.pull_request?.number;
+    const number =
+      context?.payload?.pull_request?.number || +core.getInput("number");
     const body = core.getInput("message");
     const githubToken = core.getInput("GITHUB_TOKEN");
-    if (!number) {
-      core.setFailed("This action only works for pull_request");
+    if (isNaN(number)) {
+      core.setFailed("not found pull request number");
       return;
     }
     if (!body || !githubToken) {
