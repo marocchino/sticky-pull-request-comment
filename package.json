@@ -20,7 +20,7 @@
   "author": "YourNameOrOrganization",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.0",
+    "@actions/core": "^1.2.1",
     "@actions/github": "^2.0.1"
   },
   "devDependencies": {
