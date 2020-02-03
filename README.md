@@ -5,7 +5,7 @@ Create comment on pull request, if exists update that comment.
 ## Usage:
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v1
+uses: marocchino/sticky-pull-request-comment@v1.2.1
 with:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   message: |
