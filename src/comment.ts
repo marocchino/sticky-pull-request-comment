@@ -1,3 +1,7 @@
+function headerComment(header) {
+  return `<!-- Sticky Pull Request Comment${header} -->`;
+}
+
 export async function findPreviousComment(octokit, repo, issue_number, header) {
   const { data: comments } = await octokit.issues.listComments({
     ...repo,
@@ -19,8 +23,4 @@ export async function createComment(octokit, repo, issue_number, body, header) {
     issue_number,
     body: `${headerComment(header)}\n${body}`
   });
-}
-
-function headerComment(header) {
-  return `<!-- Sticky Pull Request Comment${header} -->`;
 }
