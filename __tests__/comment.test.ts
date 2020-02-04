@@ -11,23 +11,40 @@ it("findPreviousComment", async () => {
     },
     body: "<!-- Sticky Pull Request Comment -->\nprevious message"
   };
-  const otherComment = {
+  const commentWithCustomHeader = {
     user: {
-      login: "some-user"
+      login: "github-actions[bot]"
     },
-    body: "lgtm"
+    body: "<!-- Sticky Pull Request CommentTypeA -->\nprevious message"
   };
+  const otherComments = [
+    {
+      user: {
+        login: "some-user"
+      },
+      body: "lgtm"
+    },
+    {
+      user: {
+        login: "github-actions[bot]"
+      },
+      body: "<!-- Sticky Pull Request CommentTypeB -->\nprevious message"
+    }
+  ];
   const octokit = {
     issues: {
       listComments: jest.fn(() =>
         Promise.resolve({
-          data: [otherComment, comment]
+          data: [commentWithCustomHeader, comment, ...otherComments]
         })
       )
     }
   };
 
-  expect(await findPreviousComment(octokit, repo, 123)).toBe(comment);
+  expect(await findPreviousComment(octokit, repo, 123, "")).toBe(comment);
+  expect(await findPreviousComment(octokit, repo, 123, "TypeA")).toBe(
+    commentWithCustomHeader
+  );
   expect(octokit.issues.listComments).toBeCalledWith({ issue_number: 123 });
 });
 it("updateComment", async () => {
@@ -37,11 +54,18 @@ it("updateComment", async () => {
     }
   };
   expect(
-    await updateComment(octokit, repo, 456, "hello there")
+    await updateComment(octokit, repo, 456, "hello there", "")
   ).toBeUndefined();
   expect(octokit.issues.updateComment).toBeCalledWith({
     comment_id: 456,
     body: "<!-- Sticky Pull Request Comment -->\nhello there"
+  });
+  expect(
+    await updateComment(octokit, repo, 456, "hello there", "TypeA")
+  ).toBeUndefined();
+  expect(octokit.issues.updateComment).toBeCalledWith({
+    comment_id: 456,
+    body: "<!-- Sticky Pull Request CommentTypeA -->\nhello there"
   });
 });
 it("createComment", async () => {
@@ -51,10 +75,17 @@ it("createComment", async () => {
     }
   };
   expect(
-    await createComment(octokit, repo, 456, "hello there")
+    await createComment(octokit, repo, 456, "hello there", "")
   ).toBeUndefined();
   expect(octokit.issues.createComment).toBeCalledWith({
     issue_number: 456,
     body: "<!-- Sticky Pull Request Comment -->\nhello there"
+  });
+  expect(
+    await createComment(octokit, repo, 456, "hello there", "TypeA")
+  ).toBeUndefined();
+  expect(octokit.issues.createComment).toBeCalledWith({
+    issue_number: 456,
+    body: "<!-- Sticky Pull Request CommentTypeA -->\nhello there"
   });
 });

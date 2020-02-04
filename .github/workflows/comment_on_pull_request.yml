@@ -10,5 +10,7 @@ jobs:
       - uses: ./
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          header: FromPR
           message: |
             Test ${{ github.sha }} is successfully ended.
+            This is message from PR.

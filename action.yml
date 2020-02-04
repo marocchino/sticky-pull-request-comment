@@ -2,6 +2,9 @@ name: "Sticky Pull Request Comment"
 description: "Create comment on pull request, if exists update that comment."
 author: "marocchino"
 inputs:
+  header:
+    description: "Header to determine if the comment is to be updated, not shown on screen"
+    required: false
   message:
     description: "comment message"
     required: true

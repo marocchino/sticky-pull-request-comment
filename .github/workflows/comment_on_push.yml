@@ -17,3 +17,4 @@ jobs:
           number: ${{ steps.finder.outputs.pr }}
           message: |
             Test ${{ github.sha }} is successfully ended.
+            This is message from push.
