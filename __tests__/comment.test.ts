@@ -67,6 +67,14 @@ it("updateComment", async () => {
     comment_id: 456,
     body: "<!-- Sticky Pull Request CommentTypeA -->\nhello there"
   });
+
+  expect(
+    await updateComment(octokit, repo, 456, "hello there", "TypeA", "<!-- Sticky Pull Request CommentTypeA -->\nhello there")
+  ).toBeUndefined();
+  expect(octokit.issues.updateComment).toBeCalledWith({
+    comment_id: 456,
+    body: "<!-- Sticky Pull Request CommentTypeA -->\nhello there\nhello there"
+  });
 });
 it("createComment", async () => {
   const octokit = {
