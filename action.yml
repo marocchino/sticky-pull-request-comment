@@ -5,6 +5,9 @@ inputs:
   header:
     description: "Header to determine if the comment is to be updated, not shown on screen"
     required: false
+  append:
+    description: "Indicate if new comment messages should be appended to previous comment message"
+    required: false
   message:
     description: "comment message"
     required: true
