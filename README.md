@@ -4,12 +4,90 @@ Create comment on pull request, if exists update that comment.
 
 ## Usage:
 
+### Basic
+
 ```yaml
 uses: marocchino/sticky-pull-request-comment@v1
 with:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   message: |
     Release ${{ github.sha }} to <https://pr-${{ github.event.number }}.example.com>
+```
+
+### Keep more than one comment
+
+In some cases, different actions may require different comments. The header allows you to maintain comments independently.
+
+```yaml
+release:
+  ...
+  - uses: marocchino/sticky-pull-request-comment@v1
+  with:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    header: release
+    message: |
+      Release ${{ github.sha }} to <https://pr-${{ github.event.number }}.example.com>
+
+test:
+  ...
+  - name: Run Test
+  id: test
+  run: |
+    OUTPUT=$(rake test)
+    OUTPUT="${OUTPUT//'%'/'%25'}​【7,6 m】"
+    OUTPUT="${OUTPUT//$'\n'/'%0A'}"
+    OUTPUT="${OUTPUT//$'\r'/'%0D'}"
+    echo "::set-output name=result::$OUTPUT"
+  - uses: marocchino/sticky-pull-request-comment@v1
+  with:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    header: test
+    message: |
+      ```
+      ${{ steps.test.outputs.result }}
+      ```
+```
+
+### Append after comment every time it runs
+
+```yaml
+test:
+  ...
+  - name: Run Test
+  id: test
+  run: |
+    OUTPUT=$(rake test)
+    OUTPUT="${OUTPUT//'%'/'%25'}​【7,6 m】"
+    OUTPUT="${OUTPUT//$'\n'/'%0A'}"
+    OUTPUT="${OUTPUT//$'\r'/'%0D'}"
+    echo "::set-output name=result::$OUTPUT"
+  - uses: marocchino/sticky-pull-request-comment@v1
+  with:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    append: true
+    message: |
+      Test with ${{ github.sha }}.
+      ```
+      ${{ steps.test.outputs.result }}
+      ```
+```
+
+### Comment from push
+
+If for some reason, triggering on pr is not possible, you can use push.
+
+```yaml
+- uses: jwalton/gh-find-current-pr@v1
+id: finder
+with:
+  github-token: ${{ secrets.GITHUB_TOKEN }}
+- uses: marocchino/sticky-pull-request-comment@v1
+with:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  number: ${{ steps.finder.outputs.pr }}
+  message: |
+    Test ${{ github.sha }} is successfully ended.
+    This is message from push.
 ```
 
 ## Development
