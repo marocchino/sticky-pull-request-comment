@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
 import { context, GitHub } from "@actions/github";
 import { findPreviousComment, createComment, updateComment } from "./comment";
+import { readFileSync } from 'fs';
 
 async function run() {
   const number =
@@ -13,12 +14,26 @@ async function run() {
 
   try {
     const repo = context.repo;
-    const body = core.getInput("message", { required: true });
+    const message = core.getInput("message", { required: false });
+    const path = core.getInput("path", { required: false });
     const header = core.getInput("header", { required: false }) || "";
     const append = core.getInput("append", { required: false }) || false;
     const githubToken = core.getInput("GITHUB_TOKEN", { required: true });
     const octokit = new GitHub(githubToken);
     const previous = await findPreviousComment(octokit, repo, number, header);
+
+    if (!message && !path) {
+      throw { message: 'Either message or path input is required' };
+    }
+
+    let body;
+
+    if (path) {
+      body = readFileSync(path);
+    } else {
+      body = message;
+    }
+
     if (previous) {
       if (append) {
         await updateComment(octokit, repo, previous.id, body, header, previous.body);

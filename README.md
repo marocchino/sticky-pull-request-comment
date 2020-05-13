@@ -90,6 +90,15 @@ with:
     This is message from push.
 ```
 
+### Read comment from a file
+
+```yaml
+uses: marocchino/sticky-pull-request-comment@v1
+with:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  path: path-to-comment-contents.txt
+```
+
 ## Development
 
 Install the dependencies

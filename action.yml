@@ -10,7 +10,10 @@ inputs:
     required: false
   message:
     description: "comment message"
-    required: true
+    required: false
+  path:
+    description: "path to file containing comment message"
+    required: false
   number:
     description: "pull request number for push event"
     required: false
