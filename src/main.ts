@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import { context, GitHub } from "@actions/github";
-import { findPreviousComment, createComment, updateComment } from "./comment";
+import { findPreviousComment, createComment, updateComment, deleteComment } from "./comment";
 import { readFileSync } from 'fs';
 
 async function run() {
@@ -18,6 +18,7 @@ async function run() {
     const path = core.getInput("path", { required: false });
     const header = core.getInput("header", { required: false }) || "";
     const append = core.getInput("append", { required: false }) || false;
+    const replace = core.getInput("replace", { required: false }) || false;
     const githubToken = core.getInput("GITHUB_TOKEN", { required: true });
     const octokit = new GitHub(githubToken);
     const previous = await findPreviousComment(octokit, repo, number, header);
@@ -34,11 +35,15 @@ async function run() {
       body = message;
     }
 
+    let previousBody;
+    if (append && previous) previousBody = previous.body;
+
     if (previous) {
-      if (append) {
-        await updateComment(octokit, repo, previous.id, body, header, previous.body);
+      if (replace) {
+        await deleteComment(octokit, repo, previous.id);
+        await createComment(octokit, repo, number, body, header, previousBody);
       } else {
-        await updateComment(octokit, repo, previous.id, body, header);
+        await updateComment(octokit, repo, previous.id, body, header, previousBody);
       }
     } else {
       await createComment(octokit, repo, number, body, header);

@@ -1,7 +1,8 @@
 import {
   findPreviousComment,
   createComment,
-  updateComment
+  updateComment,
+  deleteComment
 } from "../src/comment";
 const repo = {};
 it("findPreviousComment", async () => {
@@ -95,5 +96,32 @@ it("createComment", async () => {
   expect(octokit.issues.createComment).toBeCalledWith({
     issue_number: 456,
     body: "<!-- Sticky Pull Request CommentTypeA -->\nhello there"
+  });
+});
+
+it("removeComment", async () => {
+  const octokit = {
+    issues: {
+      deleteComment: jest.fn(() => Promise.resolve())
+    }
+  };
+  expect(
+    await deleteComment(octokit, repo, 456)
+  ).toBeUndefined();
+  expect(octokit.issues.deleteComment).toBeCalledWith({
+    comment_id: 456
+  });
+  expect(
+    await deleteComment(octokit, repo, 456)
+  ).toBeUndefined();
+  expect(octokit.issues.deleteComment).toBeCalledWith({
+    comment_id: 456
+  });
+
+  expect(
+    await deleteComment(octokit, repo, 456)
+  ).toBeUndefined();
+  expect(octokit.issues.deleteComment).toBeCalledWith({
+    comment_id: 456
   });
 });
