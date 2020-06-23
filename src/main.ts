@@ -35,10 +35,8 @@ async function run() {
       body = message;
     }
 
-    let previousBody;
-    if (append && previous) previousBody = previous.body;
-
     if (previous) {
+      const previousBody = append && previous.body;
       if (replace) {
         await deleteComment(octokit, repo, previous.id);
         await createComment(octokit, repo, number, body, header, previousBody);
