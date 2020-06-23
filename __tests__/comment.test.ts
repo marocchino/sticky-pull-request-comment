@@ -99,25 +99,12 @@ it("createComment", async () => {
   });
 });
 
-it("removeComment", async () => {
+it("deleteComment", async () => {
   const octokit = {
     issues: {
       deleteComment: jest.fn(() => Promise.resolve())
     }
   };
-  expect(
-    await deleteComment(octokit, repo, 456)
-  ).toBeUndefined();
-  expect(octokit.issues.deleteComment).toBeCalledWith({
-    comment_id: 456
-  });
-  expect(
-    await deleteComment(octokit, repo, 456)
-  ).toBeUndefined();
-  expect(octokit.issues.deleteComment).toBeCalledWith({
-    comment_id: 456
-  });
-
   expect(
     await deleteComment(octokit, repo, 456)
   ).toBeUndefined();
