@@ -18,7 +18,7 @@ async function run() {
     const path = core.getInput("path", { required: false });
     const header = core.getInput("header", { required: false }) || "";
     const append = core.getInput("append", { required: false }) || false;
-    const replace = core.getInput("replace", { required: false }) || false;
+    const recreate = core.getInput("recreate", { required: false }) || false;
     const githubToken = core.getInput("GITHUB_TOKEN", { required: true });
     const octokit = new GitHub(githubToken);
     const previous = await findPreviousComment(octokit, repo, number, header);
@@ -37,7 +37,7 @@ async function run() {
 
     if (previous) {
       const previousBody = append && previous.body;
-      if (replace) {
+      if (recreate) {
         await deleteComment(octokit, repo, previous.id);
         await createComment(octokit, repo, number, body, header, previousBody);
       } else {
