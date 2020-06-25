@@ -80,7 +80,7 @@ it("updateComment", async () => {
   ).toBeUndefined();
   expect(octokit.issues.updateComment).toBeCalledWith({
     comment_id: 456,
-    body: "hello there\nhello there\n<!-- Sticky Pull Request CommentTypeA -->"
+    body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->\nhello there"
   });
 });
 it("createComment", async () => {
