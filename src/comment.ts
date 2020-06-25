@@ -8,19 +8,19 @@ export async function findPreviousComment(octokit, repo, issue_number, header) {
     issue_number
   });
   const h = headerComment(header);
-  return comments.find(comment => comment.body.startsWith(h));
+  return comments.find(comment => comment.body.includes(h));
 }
 export async function updateComment(octokit, repo, comment_id, body, header, previousBody?) {
   await octokit.issues.updateComment({
     ...repo,
     comment_id,
-    body: previousBody ? `${previousBody}\n${body}` : `${headerComment(header)}\n${body}`
+    body: previousBody ? `${previousBody}\n${body}` : `${body}\n${headerComment(header)}`
   });
 }
 export async function createComment(octokit, repo, issue_number, body, header) {
   await octokit.issues.createComment({
     ...repo,
     issue_number,
-    body: `${headerComment(header)}\n${body}`
+    body: `${body}\n${headerComment(header)}`
   });
 }
