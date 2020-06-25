@@ -17,10 +17,16 @@ export async function updateComment(octokit, repo, comment_id, body, header, pre
     body: previousBody ? `${previousBody}\n${body}` : `${body}\n${headerComment(header)}`
   });
 }
-export async function createComment(octokit, repo, issue_number, body, header) {
+export async function createComment(octokit, repo, issue_number, body, header, previousBody?) {
   await octokit.issues.createComment({
     ...repo,
     issue_number,
-    body: `${body}\n${headerComment(header)}`
+    body:  previousBody ? `${previousBody}\n${body}` : `${body}\n${headerComment(header)}`
+  });
+}
+export async function deleteComment(octokit, repo, comment_id) {
+  await octokit.issues.deleteComment({
+    ...repo,
+    comment_id,
   });
 }

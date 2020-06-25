@@ -8,6 +8,9 @@ inputs:
   append:
     description: "Indicate if new comment messages should be appended to previous comment message"
     required: false
+  recreate:
+    description: "Indicate if previous comment should be removed before creating a new comment"
+    required: false
   message:
     description: "comment message"
     required: false
