@@ -24,7 +24,7 @@
     "@actions/github": "^2.2.0"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.5",
+    "@types/jest": "^26.0.7",
     "@types/node": "^14.0.24",
     "jest": "^25.5.4",
     "jest-circus": "^26.1.0",
