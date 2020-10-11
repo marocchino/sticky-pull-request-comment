@@ -20,6 +20,8 @@ inputs:
   number:
     description: "pull request number for push event"
     required: false
+  delete: 
+    description: "delete the previously created comment"
   GITHUB_TOKEN:
     description: "set secrets.GITHUB_TOKEN here"
     required: true

@@ -19,12 +19,17 @@ async function run() {
     const header = core.getInput("header", { required: false }) || "";
     const append = core.getInput("append", { required: false }) || false;
     const recreate = core.getInput("recreate", { required: false }) || false;
+    const deleteOldComment = core.getInput("delete", { required: false }) || false;
     const githubToken = core.getInput("GITHUB_TOKEN", { required: true });
     const octokit = new GitHub(githubToken);
     const previous = await findPreviousComment(octokit, repo, number, header);
 
     if (!message && !path) {
       throw { message: 'Either message or path input is required' };
+    }
+
+    if (deleteOldComment && recreate) {
+      throw { message: 'delete and recreate cannot be both set to true' };
     }
 
     let body;
@@ -37,7 +42,9 @@ async function run() {
 
     if (previous) {
       const previousBody = append && previous.body;
-      if (recreate) {
+      if (deleteOldComment) {
+        await deleteComment(octokit, repo, previous.id);
+      } else if (recreate) {
         await deleteComment(octokit, repo, previous.id);
         await createComment(octokit, repo, number, body, header, previousBody);
       } else {
