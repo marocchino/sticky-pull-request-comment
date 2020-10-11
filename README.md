@@ -99,6 +99,27 @@ with:
   path: path-to-comment-contents.txt
 ```
 
+### Delete previous commit and add comment at bottom
+
+```yaml
+uses: marocchino/sticky-pull-request-comment@v1
+with:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  recreate: true
+  message: |
+    Release ${{ github.sha }} to <https://pr-${{ github.event.number }}.example.com>
+```
+
+### Delete previous commit
+
+```yaml
+uses: marocchino/sticky-pull-request-comment@v1
+with:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  delete: true
+```
+
+
 ## Development
 
 Install the dependencies
