@@ -27,7 +27,7 @@
     "@types/jest": "^26.0.14",
     "@types/node": "^14.14.2",
     "jest": "^25.5.4",
-    "jest-circus": "^26.5.3",
+    "jest-circus": "^26.6.0",
     "ts-jest": "^25.5.1",
     "typescript": "^3.9.7"
   }
