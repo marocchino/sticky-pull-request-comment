@@ -4,6 +4,13 @@ import {
   updateComment,
   deleteComment
 } from "../src/comment";
+
+import * as core from '@actions/core';
+
+jest.mock('@actions/core', () => ({
+  warning: jest.fn()
+}));
+
 const repo = {};
 it("findPreviousComment", async () => {
   const comment = {
@@ -55,55 +62,85 @@ it("findPreviousComment", async () => {
   expect(await findPreviousComment(octokit, repo, 123, "LegacyComment")).toBe(headerFirstComment)
   expect(octokit.issues.listComments).toBeCalledWith({ issue_number: 123 });
 });
-it("updateComment", async () => {
-  const octokit = {
-    issues: {
-      updateComment: jest.fn(() => Promise.resolve())
-    }
-  };
-  expect(
-    await updateComment(octokit, repo, 456, "hello there", "")
-  ).toBeUndefined();
-  expect(octokit.issues.updateComment).toBeCalledWith({
-    comment_id: 456,
-    body: "hello there\n<!-- Sticky Pull Request Comment -->"
-  });
-  expect(
-    await updateComment(octokit, repo, 456, "hello there", "TypeA")
-  ).toBeUndefined();
-  expect(octokit.issues.updateComment).toBeCalledWith({
-    comment_id: 456,
-    body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->"
+
+describe("updateComment", () => {
+  let octokit;
+
+  beforeEach(() => {
+    octokit = {
+      issues: {
+        updateComment: jest.fn(() => Promise.resolve())
+      }
+    };
+  })
+
+  it("with comment body", async() => {
+    expect(
+      await updateComment(octokit, repo, 456, "hello there", "")
+    ).toBeUndefined();
+    expect(octokit.issues.updateComment).toBeCalledWith({
+      comment_id: 456,
+      body: "hello there\n<!-- Sticky Pull Request Comment -->"
+    });
+    expect(
+      await updateComment(octokit, repo, 456, "hello there", "TypeA")
+    ).toBeUndefined();
+    expect(octokit.issues.updateComment).toBeCalledWith({
+      comment_id: 456,
+      body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->"
+    });
+    expect(
+      await updateComment(octokit, repo, 456, "hello there", "TypeA", "hello there\n<!-- Sticky Pull Request CommentTypeA -->")
+    ).toBeUndefined();
+    expect(octokit.issues.updateComment).toBeCalledWith({
+      comment_id: 456,
+      body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->\nhello there"
+    });
   });
 
-  expect(
-    await updateComment(octokit, repo, 456, "hello there", "TypeA", "hello there\n<!-- Sticky Pull Request CommentTypeA -->")
-  ).toBeUndefined();
-  expect(octokit.issues.updateComment).toBeCalledWith({
-    comment_id: 456,
-    body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->\nhello there"
-  });
+  it("without comment body and previousbody", async() => {
+    expect(
+      await updateComment(octokit, repo, 456, "", "")
+    ).toBeUndefined();
+    expect(octokit.issues.updateComment).not.toBeCalled();
+    expect(core.warning).toBeCalledWith('Comment body cannot be blank');
+  })
 });
-it("createComment", async () => {
-  const octokit = {
-    issues: {
-      createComment: jest.fn(() => Promise.resolve())
-    }
-  };
-  expect(
-    await createComment(octokit, repo, 456, "hello there", "")
-  ).toBeUndefined();
-  expect(octokit.issues.createComment).toBeCalledWith({
-    issue_number: 456,
-    body: "hello there\n<!-- Sticky Pull Request Comment -->"
-  });
-  expect(
-    await createComment(octokit, repo, 456, "hello there", "TypeA")
-  ).toBeUndefined();
-  expect(octokit.issues.createComment).toBeCalledWith({
-    issue_number: 456,
-    body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->"
-  });
+
+describe("createComment", () => {
+  let octokit;
+
+  beforeEach(() => {
+    octokit = {
+      issues: {
+        createComment: jest.fn(() => Promise.resolve())
+      }
+    };
+  })
+
+  it("with comment body or previousBody", async () => {
+    expect(
+      await createComment(octokit, repo, 456, "hello there", "")
+    ).toBeUndefined();
+    expect(octokit.issues.createComment).toBeCalledWith({
+      issue_number: 456,
+      body: "hello there\n<!-- Sticky Pull Request Comment -->"
+    });
+    expect(
+      await createComment(octokit, repo, 456, "hello there", "TypeA")
+    ).toBeUndefined();
+    expect(octokit.issues.createComment).toBeCalledWith({
+      issue_number: 456,
+      body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->"
+    });
+  })
+  it("without comment body and previousBody", async () => {
+    expect(
+      await createComment(octokit, repo, 456, "", "")
+    ).toBeUndefined();
+    expect(octokit.issues.createComment).not.toBeCalled();
+    expect(core.warning).toBeCalledWith('Comment body cannot be blank');
+  })
 });
 
 it("deleteComment", async () => {
