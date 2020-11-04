@@ -1,3 +1,5 @@
+import * as core from "@actions/core";
+
 function headerComment(header) {
   return `<!-- Sticky Pull Request Comment${header} -->`;
 }
@@ -11,6 +13,8 @@ export async function findPreviousComment(octokit, repo, issue_number, header) {
   return comments.find(comment => comment.body.includes(h));
 }
 export async function updateComment(octokit, repo, comment_id, body, header, previousBody?) {
+  if (!body && !previousBody) core.warning('Comment body cannot be blank');
+
   await octokit.issues.updateComment({
     ...repo,
     comment_id,
@@ -18,6 +22,8 @@ export async function updateComment(octokit, repo, comment_id, body, header, pre
   });
 }
 export async function createComment(octokit, repo, issue_number, body, header, previousBody?) {
+  if (!body) core.warning('Comment body cannot be blank');
+
   await octokit.issues.createComment({
     ...repo,
     issue_number,
