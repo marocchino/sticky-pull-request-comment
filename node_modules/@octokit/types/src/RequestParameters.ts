@@ -42,5 +42,5 @@ export type RequestParameters = {
    * 3. Request body if `parameter` is `'data'`
    * 4. JSON in the request body in the form of `body[parameter]` unless `parameter` key is `'data'`
    */
-  [parameter: string]: any;
+  [parameter: string]: unknown;
 };
