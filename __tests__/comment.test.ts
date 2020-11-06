@@ -100,7 +100,7 @@ describe("updateComment", () => {
 
   it("without comment body and previousbody", async() => {
     expect(
-      await updateComment(octokit, repo, 456, "", null)
+      await updateComment(octokit, repo, 456, "", "")
     ).toBeUndefined();
     expect(octokit.issues.updateComment).not.toBeCalled();
     expect(core.warning).toBeCalledWith('Comment body cannot be blank');
@@ -136,7 +136,7 @@ describe("createComment", () => {
   })
   it("without comment body and previousBody", async () => {
     expect(
-      await createComment(octokit, repo, 456, "", null)
+      await createComment(octokit, repo, 456, "", "")
     ).toBeUndefined();
     expect(octokit.issues.createComment).not.toBeCalled();
     expect(core.warning).toBeCalledWith('Comment body cannot be blank');
