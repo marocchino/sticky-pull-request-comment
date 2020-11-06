@@ -7,7 +7,7 @@ Create comment on pull request, if exists update that comment.
 ### Basic
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v1
+uses: marocchino/sticky-pull-request-comment@v2
 with:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   message: |
@@ -21,7 +21,7 @@ In some cases, different actions may require different comments. The header allo
 ```yaml
 release:
   ...
-  - uses: marocchino/sticky-pull-request-comment@v1
+  - uses: marocchino/sticky-pull-request-comment@v2
   with:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     header: release
@@ -38,7 +38,7 @@ test:
     OUTPUT="${OUTPUT//$'\n'/'%0A'}"
     OUTPUT="${OUTPUT//$'\r'/'%0D'}"
     echo "::set-output name=result::$OUTPUT"
-  - uses: marocchino/sticky-pull-request-comment@v1
+  - uses: marocchino/sticky-pull-request-comment@v2
   with:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     header: test
@@ -61,7 +61,7 @@ test:
     OUTPUT="${OUTPUT//$'\n'/'%0A'}"
     OUTPUT="${OUTPUT//$'\r'/'%0D'}"
     echo "::set-output name=result::$OUTPUT"
-  - uses: marocchino/sticky-pull-request-comment@v1
+  - uses: marocchino/sticky-pull-request-comment@v2
   with:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     append: true
@@ -81,7 +81,7 @@ If for some reason, triggering on pr is not possible, you can use push.
 id: finder
 with:
   github-token: ${{ secrets.GITHUB_TOKEN }}
-- uses: marocchino/sticky-pull-request-comment@v1
+- uses: marocchino/sticky-pull-request-comment@v2
 with:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   number: ${{ steps.finder.outputs.pr }}
@@ -93,7 +93,7 @@ with:
 ### Read comment from a file
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v1
+uses: marocchino/sticky-pull-request-comment@v2
 with:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   path: path-to-comment-contents.txt
@@ -102,7 +102,7 @@ with:
 ### Delete previous commit and add comment at bottom
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v1
+uses: marocchino/sticky-pull-request-comment@v2
 with:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   recreate: true
@@ -113,7 +113,7 @@ with:
 ### Delete previous commit
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v1
+uses: marocchino/sticky-pull-request-comment@v2
 with:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   delete: true
