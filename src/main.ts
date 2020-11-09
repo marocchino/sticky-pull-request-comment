@@ -35,7 +35,7 @@ async function run() {
     let body;
 
     if (path) {
-      body = readFileSync(path);
+      body = readFileSync(path, 'utf-8');
     } else {
       body = message;
     }
