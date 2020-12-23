@@ -17,9 +17,9 @@ async function run() {
     const message = core.getInput("message", { required: false });
     const path = core.getInput("path", { required: false });
     const header = core.getInput("header", { required: false }) || "";
-    const append = core.getInput("append", { required: false }) || false;
-    const recreate = core.getInput("recreate", { required: false }) || false;
-    const deleteOldComment = core.getInput("delete", { required: false }) || false;
+    const append = (core.getInput("append", { required: false }) || "false") === "true";
+    const recreate = (core.getInput("recreate", { required: false }) || "false") === "true";
+    const deleteOldComment = (core.getInput("delete", { required: false }) || "false") === "true";
     const githubToken = core.getInput("GITHUB_TOKEN", { required: true });
     const octokit = new GitHub(githubToken);
     const previous = await findPreviousComment(octokit, repo, number, header);
