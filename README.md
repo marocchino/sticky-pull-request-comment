@@ -1,6 +1,7 @@
 # Sticky Pull Request Comment
 
 Create comment on pull request, if exists update that comment.
+This library runs with GitHub Actions. If you feel that the example grammar below is not friendly enough, we recommend reading [this page](https://docs.github.com/en/actions) first.
 
 ## Usage:
 
