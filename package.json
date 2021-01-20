@@ -1,8 +1,8 @@
 {
-  "name": "typescript-action",
-  "version": "0.0.0",
+  "name": "sticky-pull-request-comment",
+  "version": "2.0.1",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "Create comment on pull request, if exists update that comment.",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -17,11 +17,11 @@
     "node",
     "setup"
   ],
-  "author": "YourNameOrOrganization",
+  "author": "marocchino",
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "@actions/github": "^2.2.0"
+    "@actions/github": "^4.0.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
