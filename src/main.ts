@@ -1,11 +1,11 @@
 import * as core from "@actions/core";
-import { context, GitHub } from "@actions/github";
+import * as github from "@actions/github";
 import { findPreviousComment, createComment, updateComment, deleteComment } from "./comment";
 import { readFileSync } from 'fs';
 
 async function run() {
   const number =
-    context?.payload?.pull_request?.number ||
+    github.context?.payload?.pull_request?.number ||
     +core.getInput("number", { required: false });
   if (isNaN(number) || number < 1) {
     core.info("no numbers given: skip step");
@@ -13,7 +13,7 @@ async function run() {
   }
 
   try {
-    const repo = context.repo;
+    const repo = github.context.repo;
     const message = core.getInput("message", { required: false });
     const path = core.getInput("path", { required: false });
     const header = core.getInput("header", { required: false }) || "";
@@ -21,7 +21,7 @@ async function run() {
     const recreate = (core.getInput("recreate", { required: false }) || "false") === "true";
     const deleteOldComment = (core.getInput("delete", { required: false }) || "false") === "true";
     const githubToken = core.getInput("GITHUB_TOKEN", { required: true });
-    const octokit = new GitHub(githubToken);
+    const octokit = github.getOctokit(githubToken);
     const previous = await findPreviousComment(octokit, repo, number, header);
 
     if (!message && !path) {
