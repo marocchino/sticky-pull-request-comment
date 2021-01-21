@@ -111,7 +111,7 @@ with:
     Release ${{ github.sha }} to <https://pr-${{ github.event.number }}.example.com>
 ```
 
-### Delete previous commit
+### Delete previous comment
 
 ```yaml
 uses: marocchino/sticky-pull-request-comment@v2

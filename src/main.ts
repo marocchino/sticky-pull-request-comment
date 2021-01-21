@@ -24,7 +24,7 @@ async function run() {
     const octokit = github.getOctokit(githubToken);
     const previous = await findPreviousComment(octokit, repo, number, header);
 
-    if (!message && !path) {
+    if (!deleteOldComment && !message && !path) {
       throw { message: 'Either message or path input is required' };
     }
 
