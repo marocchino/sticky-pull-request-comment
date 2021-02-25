@@ -1,1 +1,2 @@
-lib/* linguist-generated
+lib/** -diff linguist-generated=true
+dist/** -diff linguist-generated=true
