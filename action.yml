@@ -23,6 +23,9 @@ inputs:
   delete:
     description: "delete the previously created comment"
     required: false
+  repo:
+    description: "Limited use on github enterprise. Note that When you trying changing a repo, be aware that GITHUB_TOKEN should also use that repo's. If not set, the current repo is used by default."
+    required: false
   GITHUB_TOKEN:
     description: "set secrets.GITHUB_TOKEN here"
     required: true
