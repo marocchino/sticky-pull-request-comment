@@ -13,7 +13,7 @@ async function run() {
   }
 
   try {
-    const repo = github.context.repo;
+    const repo = core.getInput("repo", { required: false }) || github.context.repo;
     const message = core.getInput("message", { required: false });
     const path = core.getInput("path", { required: false });
     const header = core.getInput("header", { required: false }) || "";
