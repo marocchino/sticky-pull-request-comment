@@ -3,13 +3,16 @@ description: "Create comment on pull request, if exists update that comment."
 author: "marocchino"
 inputs:
   header:
-    description: "Header to determine if the comment is to be updated, not shown on screen"
+    description: "Header to determine if the comment is to be updated, not shown on screen. It can be used when you want to add multiple comments independently at the same time."
     required: false
   append:
-    description: "Indicate if new comment messages should be appended to previous comment message"
+    description: "Indicate if new comment messages should be appended to previous comment message. Only `true` is allowed. Just skip this item when you don't need it."
     required: false
   recreate:
-    description: "Indicate if previous comment should be removed before creating a new comment"
+    description: "Indicate if previous comment should be removed before creating a new comment. Only `true` is allowed. Just skip this item when you don't need it."
+    required: false
+  delete:
+    description: "delete the previously created comment. Only `true` is allowed. Just skip this item when you don't need it."
     required: false
   message:
     description: "comment message"
@@ -20,15 +23,12 @@ inputs:
   number:
     description: "pull request number for push event"
     required: false
-  delete:
-    description: "delete the previously created comment"
-    required: false
   repo:
-    description: "Limited use on github enterprise. Note that When you trying changing a repo, be aware that GITHUB_TOKEN should also use that repo's. If not set, the current repo is used by default."
+    description: "other repo url limited use on github enterprise. If not set, the current repo is used by default. Note that When you trying changing a repo, be aware that GITHUB_TOKEN should also use that repo's."
     required: false
   GITHUB_TOKEN:
     description: "set secrets.GITHUB_TOKEN here"
     required: true
 runs:
   using: "node12"
-  main: "lib/main.js"
+  main: "dist/index.js"

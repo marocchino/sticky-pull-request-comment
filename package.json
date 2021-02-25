@@ -6,7 +6,13 @@
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
-    "test": "jest"
+    "format": "prettier --write **/*.ts",
+    "format-check": "prettier --check **/*.ts",
+    "lint": "eslint src/**/*.ts",
+    "package": "ncc build --source-map --license licenses.txt",
+    "test": "jest",
+    "build_test": "tsc && jest",
+    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
   },
   "repository": {
     "type": "git",
@@ -26,8 +32,15 @@
   "devDependencies": {
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.31",
+    "@typescript-eslint/parser": "^4.15.2",
+    "@vercel/ncc": "^0.27.0",
+    "eslint": "^7.20.0",
+    "eslint-plugin-github": "^4.1.1",
+    "eslint-plugin-jest": "^24.1.5",
     "jest": "^25.5.4",
     "jest-circus": "^26.6.3",
+    "js-yaml": "^4.0.0",
+    "prettier": "2.2.1",
     "ts-jest": "^25.5.1",
     "typescript": "^3.9.9"
   }
