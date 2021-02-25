@@ -152,7 +152,7 @@ with:
 
 ### `repo`
 
-**Optional** other repo url limited use on github enterprise. If not set, the current repo is used by default. Note that When you trying changing a repo, be aware that GITHUB_TOKEN should also use that repo's.
+**Optional** other repo name limited use on github enterprise. If not set, the current repo is used by default. Note that When you trying changing a repo, be aware that GITHUB_TOKEN should also use that repo's.
 
 ### `GITHUB_TOKEN`
 
