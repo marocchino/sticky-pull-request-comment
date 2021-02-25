@@ -3,7 +3,7 @@
 Create comment on pull request, if exists update that comment.
 This library runs with GitHub Actions. If you feel that the example grammar below is not friendly enough, we recommend reading [this page](https://docs.github.com/en/actions) first.
 
-## Usage:
+## Usage
 
 ### Basic
 
@@ -120,57 +120,48 @@ with:
   delete: true
 ```
 
+## Inputs
 
-## Development
+### `header`
 
-Install the dependencies
+**Optional** Header to determine if the comment is to be updated, not shown on screen. It can be used when you want to add multiple comments independently at the same time.
 
-```bash
-$ npm install
-```
+### `append`
 
-Build the typescript
+**Optional** Indicate if new comment messages should be appended to previous comment message. Only `true` is allowed. Just skip this item when you don't need it.
 
-```bash
-$ npm run build
-```
+### `recreate`
 
-Run the tests :heavy_check_mark:
+**Optional** Indicate if previous comment should be removed before creating a new comment. Only `true` is allowed. Just skip this item when you don't need it.
 
-```bash
-$ npm test
+### `delete`
 
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
+**Optional** delete the previously created comment. Only `true` is allowed. Just skip this item when you don't need it.
 
-...
-```
+### `message`
 
-## Publish to a distribution branch
+**Optional** comment message
 
-Actions are run from GitHub repos. We will create a releases branch and only checkin production modules (core in this case).
+### `path`
 
-Comment out node_modules in .gitignore and create a releases/v1 branch
+**Optional** path to file containing comment message
 
-```bash
-# comment out in distribution branches
-# node_modules/
-```
+### `number`
 
-```bash
-$ git checkout -b releases/v1
-$ git commit -a -m "prod dependencies"
-```
+**Optional** pull request number for push event
 
-```bash
-$ npm prune --production
-$ git add node_modules
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
-```
+### `repo`
 
-Your action is now published! :rocket:
+**Optional** other repo url limited use on github enterprise. If not set, the current repo is used by default. Note that When you trying changing a repo, be aware that GITHUB_TOKEN should also use that repo's.
 
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
+### `GITHUB_TOKEN`
+
+**Required** set secrets.GITHUB_TOKEN here
+
+## Outputs
+
+no outputs
+
+## Any problem?
+
+Feel free to report issues. 😃
