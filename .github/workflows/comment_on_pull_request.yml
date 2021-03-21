@@ -1,12 +1,12 @@
 name: Comment on Pull Request
 on:
-  - pull_request
+  pull_request:
 
 jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: ./
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
