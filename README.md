@@ -10,7 +10,6 @@ This library runs with GitHub Actions. If you feel that the example grammar belo
 ```yaml
 uses: marocchino/sticky-pull-request-comment@v2
 with:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   message: |
     Release ${{ github.sha }} to <https://pr-${{ github.event.number }}.example.com>
 ```
@@ -156,7 +155,7 @@ with:
 
 ### `GITHUB_TOKEN`
 
-**Required** set secrets.GITHUB_TOKEN here
+**Optional**, typically set secrets.GITHUB_TOKEN. If not set, this will use `${{ github.token }}`.
 
 ## Outputs
 
