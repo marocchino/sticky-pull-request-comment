@@ -29,6 +29,7 @@ inputs:
   GITHUB_TOKEN:
     description: 'The GitHub access token (e.g. secrets.GITHUB_TOKEN) used to create or update the comment. This defaults to {{ github.token }}.'
     default: '${{ github.token }}'
+    required: false
 runs:
   using: "node12"
   main: "dist/index.js"
