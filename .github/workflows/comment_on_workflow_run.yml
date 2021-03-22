@@ -1,0 +1,28 @@
+name: Comment on PR
+
+on:
+  workflow_run:
+    workflows:
+      - "Test"
+    types:
+      - completed
+
+jobs:
+  exam:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.event == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: on artifact
+        id: artifact
+        uses: marocchino/on_artifact@v1
+        with:
+          name: all
+      - uses: ./
+        with:
+          header: All
+          number: ${{ steps.artifact.outputs.number }}
+          message: |
+            ```
+            ${{ steps.artifact.outputs.all_result }}
+            ```
