@@ -112,10 +112,10 @@ with:
 
 ### Error: Resource not accessible by integration
 
-This library require write permission of repo. that message means requester has
-not enough permission. The solution is to split the workflow between the part
-that can be executed with only read privileges and the part that writes comments.
-See [this article](https://securitylab.github.com/research/github-actions-preventing-pwn-requests)
+That message means requester has not enough permission. The solution is to split
+the workflow between the part that can be executed with only read privileges and
+the part that writes comments. See [this
+article](https://securitylab.github.com/research/github-actions-preventing-pwn-requests)
 for more information, and see below example for solution:
 
 ```yaml
