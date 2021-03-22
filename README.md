@@ -110,6 +110,69 @@ with:
   delete: true
 ```
 
+### Error: Resource not accessible by integration
+
+This library require write permission of repo. that message means requester has
+not enough permission. The solution is to split the workflow between the part
+that can be executed with only read privileges and the part that writes comments.
+See [this article](https://securitylab.github.com/research/github-actions-preventing-pwn-requests)
+for more information, and see below example for solution:
+
+```yaml
+# test.yml
+name: Test
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm ci
+      - run: |
+          mkdir -p ./pr
+          echo ${{ github.event.number }} | tee ./pr/number
+          npm run all | tee ./pr/all_result
+      - uses: actions/upload-artifact@v2
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          name: all
+          path: pr/
+
+# comment_on_pr.yml
+name: Comment on PR
+
+on:
+  workflow_run:
+    workflows:
+      - "Test"
+    types:
+      - completed
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.event == 'pull_request' }}
+    steps:
+      - name: on artifact
+        id: artifact
+        uses: marocchino/on_artifact@v1
+        with:
+          name: all
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: All
+          number: ${{ steps.artifact.outputs.number }}
+          message: |
+            ```
+            ${{ steps.artifact.outputs.all_result }}
+            ```
+```
+
 ## Inputs
 
 ### `header`
