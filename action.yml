@@ -4,15 +4,19 @@ author: "marocchino"
 inputs:
   header:
     description: "Header to determine if the comment is to be updated, not shown on screen. It can be used when you want to add multiple comments independently at the same time."
+    default: ""
     required: false
   append:
     description: "Indicate if new comment messages should be appended to previous comment message. Only `true` is allowed. Just skip this item when you don't need it."
+    default: "false"
     required: false
   recreate:
     description: "Indicate if previous comment should be removed before creating a new comment. Only `true` is allowed. Just skip this item when you don't need it."
+    default: "false"
     required: false
   delete:
     description: "delete the previously created comment. Only `true` is allowed. Just skip this item when you don't need it."
+    default: "false"
     required: false
   message:
     description: "comment message"

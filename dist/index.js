@@ -79,6 +79,55 @@ exports.deleteComment = deleteComment;
 
 /***/ }),
 
+/***/ 88:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.githubToken = exports.deleteOldComment = exports.recreate = exports.append = exports.header = exports.path = exports.message = exports.repo = exports.pullRequestNumber = void 0;
+const core = __importStar(__nccwpck_require__(186));
+const github_1 = __nccwpck_require__(438);
+exports.pullRequestNumber = ((_b = (_a = github_1.context === null || github_1.context === void 0 ? void 0 : github_1.context.payload) === null || _a === void 0 ? void 0 : _a.pull_request) === null || _b === void 0 ? void 0 : _b.number) ||
+    +core.getInput('number', { required: false });
+exports.repo = buildRepo();
+exports.message = core.getInput('message', { required: false });
+exports.path = core.getInput('path', { required: false });
+exports.header = core.getInput('header', { required: false });
+exports.append = core.getInput('append', { required: true }) === 'true';
+exports.recreate = core.getInput('recreate', { required: true }) === 'true';
+exports.deleteOldComment = core.getInput('delete', { required: true }) === 'true';
+exports.githubToken = core.getInput('GITHUB_TOKEN', { required: true });
+function buildRepo() {
+    return {
+        owner: github_1.context.repo.owner,
+        repo: core.getInput('repo', { required: false }) || github_1.context.repo.repo
+    };
+}
+
+
+/***/ }),
+
 /***/ 109:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -116,56 +165,45 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const github = __importStar(__nccwpck_require__(438));
 const comment_1 = __nccwpck_require__(667);
+const config_1 = __nccwpck_require__(88);
 const fs_1 = __nccwpck_require__(747);
 function run() {
-    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
-        const number = ((_c = (_b = (_a = github.context) === null || _a === void 0 ? void 0 : _a.payload) === null || _b === void 0 ? void 0 : _b.pull_request) === null || _c === void 0 ? void 0 : _c.number) ||
-            +core.getInput('number', { required: false });
-        if (isNaN(number) || number < 1) {
+        if (isNaN(config_1.pullRequestNumber) || config_1.pullRequestNumber < 1) {
             core.info('no pull request numbers given: skip step');
             return;
         }
         try {
-            const repo = github.context.repo;
-            repo.repo = core.getInput('repo', { required: false }) || repo.repo;
-            const message = core.getInput('message', { required: false });
-            const path = core.getInput('path', { required: false });
-            const header = core.getInput('header', { required: false }) || '';
-            const append = (core.getInput('append', { required: false }) || 'false') === 'true';
-            const recreate = (core.getInput('recreate', { required: false }) || 'false') === 'true';
-            const deleteOldComment = (core.getInput('delete', { required: false }) || 'false') === 'true';
-            const githubToken = core.getInput('GITHUB_TOKEN', { required: true });
-            const octokit = github.getOctokit(githubToken);
-            const previous = yield comment_1.findPreviousComment(octokit, repo, number, header);
-            if (!deleteOldComment && !message && !path) {
+            const octokit = github.getOctokit(config_1.githubToken);
+            const previous = yield comment_1.findPreviousComment(octokit, config_1.repo, config_1.pullRequestNumber, config_1.header);
+            if (!config_1.deleteOldComment && !config_1.message && !config_1.path) {
                 throw new Error('Either message or path input is required');
             }
-            if (deleteOldComment && recreate) {
+            if (config_1.deleteOldComment && config_1.recreate) {
                 throw new Error('delete and recreate cannot be both set to true');
             }
             let body;
-            if (path) {
-                body = fs_1.readFileSync(path, 'utf-8');
+            if (config_1.path) {
+                body = fs_1.readFileSync(config_1.path, 'utf-8');
             }
             else {
-                body = message;
+                body = config_1.message;
             }
             if (previous) {
-                const previousBody = append ? previous.body : undefined;
-                if (deleteOldComment) {
-                    yield comment_1.deleteComment(octokit, repo, previous.id);
+                const previousBody = config_1.append ? previous.body : undefined;
+                if (config_1.deleteOldComment) {
+                    yield comment_1.deleteComment(octokit, config_1.repo, previous.id);
                 }
-                else if (recreate) {
-                    yield comment_1.deleteComment(octokit, repo, previous.id);
-                    yield comment_1.createComment(octokit, repo, number, body, header, previousBody);
+                else if (config_1.recreate) {
+                    yield comment_1.deleteComment(octokit, config_1.repo, previous.id);
+                    yield comment_1.createComment(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header, previousBody);
                 }
                 else {
-                    yield comment_1.updateComment(octokit, repo, previous.id, body, header, previousBody);
+                    yield comment_1.updateComment(octokit, config_1.repo, previous.id, body, config_1.header, previousBody);
                 }
             }
             else {
-                yield comment_1.createComment(octokit, repo, number, body, header);
+                yield comment_1.createComment(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header);
             }
         }
         catch (error) {
