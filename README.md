@@ -143,7 +143,7 @@ is explicitly passed, this problem can be solved by just deleting that part.
 
 ### `number`
 
-**Optional** pull request number for push event
+**Optional** pull request number for push event. Note that this is **lower priority** than number from pull request event.
 
 ### `repo`
 
