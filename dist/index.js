@@ -105,24 +105,39 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.githubToken = exports.deleteOldComment = exports.recreate = exports.append = exports.header = exports.path = exports.message = exports.repo = exports.pullRequestNumber = void 0;
+exports.body = exports.githubToken = exports.deleteOldComment = exports.recreate = exports.append = exports.header = exports.repo = exports.pullRequestNumber = void 0;
 const core = __importStar(__nccwpck_require__(186));
 const github_1 = __nccwpck_require__(438);
+const fs_1 = __nccwpck_require__(747);
 exports.pullRequestNumber = ((_b = (_a = github_1.context === null || github_1.context === void 0 ? void 0 : github_1.context.payload) === null || _a === void 0 ? void 0 : _a.pull_request) === null || _b === void 0 ? void 0 : _b.number) ||
     +core.getInput('number', { required: false });
 exports.repo = buildRepo();
-exports.message = core.getInput('message', { required: false });
-exports.path = core.getInput('path', { required: false });
 exports.header = core.getInput('header', { required: false });
 exports.append = core.getInput('append', { required: true }) === 'true';
 exports.recreate = core.getInput('recreate', { required: true }) === 'true';
 exports.deleteOldComment = core.getInput('delete', { required: true }) === 'true';
 exports.githubToken = core.getInput('GITHUB_TOKEN', { required: true });
+exports.body = buildBody();
 function buildRepo() {
     return {
         owner: github_1.context.repo.owner,
         repo: core.getInput('repo', { required: false }) || github_1.context.repo.repo
     };
+}
+function buildBody() {
+    const path = core.getInput('path', { required: false });
+    if (path) {
+        try {
+            return fs_1.readFileSync(path, 'utf-8');
+        }
+        catch (error) {
+            core.setFailed(error.message);
+            return '';
+        }
+    }
+    else {
+        return core.getInput('message', { required: false });
+    }
 }
 
 
@@ -166,7 +181,6 @@ const core = __importStar(__nccwpck_require__(186));
 const github = __importStar(__nccwpck_require__(438));
 const comment_1 = __nccwpck_require__(667);
 const config_1 = __nccwpck_require__(88);
-const fs_1 = __nccwpck_require__(747);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         if (isNaN(config_1.pullRequestNumber) || config_1.pullRequestNumber < 1) {
@@ -174,37 +188,29 @@ function run() {
             return;
         }
         try {
-            const octokit = github.getOctokit(config_1.githubToken);
-            const previous = yield comment_1.findPreviousComment(octokit, config_1.repo, config_1.pullRequestNumber, config_1.header);
-            if (!config_1.deleteOldComment && !config_1.message && !config_1.path) {
+            if (!config_1.deleteOldComment && !config_1.body) {
                 throw new Error('Either message or path input is required');
             }
             if (config_1.deleteOldComment && config_1.recreate) {
                 throw new Error('delete and recreate cannot be both set to true');
             }
-            let body;
-            if (config_1.path) {
-                body = fs_1.readFileSync(config_1.path, 'utf-8');
+            const octokit = github.getOctokit(config_1.githubToken);
+            const previous = yield comment_1.findPreviousComment(octokit, config_1.repo, config_1.pullRequestNumber, config_1.header);
+            if (!previous) {
+                yield comment_1.createComment(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header);
+                return;
             }
-            else {
-                body = config_1.message;
+            if (config_1.deleteOldComment) {
+                yield comment_1.deleteComment(octokit, config_1.repo, previous.id);
+                return;
             }
-            if (previous) {
-                const previousBody = config_1.append ? previous.body : undefined;
-                if (config_1.deleteOldComment) {
-                    yield comment_1.deleteComment(octokit, config_1.repo, previous.id);
-                }
-                else if (config_1.recreate) {
-                    yield comment_1.deleteComment(octokit, config_1.repo, previous.id);
-                    yield comment_1.createComment(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header, previousBody);
-                }
-                else {
-                    yield comment_1.updateComment(octokit, config_1.repo, previous.id, body, config_1.header, previousBody);
-                }
+            const previousBody = config_1.append ? previous.body : undefined;
+            if (config_1.recreate) {
+                yield comment_1.deleteComment(octokit, config_1.repo, previous.id);
+                yield comment_1.createComment(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header, previousBody);
+                return;
             }
-            else {
-                yield comment_1.createComment(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header);
-            }
+            yield comment_1.updateComment(octokit, config_1.repo, previous.id, config_1.body, config_1.header, previousBody);
         }
         catch (error) {
             core.setFailed(error.message);
