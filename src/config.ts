@@ -5,7 +5,14 @@ import {readFileSync} from 'fs'
 export const pullRequestNumber =
   context?.payload?.pull_request?.number ||
   +core.getInput('number', {required: false})
-
+core.info('## inputs')
+core.info(`- number: ${core.getInput('number')}`)
+core.info(`- header: ${core.getInput('header')}`)
+core.info(`- append: ${core.getInput('append')}`)
+core.info(`- recreate: ${core.getInput('recreate')}`)
+core.info(`- delete: ${core.getInput('delete')}`)
+core.info(`- path: ${core.getInput('path')}`)
+core.info(`- message: ${core.getInput('message')}`)
 export const repo = buildRepo()
 export const header = core.getInput('header', {required: false})
 export const append = core.getInput('append', {required: true}) === 'true'
