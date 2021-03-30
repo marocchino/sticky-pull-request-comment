@@ -10,6 +10,13 @@ jobs:
       - uses: ./
         with:
           header: FromPR
+          recreate: true
           message: |
             Test ${{ github.sha }} is successfully ended.
             This is message from PR.
+      - uses: ./
+        with:
+          header: FromPR
+          append: true
+          message: |
+            Append message.
