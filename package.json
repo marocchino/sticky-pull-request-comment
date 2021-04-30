@@ -30,7 +30,7 @@
     "@actions/github": "^4.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.22",
+    "@types/jest": "^26.0.23",
     "@types/node": "^15.0.1",
     "@typescript-eslint/parser": "^4.22.0",
     "@vercel/ncc": "^0.28.3",
