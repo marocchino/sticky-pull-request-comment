@@ -1,6 +1,6 @@
 # Sticky Pull Request Comment
 
-Create comment on pull request, if exists update that comment.
+Create a comment on a pull request, if it exists update that comment.
 This library runs with GitHub Actions. If you feel that the example grammar below is not friendly enough, we recommend reading [this page](https://docs.github.com/en/actions) first.
 
 ## Usage
@@ -80,8 +80,8 @@ If for some reason, triggering on pr is not possible, you can use push.
   with:
     number: ${{ steps.finder.outputs.pr }}
     message: |
-      Test ${{ github.sha }} is successfully ended.
-      This is message from push.
+      Test ${{ github.sha }} ended successfully.
+      This message is from a push.
 ```
 
 ### Read comment from a file
@@ -92,7 +92,7 @@ with:
   path: path-to-comment-contents.txt
 ```
 
-### Delete previous commit and add comment at bottom
+### Delete the previous comment and add a comment at the end
 
 ```yaml
 uses: marocchino/sticky-pull-request-comment@v2
@@ -112,42 +112,42 @@ with:
 
 ### Error: Resource not accessible by integration
 
-That message means requester has not enough permission. If `secrets.GITHUB_TOKEN`
-is explicitly passed, this problem can be solved by just deleting that part. 
+This message means the requester does not have enough permission. If `secrets.GITHUB_TOKEN`
+is explicitly passed, this problem can be solved by just removing it. 
 
 ## Inputs
 
 ### `header`
 
-**Optional** Header to determine if the comment is to be updated, not shown on screen. It can be used when you want to add multiple comments independently at the same time.
+**Optional** Header to determine if the comment should be updated (it is not shown to users). It can be used when you want to add multiple comments independently to a given object.
 
 ### `append`
 
-**Optional** Indicate if new comment messages should be appended to previous comment message. Only `true` is allowed. Just skip this item when you don't need it.
+**Optional** Indicate if new comment messages should be appended to previous comment message. Only `true` is allowed. Just skip this option when you don't need it.
 
 ### `recreate`
 
-**Optional** Indicate if previous comment should be removed before creating a new comment. Only `true` is allowed. Just skip this item when you don't need it.
+**Optional** Indicate if previous comment should be removed before creating a new comment. Only `true` is allowed. Just skip this option when you don't need it.
 
 ### `delete`
 
-**Optional** delete the previously created comment. Only `true` is allowed. Just skip this item when you don't need it.
+**Optional** Delete the previously created comment. Only `true` is allowed. Just skip this option when you don't need it.
 
 ### `message`
 
-**Optional** comment message
+**Optional** Comment message
 
 ### `path`
 
-**Optional** path to file containing comment message
+**Optional** Path to file containing comment message
 
 ### `number`
 
-**Optional** pull request number for push event. Note that this is **lower priority** than number from pull request event.
+**Optional** Pull request number for push event. Note that this has a **lower priority** than the number of a pull_request event.
 
 ### `repo`
 
-**Optional** other repo name limited use on github enterprise. If not set, the current repo is used by default. Note that When you trying changing a repo, be aware that GITHUB_TOKEN should also use that repo's.
+**Optional** Another repository name. Of limited use on GitHub enterprise. If not set, the current repository is used by default. Note that when you trying changing a repo, be aware that `GITHUB_TOKEN` should also have permission for that repository.
 
 ### `GITHUB_TOKEN`
 
@@ -155,7 +155,7 @@ is explicitly passed, this problem can be solved by just deleting that part.
 
 ## Outputs
 
-no outputs
+None
 
 ## Any problem?
 
