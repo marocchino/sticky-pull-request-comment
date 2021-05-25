@@ -93,3 +93,5 @@ typings/
 .dynamodb/
 
 .vscode/
+
+.yarn.lock
