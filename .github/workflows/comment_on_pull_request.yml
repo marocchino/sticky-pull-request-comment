@@ -9,6 +9,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v2
+      - run: npm ci
+      - run: npm run build
       - uses: ./
         with:
           header: FromPR
