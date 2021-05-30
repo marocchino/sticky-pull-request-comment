@@ -49,17 +49,19 @@ it('findPreviousComment', async () => {
     }
   ]
   const octokit: any = {
-    issues: {
-      listComments: jest.fn(() =>
-        Promise.resolve({
-          data: [
-            commentWithCustomHeader,
-            comment,
-            headerFirstComment,
-            ...otherComments
-          ]
-        })
-      )
+    rest: {
+      issues: {
+        listComments: jest.fn(() =>
+          Promise.resolve({
+            data: [
+              commentWithCustomHeader,
+              comment,
+              headerFirstComment,
+              ...otherComments
+            ]
+          })
+        )
+      }
     }
   }
 
@@ -70,7 +72,7 @@ it('findPreviousComment', async () => {
   expect(await findPreviousComment(octokit, repo, 123, 'LegacyComment')).toBe(
     headerFirstComment
   )
-  expect(octokit.issues.listComments).toBeCalledWith({
+  expect(octokit.rest.issues.listComments).toBeCalledWith({
     owner: 'marocchino',
     repo: 'sticky-pull-request-comment',
     issue_number: 123
@@ -82,8 +84,10 @@ describe('updateComment', () => {
 
   beforeEach(() => {
     octokit = {
-      issues: {
-        updateComment: jest.fn(() => Promise.resolve())
+      rest: {
+        issues: {
+          updateComment: jest.fn(() => Promise.resolve())
+        }
       }
     }
   })
@@ -92,7 +96,7 @@ describe('updateComment', () => {
     expect(
       await updateComment(octokit, repo, 456, 'hello there', '')
     ).toBeUndefined()
-    expect(octokit.issues.updateComment).toBeCalledWith({
+    expect(octokit.rest.issues.updateComment).toBeCalledWith({
       comment_id: 456,
       owner: 'marocchino',
       repo: 'sticky-pull-request-comment',
@@ -101,7 +105,7 @@ describe('updateComment', () => {
     expect(
       await updateComment(octokit, repo, 456, 'hello there', 'TypeA')
     ).toBeUndefined()
-    expect(octokit.issues.updateComment).toBeCalledWith({
+    expect(octokit.rest.issues.updateComment).toBeCalledWith({
       comment_id: 456,
       owner: 'marocchino',
       repo: 'sticky-pull-request-comment',
@@ -117,7 +121,7 @@ describe('updateComment', () => {
         'hello there\n<!-- Sticky Pull Request CommentTypeA -->'
       )
     ).toBeUndefined()
-    expect(octokit.issues.updateComment).toBeCalledWith({
+    expect(octokit.rest.issues.updateComment).toBeCalledWith({
       comment_id: 456,
       owner: 'marocchino',
       repo: 'sticky-pull-request-comment',
@@ -125,9 +129,9 @@ describe('updateComment', () => {
     })
   })
 
-  it('without comment body and previousbody', async () => {
+  it('without comment body and previous body', async () => {
     expect(await updateComment(octokit, repo, 456, '', '')).toBeUndefined()
-    expect(octokit.issues.updateComment).not.toBeCalled()
+    expect(octokit.rest.issues.updateComment).not.toBeCalled()
     expect(core.warning).toBeCalledWith('Comment body cannot be blank')
   })
 })
@@ -137,8 +141,10 @@ describe('createComment', () => {
 
   beforeEach(() => {
     octokit = {
-      issues: {
-        createComment: jest.fn(() => Promise.resolve())
+      rest: {
+        issues: {
+          createComment: jest.fn(() => Promise.resolve())
+        }
       }
     }
   })
@@ -147,7 +153,7 @@ describe('createComment', () => {
     expect(
       await createComment(octokit, repo, 456, 'hello there', '')
     ).toBeUndefined()
-    expect(octokit.issues.createComment).toBeCalledWith({
+    expect(octokit.rest.issues.createComment).toBeCalledWith({
       issue_number: 456,
       owner: 'marocchino',
       repo: 'sticky-pull-request-comment',
@@ -156,7 +162,7 @@ describe('createComment', () => {
     expect(
       await createComment(octokit, repo, 456, 'hello there', 'TypeA')
     ).toBeUndefined()
-    expect(octokit.issues.createComment).toBeCalledWith({
+    expect(octokit.rest.issues.createComment).toBeCalledWith({
       issue_number: 456,
       owner: 'marocchino',
       repo: 'sticky-pull-request-comment',
@@ -165,19 +171,21 @@ describe('createComment', () => {
   })
   it('without comment body and previousBody', async () => {
     expect(await createComment(octokit, repo, 456, '', '')).toBeUndefined()
-    expect(octokit.issues.createComment).not.toBeCalled()
+    expect(octokit.rest.issues.createComment).not.toBeCalled()
     expect(core.warning).toBeCalledWith('Comment body cannot be blank')
   })
 })
 
 it('deleteComment', async () => {
   const octokit: any = {
-    issues: {
-      deleteComment: jest.fn(() => Promise.resolve())
+    rest: {
+      issues: {
+        deleteComment: jest.fn(() => Promise.resolve())
+      }
     }
   }
   expect(await deleteComment(octokit, repo, 456)).toBeUndefined()
-  expect(octokit.issues.deleteComment).toBeCalledWith({
+  expect(octokit.rest.issues.deleteComment).toBeCalledWith({
     comment_id: 456,
     owner: 'marocchino',
     repo: 'sticky-pull-request-comment'
