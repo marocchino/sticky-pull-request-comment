@@ -32,8 +32,7 @@ it('findPreviousComment', async () => {
     user: {
       login: 'github-actions[bot]'
     },
-    body:
-      '<!-- Sticky Pull Request CommentLegacyComment -->\nheader first message'
+    body: '<!-- Sticky Pull Request CommentLegacyComment -->\nheader first message'
   }
   const otherComments = [
     {
@@ -122,8 +121,7 @@ describe('updateComment', () => {
       comment_id: 456,
       owner: 'marocchino',
       repo: 'sticky-pull-request-comment',
-      body:
-        'hello there\n<!-- Sticky Pull Request CommentTypeA -->\nhello there'
+      body: 'hello there\n<!-- Sticky Pull Request CommentTypeA -->\nhello there'
     })
   })
 
