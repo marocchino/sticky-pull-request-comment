@@ -1,11 +1,11 @@
-import * as core from '@actions/core'
-import * as github from '@actions/github'
+import * as core from "@actions/core"
+import * as github from "@actions/github"
 import {
   findPreviousComment,
   createComment,
   updateComment,
   deleteComment
-} from './comment'
+} from "./comment"
 import {
   pullRequestNumber,
   repo,
@@ -15,21 +15,21 @@ import {
   recreate,
   deleteOldComment,
   githubToken
-} from './config'
+} from "./config"
 
 async function run(): Promise<undefined> {
   if (isNaN(pullRequestNumber) || pullRequestNumber < 1) {
-    core.info('no pull request numbers given: skip step')
+    core.info("no pull request numbers given: skip step")
     return
   }
 
   try {
     if (!deleteOldComment && !body) {
-      throw new Error('Either message or path input is required')
+      throw new Error("Either message or path input is required")
     }
 
     if (deleteOldComment && recreate) {
-      throw new Error('delete and recreate cannot be both set to true')
+      throw new Error("delete and recreate cannot be both set to true")
     }
 
     const octokit = github.getOctokit(githubToken)

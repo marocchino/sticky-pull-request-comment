@@ -1,5 +1,5 @@
-import * as core from '@actions/core'
-import {GitHub} from '@actions/github/lib/utils'
+import * as core from "@actions/core"
+import {GitHub} from "@actions/github/lib/utils"
 
 function headerComment(header: String): string {
   return `<!-- Sticky Pull Request Comment${header} -->`
@@ -33,7 +33,7 @@ export async function updateComment(
   previousBody?: string
 ): Promise<void> {
   if (!body && !previousBody)
-    return core.warning('Comment body cannot be blank')
+    return core.warning("Comment body cannot be blank")
 
   await octokit.rest.issues.updateComment({
     ...repo,
@@ -55,7 +55,7 @@ export async function createComment(
   previousBody?: string
 ): Promise<void> {
   if (!body && !previousBody)
-    return core.warning('Comment body cannot be blank')
+    return core.warning("Comment body cannot be blank")
 
   await octokit.rest.issues.createComment({
     ...repo,
