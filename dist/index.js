@@ -42,16 +42,17 @@ function headerComment(header) {
 }
 function findPreviousComment(octokit, repo, issue_number, header) {
     return __awaiter(this, void 0, void 0, function* () {
+        const { viewer } = yield octokit.graphql("query { viewer { login } }");
         const { data: comments } = yield octokit.rest.issues.listComments(Object.assign(Object.assign({}, repo), { issue_number }));
         const h = headerComment(header);
-        return comments.find(comment => { var _a; return (_a = comment.body) === null || _a === void 0 ? void 0 : _a.includes(h); });
+        return comments.find(comment => { var _a, _b; return ((_a = comment.user) === null || _a === void 0 ? void 0 : _a.login) === viewer.login && ((_b = comment.body) === null || _b === void 0 ? void 0 : _b.includes(h)); });
     });
 }
 exports.findPreviousComment = findPreviousComment;
 function updateComment(octokit, repo, comment_id, body, header, previousBody) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!body && !previousBody)
-            return core.warning('Comment body cannot be blank');
+            return core.warning("Comment body cannot be blank");
         yield octokit.rest.issues.updateComment(Object.assign(Object.assign({}, repo), { comment_id, body: previousBody
                 ? `${previousBody}\n${body}`
                 : `${body}\n${headerComment(header)}` }));
@@ -61,7 +62,7 @@ exports.updateComment = updateComment;
 function createComment(octokit, repo, issue_number, body, header, previousBody) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!body && !previousBody)
-            return core.warning('Comment body cannot be blank');
+            return core.warning("Comment body cannot be blank");
         yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, repo), { issue_number, body: previousBody
                 ? `${previousBody}\n${body}`
                 : `${body}\n${headerComment(header)}` }));
@@ -109,33 +110,33 @@ const core = __importStar(__nccwpck_require__(186));
 const github_1 = __nccwpck_require__(438);
 const fs_1 = __nccwpck_require__(747);
 exports.pullRequestNumber = ((_b = (_a = github_1.context === null || github_1.context === void 0 ? void 0 : github_1.context.payload) === null || _a === void 0 ? void 0 : _a.pull_request) === null || _b === void 0 ? void 0 : _b.number) ||
-    +core.getInput('number', { required: false });
+    +core.getInput("number", { required: false });
 exports.repo = buildRepo();
-exports.header = core.getInput('header', { required: false });
-exports.append = core.getBooleanInput('append', { required: true });
-exports.recreate = core.getBooleanInput('recreate', { required: true });
-exports.deleteOldComment = core.getBooleanInput('delete', { required: true });
-exports.githubToken = core.getInput('GITHUB_TOKEN', { required: true });
+exports.header = core.getInput("header", { required: false });
+exports.append = core.getBooleanInput("append", { required: true });
+exports.recreate = core.getBooleanInput("recreate", { required: true });
+exports.deleteOldComment = core.getBooleanInput("delete", { required: true });
+exports.githubToken = core.getInput("GITHUB_TOKEN", { required: true });
 exports.body = buildBody();
 function buildRepo() {
     return {
         owner: github_1.context.repo.owner,
-        repo: core.getInput('repo', { required: false }) || github_1.context.repo.repo
+        repo: core.getInput("repo", { required: false }) || github_1.context.repo.repo
     };
 }
 function buildBody() {
-    const path = core.getInput('path', { required: false });
+    const path = core.getInput("path", { required: false });
     if (path) {
         try {
-            return fs_1.readFileSync(path, 'utf-8');
+            return fs_1.readFileSync(path, "utf-8");
         }
         catch (error) {
             core.setFailed(error.message);
-            return '';
+            return "";
         }
     }
     else {
-        return core.getInput('message', { required: false });
+        return core.getInput("message", { required: false });
     }
 }
 
@@ -183,15 +184,15 @@ const config_1 = __nccwpck_require__(88);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         if (isNaN(config_1.pullRequestNumber) || config_1.pullRequestNumber < 1) {
-            core.info('no pull request numbers given: skip step');
+            core.info("no pull request numbers given: skip step");
             return;
         }
         try {
             if (!config_1.deleteOldComment && !config_1.body) {
-                throw new Error('Either message or path input is required');
+                throw new Error("Either message or path input is required");
             }
             if (config_1.deleteOldComment && config_1.recreate) {
-                throw new Error('delete and recreate cannot be both set to true');
+                throw new Error("delete and recreate cannot be both set to true");
             }
             const octokit = github.getOctokit(config_1.githubToken);
             const previous = yield comment_1.findPreviousComment(octokit, config_1.repo, config_1.pullRequestNumber, config_1.header);
@@ -354,7 +355,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
+exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
 const command_1 = __nccwpck_require__(351);
 const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(278);
@@ -440,6 +441,21 @@ function getInput(name, options) {
     return val.trim();
 }
 exports.getInput = getInput;
+/**
+ * Gets the values of an multiline input.  Each value is also trimmed.
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   string[]
+ *
+ */
+function getMultilineInput(name, options) {
+    const inputs = getInput(name, options)
+        .split('\n')
+        .filter(x => x !== '');
+    return inputs;
+}
+exports.getMultilineInput = getMultilineInput;
 /**
  * Gets the input value of the boolean type in the YAML 1.2 "core schema" specification.
  * Support boolean input list: `true | True | TRUE | false | False | FALSE` .
