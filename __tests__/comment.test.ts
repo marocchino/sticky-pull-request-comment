@@ -16,45 +16,51 @@ const repo = {
   repo: "sticky-pull-request-comment"
 }
 it("findPreviousComment", async () => {
+  const authenticatedUser = {
+    login: "github-actions[bot]"
+  }
+  const otherUser = {
+    login: "some-user"
+  }
   const comment = {
-    user: {
-      login: "github-actions[bot]"
-    },
+    user: authenticatedUser,
     body: "previous message\n<!-- Sticky Pull Request Comment -->"
   }
   const commentWithCustomHeader = {
-    user: {
-      login: "github-actions[bot]"
-    },
+    user: authenticatedUser,
     body: "previous message\n<!-- Sticky Pull Request CommentTypeA -->"
   }
   const headerFirstComment = {
-    user: {
-      login: "github-actions[bot]"
-    },
+    user: authenticatedUser,
     body: "<!-- Sticky Pull Request CommentLegacyComment -->\nheader first message"
+  }
+  const otherUserComment = {
+    user: otherUser,
+    body: "Fake previous message\n<!-- Sticky Pull Request Comment -->"
   }
   const otherComments = [
     {
-      user: {
-        login: "some-user"
-      },
+      user: otherUser,
       body: "lgtm"
     },
     {
-      user: {
-        login: "github-actions[bot]"
-      },
+      user: authenticatedUser,
       body: "previous message\n<!-- Sticky Pull Request CommentTypeB -->"
     }
   ]
   const octokit: any = {
+    graphql: jest.fn(() =>
+      Promise.resolve({
+        viewer: authenticatedUser
+      })
+    ),
     rest: {
       issues: {
         listComments: jest.fn(() =>
           Promise.resolve({
             data: [
               commentWithCustomHeader,
+              otherUserComment,
               comment,
               headerFirstComment,
               ...otherComments
