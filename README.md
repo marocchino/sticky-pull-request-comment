@@ -107,6 +107,7 @@ with:
 ```yaml
 uses: marocchino/sticky-pull-request-comment@v2
 with:
+  header: <same-header-as-the-step-that-added-the-comment>
   delete: true
 ```
 
@@ -131,7 +132,7 @@ is explicitly passed, this problem can be solved by just removing it.
 
 ### `delete`
 
-**Optional** Delete the previously created comment. Only `true` is allowed. Just skip this option when you don't need it.
+**Optional** Delete a previously created comment. Use `header` to point to which comment you want to delete. Only `true` is allowed (i.e. delete this this option if you don't need it).
 
 ### `message`
 
