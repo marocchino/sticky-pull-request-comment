@@ -132,7 +132,7 @@ is explicitly passed, this problem can be solved by just removing it.
 
 ### `delete`
 
-**Optional** Delete a previously created comment. Use `header` to point to which comment you want to delete. Only `true` is allowed (i.e. delete this this option if you don't need it).
+**Optional** Delete a previously created comment. Use `header` to point to which comment you want to delete. Only `true` is allowed (i.e. delete this option if you don't need it).
 
 ### `message`
 
