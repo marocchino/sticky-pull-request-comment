@@ -1,11 +1,12 @@
-import {
-  findPreviousComment,
-  createComment,
-  updateComment,
-  deleteComment
-} from "../src/comment"
-
+import {getOctokit} from "@actions/github"
 import * as core from "@actions/core"
+
+import {
+  createComment,
+  deleteComment,
+  findPreviousComment,
+  updateComment
+} from "../src/comment"
 
 jest.mock("@actions/core", () => ({
   warning: jest.fn()
@@ -48,28 +49,17 @@ it("findPreviousComment", async () => {
       body: "previous message\n<!-- Sticky Pull Request CommentTypeB -->"
     }
   ]
-  const octokit: any = {
-    graphql: jest.fn(() =>
-      Promise.resolve({
-        viewer: authenticatedUser
-      })
-    ),
-    rest: {
-      issues: {
-        listComments: jest.fn(() =>
-          Promise.resolve({
-            data: [
-              commentWithCustomHeader,
-              otherUserComment,
-              comment,
-              headerFirstComment,
-              ...otherComments
-            ]
-          })
-        )
-      }
-    }
-  }
+  const octokit = getOctokit("github-token")
+  jest.spyOn(octokit, "graphql").mockResolvedValue({viewer: authenticatedUser})
+  jest.spyOn(octokit.rest.issues, "listComments").mockResolvedValue({
+    data: [
+      commentWithCustomHeader,
+      otherUserComment,
+      comment,
+      headerFirstComment,
+      ...otherComments
+    ]
+  } as any)
 
   expect(await findPreviousComment(octokit, repo, 123, "")).toBe(comment)
   expect(await findPreviousComment(octokit, repo, 123, "TypeA")).toBe(
@@ -86,16 +76,12 @@ it("findPreviousComment", async () => {
 })
 
 describe("updateComment", () => {
-  let octokit
+  const octokit = getOctokit("github-token")
 
   beforeEach(() => {
-    octokit = {
-      rest: {
-        issues: {
-          updateComment: jest.fn(() => Promise.resolve())
-        }
-      }
-    }
+    jest
+      .spyOn<any, string>(octokit.rest.issues, "updateComment")
+      .mockResolvedValue("")
   })
 
   it("with comment body", async () => {
@@ -143,16 +129,12 @@ describe("updateComment", () => {
 })
 
 describe("createComment", () => {
-  let octokit
+  const octokit = getOctokit("github-token")
 
   beforeEach(() => {
-    octokit = {
-      rest: {
-        issues: {
-          createComment: jest.fn(() => Promise.resolve())
-        }
-      }
-    }
+    jest
+      .spyOn<any, string>(octokit.rest.issues, "createComment")
+      .mockResolvedValue("")
   })
 
   it("with comment body or previousBody", async () => {
@@ -183,13 +165,11 @@ describe("createComment", () => {
 })
 
 it("deleteComment", async () => {
-  const octokit: any = {
-    rest: {
-      issues: {
-        deleteComment: jest.fn(() => Promise.resolve())
-      }
-    }
-  }
+  const octokit = getOctokit("github-token")
+
+  jest
+    .spyOn(octokit.rest.issues, "deleteComment")
+    .mockReturnValue(undefined as any)
   expect(await deleteComment(octokit, repo, 456)).toBeUndefined()
   expect(octokit.rest.issues.deleteComment).toBeCalledWith({
     comment_id: 456,
