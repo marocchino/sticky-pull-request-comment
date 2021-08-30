@@ -66,7 +66,9 @@ async function run(): Promise<undefined> {
 
     await updateComment(octokit, repo, previous.id, body, header, previousBody)
   } catch (error) {
-    core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.setFailed(error.message)
+    }
   }
 }
 

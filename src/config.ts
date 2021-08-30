@@ -28,7 +28,9 @@ function buildBody(): string {
     try {
       return readFileSync(path, "utf-8")
     } catch (error) {
-      core.setFailed(error.message)
+      if (error instanceof Error) {
+        core.setFailed(error.message)
+      }
       return ""
     }
   } else {

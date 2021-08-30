@@ -128,10 +128,12 @@ function buildBody() {
     const path = core.getInput("path", { required: false });
     if (path) {
         try {
-            return fs_1.readFileSync(path, "utf-8");
+            return (0, fs_1.readFileSync)(path, "utf-8");
         }
         catch (error) {
-            core.setFailed(error.message);
+            if (error instanceof Error) {
+                core.setFailed(error.message);
+            }
             return "";
         }
     }
@@ -195,25 +197,27 @@ function run() {
                 throw new Error("delete and recreate cannot be both set to true");
             }
             const octokit = github.getOctokit(config_1.githubToken);
-            const previous = yield comment_1.findPreviousComment(octokit, config_1.repo, config_1.pullRequestNumber, config_1.header);
+            const previous = yield (0, comment_1.findPreviousComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.header);
             if (!previous) {
-                yield comment_1.createComment(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header);
+                yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header);
                 return;
             }
             if (config_1.deleteOldComment) {
-                yield comment_1.deleteComment(octokit, config_1.repo, previous.id);
+                yield (0, comment_1.deleteComment)(octokit, config_1.repo, previous.id);
                 return;
             }
             const previousBody = config_1.append ? previous.body : undefined;
             if (config_1.recreate) {
-                yield comment_1.deleteComment(octokit, config_1.repo, previous.id);
-                yield comment_1.createComment(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header, previousBody);
+                yield (0, comment_1.deleteComment)(octokit, config_1.repo, previous.id);
+                yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header, previousBody);
                 return;
             }
-            yield comment_1.updateComment(octokit, config_1.repo, previous.id, config_1.body, config_1.header, previousBody);
+            yield (0, comment_1.updateComment)(octokit, config_1.repo, previous.id, config_1.body, config_1.header, previousBody);
         }
         catch (error) {
-            core.setFailed(error.message);
+            if (error instanceof Error) {
+                core.setFailed(error.message);
+            }
         }
     });
 }
