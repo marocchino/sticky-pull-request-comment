@@ -1,6 +1,6 @@
 {
   "name": "sticky-pull-request-comment",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "private": true,
   "description": "Create comment on pull request, if exists update that comment.",
   "main": "lib/main.js",
