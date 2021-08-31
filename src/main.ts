@@ -1,21 +1,21 @@
 import * as core from "@actions/core"
 import * as github from "@actions/github"
 import {
-  findPreviousComment,
-  createComment,
-  updateComment,
-  deleteComment
-} from "./comment"
-import {
-  pullRequestNumber,
-  repo,
-  body,
-  header,
   append,
-  recreate,
+  body,
   deleteOldComment,
-  githubToken
+  githubToken,
+  header,
+  pullRequestNumber,
+  recreate,
+  repo
 } from "./config"
+import {
+  createComment,
+  deleteComment,
+  findPreviousComment,
+  updateComment
+} from "./comment"
 
 async function run(): Promise<undefined> {
   if (isNaN(pullRequestNumber) || pullRequestNumber < 1) {
