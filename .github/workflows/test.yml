@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: npm ci
+      - run: yarn install
       - run: |
           set -o pipefail
           mkdir -p ./pr
           echo ${{ github.event.number }} | tee ./pr/number
-          npm run all |& tee ./pr/all_result
+          yarn all |& tee ./pr/all_result
       - uses: actions/upload-artifact@v2
         if: ${{ github.event_name == 'pull_request' && (success() || failure()) }}
         with:
