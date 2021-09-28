@@ -18,6 +18,10 @@ inputs:
     description: "delete the previously created comment. Only `true` is allowed. Just skip this item when you don't need it."
     default: "false"
     required: false
+  hide_details:
+    description: "hide summary tags in the previously created comment. Only `true` is allowed. Just skip this item when you don't need it."
+    default: "false"
+    required: false
   message:
     description: "comment message"
     required: false

@@ -5,6 +5,7 @@ import {
   createComment,
   deleteComment,
   findPreviousComment,
+  getBodyOf,
   updateComment
 } from "../src/comment"
 
@@ -176,4 +177,43 @@ it("deleteComment", async () => {
     owner: "marocchino",
     repo: "sticky-pull-request-comment"
   })
+})
+
+describe("getBodyOf", () => {
+  const nullPrevious = {}
+  const simplePrevious = {
+    body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->"
+  }
+  const detailsPrevious = {
+    body: `
+    <details open>
+    <summary>title</summary>
+
+    content
+    </details>
+    <!-- Sticky Pull Request CommentTypeA -->
+  `
+  }
+  const replaced = `
+    <details>
+    <summary>title</summary>
+
+    content
+    </details>
+    <!-- Sticky Pull Request CommentTypeA -->
+  `
+  test.each`
+    append   | hideDetails | previous           | expected
+    ${false} | ${false}    | ${detailsPrevious} | ${undefined}
+    ${true}  | ${false}    | ${nullPrevious}    | ${undefined}
+    ${true}  | ${false}    | ${detailsPrevious} | ${detailsPrevious.body}
+    ${true}  | ${true}     | ${nullPrevious}    | ${undefined}
+    ${true}  | ${true}     | ${simplePrevious}  | ${simplePrevious.body}
+    ${true}  | ${true}     | ${detailsPrevious} | ${replaced}
+  `(
+    "receive $previous, $append, $hideDetails and returns $expected",
+    ({append, hideDetails, previous, expected}) => {
+      expect(getBodyOf(previous, append, hideDetails)).toEqual(expected)
+    }
+  )
 })

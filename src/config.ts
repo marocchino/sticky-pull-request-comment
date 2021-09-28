@@ -9,6 +9,9 @@ export const pullRequestNumber =
 export const repo = buildRepo()
 export const header = core.getInput("header", {required: false})
 export const append = core.getBooleanInput("append", {required: true})
+export const hideDetails = core.getBooleanInput("hide_details", {
+  required: true
+})
 export const recreate = core.getBooleanInput("recreate", {required: true})
 export const deleteOldComment = core.getBooleanInput("delete", {required: true})
 export const githubToken = core.getInput("GITHUB_TOKEN", {required: true})

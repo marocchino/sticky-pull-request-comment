@@ -6,6 +6,7 @@ import {
   deleteOldComment,
   githubToken,
   header,
+  hideDetails,
   pullRequestNumber,
   recreate,
   repo
@@ -14,6 +15,7 @@ import {
   createComment,
   deleteComment,
   findPreviousComment,
+  getBodyOf,
   updateComment
 } from "./comment"
 
@@ -50,7 +52,7 @@ async function run(): Promise<undefined> {
       return
     }
 
-    const previousBody = append ? previous.body : undefined
+    const previousBody = getBodyOf(previous, append, hideDetails)
     if (recreate) {
       await deleteComment(octokit, repo, previous.id)
       await createComment(
