@@ -81,3 +81,19 @@ export async function deleteComment(
     comment_id
   })
 }
+
+export function getBodyOf(
+  previous: {body?: string},
+  append: boolean,
+  hideDetails: boolean
+): string | undefined {
+  if (!append) {
+    return undefined
+  }
+
+  if (!hideDetails) {
+    return previous.body
+  }
+
+  return previous.body?.replace(/(<details.*?)\s*\bopen\b(.*>)/g, "$1$2")
+}

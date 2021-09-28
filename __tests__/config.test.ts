@@ -4,6 +4,7 @@ beforeEach(() => {
   process.env["INPUT_APPEND"] = "false"
   process.env["INPUT_RECREATE"] = "false"
   process.env["INPUT_DELETE"] = "false"
+  process.env["INPUT_HIDE_DETAILS"] = "false"
   process.env["INPUT_GITHUB_TOKEN"] = "some-token"
 })
 
@@ -17,6 +18,7 @@ afterEach(() => {
   delete process.env["INPUT_APPEND"]
   delete process.env["INPUT_RECREATE"]
   delete process.env["INPUT_DELETE"]
+  delete process.env["INPUT_HIDE_DETAILS"]
   delete process.env["INPUT_GITHUB_TOKEN"]
   delete process.env["INPUT_PATH"]
 })
@@ -31,6 +33,7 @@ test("repo", () => {
     append: false,
     recreate: false,
     deleteOldComment: false,
+    hideDetails: false,
     githubToken: "some-token"
   })
 })
@@ -44,6 +47,7 @@ test("header", () => {
     append: false,
     recreate: false,
     deleteOldComment: false,
+    hideDetails: false,
     githubToken: "some-token"
   })
 })
@@ -57,6 +61,7 @@ test("append", () => {
     append: true,
     recreate: false,
     deleteOldComment: false,
+    hideDetails: false,
     githubToken: "some-token"
   })
 })
@@ -70,6 +75,7 @@ test("recreate", () => {
     append: false,
     recreate: true,
     deleteOldComment: false,
+    hideDetails: false,
     githubToken: "some-token"
   })
 })
@@ -83,6 +89,21 @@ test("delete", () => {
     append: false,
     recreate: false,
     deleteOldComment: true,
+    hideDetails: false,
+    githubToken: "some-token"
+  })
+})
+test("hideDetails", () => {
+  process.env["INPUT_HIDE_DETAILS"] = "true"
+  expect(require("../src/config")).toMatchObject({
+    pullRequestNumber: expect.any(Number),
+    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
+    body: "",
+    header: "",
+    append: false,
+    recreate: false,
+    deleteOldComment: false,
+    hideDetails: true,
     githubToken: "some-token"
   })
 })
@@ -97,6 +118,7 @@ describe("path", () => {
       append: false,
       recreate: false,
       deleteOldComment: false,
+      hideDetails: false,
       githubToken: "some-token"
     })
   })
@@ -111,6 +133,7 @@ describe("path", () => {
       append: false,
       recreate: false,
       deleteOldComment: false,
+      hideDetails: false,
       githubToken: "some-token"
     })
   })
@@ -126,6 +149,7 @@ test("message", () => {
     append: false,
     recreate: false,
     deleteOldComment: false,
+    hideDetails: false,
     githubToken: "some-token"
   })
 })
