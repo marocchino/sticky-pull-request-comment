@@ -1,4 +1,4 @@
-name: Comment on PR
+name: Comment on Workflow Run
 
 on:
   workflow_run:
@@ -24,7 +24,7 @@ jobs:
           number: ${{ steps.artifact.outputs.number }}
           message: |
             <details open>
-            <summary>output of `yarn all`</summary>
+            <summary>output of yarn all</summary>
 
             ```
             ${{ steps.artifact.outputs.all_result }}
@@ -33,6 +33,7 @@ jobs:
       - uses: ./
         with:
           header: All
+          number: ${{ steps.artifact.outputs.number }}
           append: true
           hide_details: true
           message: |
