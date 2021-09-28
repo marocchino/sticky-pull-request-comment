@@ -23,6 +23,17 @@ jobs:
           header: All
           number: ${{ steps.artifact.outputs.number }}
           message: |
+            <details open>
+            <summary>output of `yarn all`</summary>
+
             ```
             ${{ steps.artifact.outputs.all_result }}
             ```
+            </details>
+      - uses: ./
+        with:
+          header: All
+          append: true
+          hide_details: true
+          message: |
+            The build is over.
