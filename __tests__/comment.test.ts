@@ -18,8 +18,11 @@ const repo = {
   repo: "sticky-pull-request-comment"
 }
 it("findPreviousComment", async () => {
-  const authenticatedUser = {
+  const authenticatedBotUser = {
     login: "github-actions[bot]"
+  }
+  const authenticatedUser = {
+    login: "github-actions"
   }
   const otherUser = {
     login: "some-user"
@@ -64,7 +67,7 @@ it("findPreviousComment", async () => {
   ]
   const octokit = getOctokit("github-token")
   jest.spyOn(octokit, "graphql").mockResolvedValue({
-    viewer: authenticatedUser,
+    viewer: authenticatedBotUser,
     repository: {
       pullRequest: {
         comments: {

@@ -70,14 +70,13 @@ function findPreviousComment(octokit, repo, number, header) {
         }
       }
       `, Object.assign(Object.assign({}, repo), { after, number }));
-            core.warning(JSON.stringify(data));
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
             const viewer = data.viewer;
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
             const repository = data.repository;
             const target = (_c = (_b = (_a = repository.pullRequest) === null || _a === void 0 ? void 0 : _a.comments) === null || _b === void 0 ? void 0 : _b.nodes) === null || _c === void 0 ? void 0 : _c.find((node) => {
                 var _a, _b;
-                return ((_a = node === null || node === void 0 ? void 0 : node.author) === null || _a === void 0 ? void 0 : _a.login) === viewer.login &&
+                return ((_a = node === null || node === void 0 ? void 0 : node.author) === null || _a === void 0 ? void 0 : _a.login) === viewer.login.replace("[bot]", "") &&
                     !(node === null || node === void 0 ? void 0 : node.isMinimized) &&
                     ((_b = node === null || node === void 0 ? void 0 : node.body) === null || _b === void 0 ? void 0 : _b.includes(h));
             });
