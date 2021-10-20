@@ -6,7 +6,8 @@ import {
   deleteComment,
   findPreviousComment,
   getBodyOf,
-  updateComment
+  updateComment,
+  minimizeComment
 } from "../src/comment"
 
 jest.mock("@actions/core", () => ({
@@ -195,6 +196,19 @@ it("deleteComment", async () => {
   expect(await deleteComment(octokit, "456")).toBeUndefined()
   expect(octokit.graphql).toBeCalledWith(expect.any(String), {
     id: "456"
+  })
+})
+
+it("minimizeComment", async () => {
+  const octokit = getOctokit("github-token")
+
+  jest.spyOn(octokit, "graphql").mockReturnValue(undefined as any)
+  expect(await minimizeComment(octokit, "456", "OUTDATED")).toBeUndefined()
+  expect(octokit.graphql).toBeCalledWith(expect.any(String), {
+    input: {
+      subjectId: "456",
+      classifier: "OUTDATED"
+    }
   })
 })
 

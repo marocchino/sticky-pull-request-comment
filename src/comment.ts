@@ -1,5 +1,10 @@
 import * as core from "@actions/core"
-import {IssueComment, Repository, User} from "@octokit/graphql-schema"
+import {
+  IssueComment,
+  ReportedContentClassifiers,
+  Repository,
+  User
+} from "@octokit/graphql-schema"
 import {GitHub} from "@actions/github/lib/utils"
 
 function headerComment(header: String): string {
@@ -14,7 +19,7 @@ export async function findPreviousComment(
   },
   number: number,
   header: string
-): Promise<{body: string; id: string} | undefined> {
+): Promise<IssueComment | undefined> {
   let after = null
   let hasNextPage = true
   const h = headerComment(header)
@@ -131,6 +136,22 @@ export async function deleteComment(
     }
     `,
     {id}
+  )
+}
+export async function minimizeComment(
+  octokit: InstanceType<typeof GitHub>,
+  subjectId: string,
+  classifier: ReportedContentClassifiers
+): Promise<void> {
+  await octokit.graphql(
+    `
+    mutation($input: MinimizeCommentInput!) { 
+      minimizeComment(input: $input) {
+        clientMutationId
+      }
+    }
+    `,
+    {input: {subjectId, classifier}}
   )
 }
 

@@ -35,7 +35,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getBodyOf = exports.deleteComment = exports.createComment = exports.updateComment = exports.findPreviousComment = void 0;
+exports.getBodyOf = exports.minimizeComment = exports.deleteComment = exports.createComment = exports.updateComment = exports.findPreviousComment = void 0;
 const core = __importStar(__nccwpck_require__(186));
 function headerComment(header) {
     return `<!-- Sticky Pull Request Comment${header} -->`;
@@ -137,6 +137,18 @@ function deleteComment(octokit, id) {
     });
 }
 exports.deleteComment = deleteComment;
+function minimizeComment(octokit, subjectId, classifier) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield octokit.graphql(`
+    mutation($input: MinimizeCommentInput!) { 
+      minimizeComment(input: $input) {
+        clientMutationId
+      }
+    }
+    `, { input: { subjectId, classifier } });
+    });
+}
+exports.minimizeComment = minimizeComment;
 function getBodyOf(previous, append, hideDetails) {
     var _a;
     if (!append) {
