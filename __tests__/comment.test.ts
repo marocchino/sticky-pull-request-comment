@@ -25,41 +25,63 @@ it("findPreviousComment", async () => {
     login: "some-user"
   }
   const comment = {
-    user: authenticatedUser,
+    id: "1",
+    author: authenticatedUser,
+    isMinimized: false,
     body: "previous message\n<!-- Sticky Pull Request Comment -->"
   }
   const commentWithCustomHeader = {
-    user: authenticatedUser,
+    id: "2",
+    author: authenticatedUser,
+    isMinimized: false,
     body: "previous message\n<!-- Sticky Pull Request CommentTypeA -->"
   }
   const headerFirstComment = {
-    user: authenticatedUser,
+    id: "3",
+    author: authenticatedUser,
+    isMinimized: false,
     body: "<!-- Sticky Pull Request CommentLegacyComment -->\nheader first message"
   }
   const otherUserComment = {
-    user: otherUser,
+    id: "4",
+    author: otherUser,
+    isMinimized: false,
     body: "Fake previous message\n<!-- Sticky Pull Request Comment -->"
   }
   const otherComments = [
     {
-      user: otherUser,
+      id: "5",
+      author: otherUser,
+      isMinimized: false,
       body: "lgtm"
     },
     {
-      user: authenticatedUser,
+      id: "6",
+      author: authenticatedUser,
+      isMinimized: false,
       body: "previous message\n<!-- Sticky Pull Request CommentTypeB -->"
     }
   ]
   const octokit = getOctokit("github-token")
-  jest.spyOn(octokit, "graphql").mockResolvedValue({viewer: authenticatedUser})
-  jest.spyOn(octokit.rest.issues, "listComments").mockResolvedValue({
-    data: [
-      commentWithCustomHeader,
-      otherUserComment,
-      comment,
-      headerFirstComment,
-      ...otherComments
-    ]
+  jest.spyOn(octokit, "graphql").mockResolvedValue({
+    viewer: authenticatedUser,
+    repository: {
+      pullRequest: {
+        comments: {
+          nodes: [
+            commentWithCustomHeader,
+            otherUserComment,
+            comment,
+            headerFirstComment,
+            ...otherComments
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: "6"
+          }
+        }
+      }
+    }
   } as any)
 
   expect(await findPreviousComment(octokit, repo, 123, "")).toBe(comment)
@@ -69,10 +91,11 @@ it("findPreviousComment", async () => {
   expect(await findPreviousComment(octokit, repo, 123, "LegacyComment")).toBe(
     headerFirstComment
   )
-  expect(octokit.rest.issues.listComments).toBeCalledWith({
+  expect(octokit.graphql).toBeCalledWith(expect.any(String), {
+    after: null,
+    number: 123,
     owner: "marocchino",
-    repo: "sticky-pull-request-comment",
-    issue_number: 123
+    repo: "sticky-pull-request-comment"
   })
 })
 
@@ -80,51 +103,48 @@ describe("updateComment", () => {
   const octokit = getOctokit("github-token")
 
   beforeEach(() => {
-    jest
-      .spyOn<any, string>(octokit.rest.issues, "updateComment")
-      .mockResolvedValue("")
+    jest.spyOn<any, string>(octokit, "graphql").mockResolvedValue("")
   })
 
   it("with comment body", async () => {
     expect(
-      await updateComment(octokit, repo, 456, "hello there", "")
+      await updateComment(octokit, "456", "hello there", "")
     ).toBeUndefined()
-    expect(octokit.rest.issues.updateComment).toBeCalledWith({
-      comment_id: 456,
-      owner: "marocchino",
-      repo: "sticky-pull-request-comment",
-      body: "hello there\n<!-- Sticky Pull Request Comment -->"
+    expect(octokit.graphql).toBeCalledWith(expect.any(String), {
+      input: {
+        id: "456",
+        body: "hello there\n<!-- Sticky Pull Request Comment -->"
+      }
     })
     expect(
-      await updateComment(octokit, repo, 456, "hello there", "TypeA")
+      await updateComment(octokit, "456", "hello there", "TypeA")
     ).toBeUndefined()
-    expect(octokit.rest.issues.updateComment).toBeCalledWith({
-      comment_id: 456,
-      owner: "marocchino",
-      repo: "sticky-pull-request-comment",
-      body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->"
+    expect(octokit.graphql).toBeCalledWith(expect.any(String), {
+      input: {
+        id: "456",
+        body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->"
+      }
     })
     expect(
       await updateComment(
         octokit,
-        repo,
-        456,
+        "456",
         "hello there",
         "TypeA",
         "hello there\n<!-- Sticky Pull Request CommentTypeA -->"
       )
     ).toBeUndefined()
-    expect(octokit.rest.issues.updateComment).toBeCalledWith({
-      comment_id: 456,
-      owner: "marocchino",
-      repo: "sticky-pull-request-comment",
-      body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->\nhello there"
+    expect(octokit.graphql).toBeCalledWith(expect.any(String), {
+      input: {
+        id: "456",
+        body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->\nhello there"
+      }
     })
   })
 
   it("without comment body and previous body", async () => {
-    expect(await updateComment(octokit, repo, 456, "", "")).toBeUndefined()
-    expect(octokit.rest.issues.updateComment).not.toBeCalled()
+    expect(await updateComment(octokit, "456", "", "")).toBeUndefined()
+    expect(octokit.graphql).not.toBeCalled()
     expect(core.warning).toBeCalledWith("Comment body cannot be blank")
   })
 })
@@ -168,14 +188,10 @@ describe("createComment", () => {
 it("deleteComment", async () => {
   const octokit = getOctokit("github-token")
 
-  jest
-    .spyOn(octokit.rest.issues, "deleteComment")
-    .mockReturnValue(undefined as any)
-  expect(await deleteComment(octokit, repo, 456)).toBeUndefined()
-  expect(octokit.rest.issues.deleteComment).toBeCalledWith({
-    comment_id: 456,
-    owner: "marocchino",
-    repo: "sticky-pull-request-comment"
+  jest.spyOn(octokit, "graphql").mockReturnValue(undefined as any)
+  expect(await deleteComment(octokit, "456")).toBeUndefined()
+  expect(octokit.graphql).toBeCalledWith(expect.any(String), {
+    id: "456"
   })
 })
 

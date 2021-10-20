@@ -27,7 +27,8 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.6.0",
-    "@actions/github": "^5.0.0"
+    "@actions/github": "^5.0.0",
+    "@octokit/graphql-schema": "^10.73.0"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",

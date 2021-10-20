@@ -40,22 +40,78 @@ const core = __importStar(__nccwpck_require__(186));
 function headerComment(header) {
     return `<!-- Sticky Pull Request Comment${header} -->`;
 }
-function findPreviousComment(octokit, repo, issue_number, header) {
+function findPreviousComment(octokit, repo, number, header) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     return __awaiter(this, void 0, void 0, function* () {
-        const { viewer } = yield octokit.graphql("query { viewer { login } }");
-        const { data: comments } = yield octokit.rest.issues.listComments(Object.assign(Object.assign({}, repo), { issue_number }));
+        let after = null;
+        let hasNextPage = true;
         const h = headerComment(header);
-        return comments.find(comment => { var _a, _b; return ((_a = comment.user) === null || _a === void 0 ? void 0 : _a.login) === viewer.login && ((_b = comment.body) === null || _b === void 0 ? void 0 : _b.includes(h)); });
+        while (hasNextPage) {
+            const data = yield octokit.graphql(`
+      query($repo: String! $owner: String! $number: Int! $after: String) {
+        viewer { login }
+        repository(name: $repo owner: $owner) {
+          pullRequest(number: $number) {
+            comments(first: 100 after: $after) {
+              nodes {
+                id
+                author {
+                  login
+                }
+                isMinimized
+                body
+              }
+              pageInfo {
+                endCursor
+                hasNextPage
+              }
+            }
+          }
+        }
+      }
+      `, Object.assign(Object.assign({}, repo), { after, number }));
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            const viewer = data.viewer;
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            const repository = data.repository;
+            const target = (_c = (_b = (_a = repository.pullRequest) === null || _a === void 0 ? void 0 : _a.comments) === null || _b === void 0 ? void 0 : _b.nodes) === null || _c === void 0 ? void 0 : _c.find((node) => {
+                var _a, _b;
+                return ((_a = node === null || node === void 0 ? void 0 : node.author) === null || _a === void 0 ? void 0 : _a.login) === viewer.login &&
+                    !(node === null || node === void 0 ? void 0 : node.isMinimized) &&
+                    ((_b = node === null || node === void 0 ? void 0 : node.body) === null || _b === void 0 ? void 0 : _b.includes(h));
+            });
+            if (target) {
+                return target;
+            }
+            after = (_f = (_e = (_d = repository.pullRequest) === null || _d === void 0 ? void 0 : _d.comments) === null || _e === void 0 ? void 0 : _e.pageInfo) === null || _f === void 0 ? void 0 : _f.endCursor;
+            hasNextPage =
+                (_k = (_j = (_h = (_g = repository.pullRequest) === null || _g === void 0 ? void 0 : _g.comments) === null || _h === void 0 ? void 0 : _h.pageInfo) === null || _j === void 0 ? void 0 : _j.hasNextPage) !== null && _k !== void 0 ? _k : false;
+        }
+        return undefined;
     });
 }
 exports.findPreviousComment = findPreviousComment;
-function updateComment(octokit, repo, comment_id, body, header, previousBody) {
+function updateComment(octokit, id, body, header, previousBody) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!body && !previousBody)
             return core.warning("Comment body cannot be blank");
-        yield octokit.rest.issues.updateComment(Object.assign(Object.assign({}, repo), { comment_id, body: previousBody
-                ? `${previousBody}\n${body}`
-                : `${body}\n${headerComment(header)}` }));
+        yield octokit.graphql(`
+    mutation($input: UpdateIssueCommentInput!) {
+      updateIssueComment(input: $input) {
+        issueComment {
+          id
+          body
+        }
+      }
+    }
+    `, {
+            input: {
+                id,
+                body: previousBody
+                    ? `${previousBody}\n${body}`
+                    : `${body}\n${headerComment(header)}`
+            }
+        });
     });
 }
 exports.updateComment = updateComment;
@@ -69,9 +125,15 @@ function createComment(octokit, repo, issue_number, body, header, previousBody) 
     });
 }
 exports.createComment = createComment;
-function deleteComment(octokit, repo, comment_id) {
+function deleteComment(octokit, id) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield octokit.rest.issues.deleteComment(Object.assign(Object.assign({}, repo), { comment_id }));
+        yield octokit.graphql(`
+    mutation($id: ID!) {
+      deleteIssueComment(input: { id: $id }) {
+        clientMutationId
+      }
+    }
+    `, { id });
     });
 }
 exports.deleteComment = deleteComment;
@@ -217,16 +279,16 @@ function run() {
                 return;
             }
             if (config_1.deleteOldComment) {
-                yield (0, comment_1.deleteComment)(octokit, config_1.repo, previous.id);
+                yield (0, comment_1.deleteComment)(octokit, previous.id);
                 return;
             }
             const previousBody = (0, comment_1.getBodyOf)(previous, config_1.append, config_1.hideDetails);
             if (config_1.recreate) {
-                yield (0, comment_1.deleteComment)(octokit, config_1.repo, previous.id);
+                yield (0, comment_1.deleteComment)(octokit, previous.id);
                 yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header, previousBody);
                 return;
             }
-            yield (0, comment_1.updateComment)(octokit, config_1.repo, previous.id, config_1.body, config_1.header, previousBody);
+            yield (0, comment_1.updateComment)(octokit, previous.id, config_1.body, config_1.header, previousBody);
         }
         catch (error) {
             if (error instanceof Error) {
@@ -373,12 +435,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
+exports.getIDToken = exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
 const command_1 = __nccwpck_require__(351);
 const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(278);
 const os = __importStar(__nccwpck_require__(87));
 const path = __importStar(__nccwpck_require__(622));
+const oidc_utils_1 = __nccwpck_require__(41);
 /**
  * The code to exit an action
  */
@@ -647,6 +710,12 @@ function getState(name) {
     return process.env[`STATE_${name}`] || '';
 }
 exports.getState = getState;
+function getIDToken(aud) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield oidc_utils_1.OidcClient.getIDToken(aud);
+    });
+}
+exports.getIDToken = getIDToken;
 //# sourceMappingURL=core.js.map
 
 /***/ }),
@@ -700,6 +769,90 @@ exports.issueCommand = issueCommand;
 
 /***/ }),
 
+/***/ 41:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.OidcClient = void 0;
+const http_client_1 = __nccwpck_require__(925);
+const auth_1 = __nccwpck_require__(702);
+const core_1 = __nccwpck_require__(186);
+class OidcClient {
+    static createHttpClient(allowRetry = true, maxRetry = 10) {
+        const requestOptions = {
+            allowRetries: allowRetry,
+            maxRetries: maxRetry
+        };
+        return new http_client_1.HttpClient('actions/oidc-client', [new auth_1.BearerCredentialHandler(OidcClient.getRequestToken())], requestOptions);
+    }
+    static getRequestToken() {
+        const token = process.env['ACTIONS_ID_TOKEN_REQUEST_TOKEN'];
+        if (!token) {
+            throw new Error('Unable to get ACTIONS_ID_TOKEN_REQUEST_TOKEN env variable');
+        }
+        return token;
+    }
+    static getIDTokenUrl() {
+        const runtimeUrl = process.env['ACTIONS_ID_TOKEN_REQUEST_URL'];
+        if (!runtimeUrl) {
+            throw new Error('Unable to get ACTIONS_ID_TOKEN_REQUEST_URL env variable');
+        }
+        return runtimeUrl;
+    }
+    static getCall(id_token_url) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const httpclient = OidcClient.createHttpClient();
+            const res = yield httpclient
+                .getJson(id_token_url)
+                .catch(error => {
+                throw new Error(`Failed to get ID Token. \n 
+        Error Code : ${error.statusCode}\n 
+        Error Message: ${error.result.message}`);
+            });
+            const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
+            if (!id_token) {
+                throw new Error('Response json body do not have ID Token field');
+            }
+            return id_token;
+        });
+    }
+    static getIDToken(audience) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // New ID Token is requested from action service
+                let id_token_url = OidcClient.getIDTokenUrl();
+                if (audience) {
+                    const encodedAudience = encodeURIComponent(audience);
+                    id_token_url = `${id_token_url}&audience=${encodedAudience}`;
+                }
+                core_1.debug(`ID token url is ${id_token_url}`);
+                const id_token = yield OidcClient.getCall(id_token_url);
+                core_1.setSecret(id_token);
+                return id_token;
+            }
+            catch (error) {
+                throw new Error(`Error message: ${error.message}`);
+            }
+        });
+    }
+}
+exports.OidcClient = OidcClient;
+//# sourceMappingURL=oidc-utils.js.map
+
+/***/ }),
+
 /***/ 278:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -735,6 +888,7 @@ function toCommandProperties(annotationProperties) {
     }
     return {
         title: annotationProperties.title,
+        file: annotationProperties.file,
         line: annotationProperties.startLine,
         endLine: annotationProperties.endLine,
         col: annotationProperties.startColumn,
@@ -958,6 +1112,72 @@ function getOctokitOptions(token, options) {
 }
 exports.getOctokitOptions = getOctokitOptions;
 //# sourceMappingURL=utils.js.map
+
+/***/ }),
+
+/***/ 702:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+class BasicCredentialHandler {
+    constructor(username, password) {
+        this.username = username;
+        this.password = password;
+    }
+    prepareRequest(options) {
+        options.headers['Authorization'] =
+            'Basic ' +
+                Buffer.from(this.username + ':' + this.password).toString('base64');
+    }
+    // This handler cannot handle 401
+    canHandleAuthentication(response) {
+        return false;
+    }
+    handleAuthentication(httpClient, requestInfo, objs) {
+        return null;
+    }
+}
+exports.BasicCredentialHandler = BasicCredentialHandler;
+class BearerCredentialHandler {
+    constructor(token) {
+        this.token = token;
+    }
+    // currently implements pre-authorization
+    // TODO: support preAuth = false where it hooks on 401
+    prepareRequest(options) {
+        options.headers['Authorization'] = 'Bearer ' + this.token;
+    }
+    // This handler cannot handle 401
+    canHandleAuthentication(response) {
+        return false;
+    }
+    handleAuthentication(httpClient, requestInfo, objs) {
+        return null;
+    }
+}
+exports.BearerCredentialHandler = BearerCredentialHandler;
+class PersonalAccessTokenCredentialHandler {
+    constructor(token) {
+        this.token = token;
+    }
+    // currently implements pre-authorization
+    // TODO: support preAuth = false where it hooks on 401
+    prepareRequest(options) {
+        options.headers['Authorization'] =
+            'Basic ' + Buffer.from('PAT:' + this.token).toString('base64');
+    }
+    // This handler cannot handle 401
+    canHandleAuthentication(response) {
+        return false;
+    }
+    handleAuthentication(httpClient, requestInfo, objs) {
+        return null;
+    }
+}
+exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHandler;
+
 
 /***/ }),
 
