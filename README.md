@@ -18,7 +18,7 @@ with:
 
 In some cases, different actions may require different comments. The header allows you to maintain comments independently.
 
-```yaml
+````yaml
 release:
   ...
   - uses: marocchino/sticky-pull-request-comment@v2
@@ -44,11 +44,11 @@ test:
         ```
         ${{ steps.test.outputs.result }}
         ```
-```
+````
 
 ### Append after comment every time it runs
 
-```yaml
+````yaml
 test:
   ...
   - name: Run Test
@@ -67,7 +67,7 @@ test:
         ```
         ${{ steps.test.outputs.result }}
         ```
-```
+````
 
 ### Comment from push
 
@@ -111,10 +111,31 @@ with:
   delete: true
 ```
 
+### Hide the previous comment and add a comment at the end
+
+```yaml
+uses: marocchino/sticky-pull-request-comment@v2
+with:
+  hide_and_recreate: true
+  hide_classify: "OUTDATED"
+  message: |
+    Release ${{ github.sha }} to <https://pr-${{ github.event.number }}.example.com>
+```
+
+### Hide previous comment
+
+```yaml
+uses: marocchino/sticky-pull-request-comment@v2
+with:
+  header: <same-header-as-the-step-that-added-the-comment>
+  hide: true
+  hide_classify: "OUTDATED"
+```
+
 ### Error: Resource not accessible by integration
 
 This message means the requester does not have enough permission. If `secrets.GITHUB_TOKEN`
-is explicitly passed, this problem can be solved by just removing it. 
+is explicitly passed, this problem can be solved by just removing it.
 
 ## Inputs
 
@@ -133,6 +154,22 @@ is explicitly passed, this problem can be solved by just removing it.
 ### `delete`
 
 **Optional** Delete a previously created comment. Use `header` to point to which comment you want to delete. Only `true` is allowed (i.e. delete this option if you don't need it).
+
+### `hide`
+
+**Optional** Hide a previously created comment. Use `header` to point to which comment you want to delete. Only `true` is allowed (i.e. delete this option if you don't need it).
+
+### `hide_classify`
+
+**Optional** The reasons a piece of content can be reported or minimized. SPAM, ABUSE, OFF_TOPIC, OUTDATED, DUPLICATE, RESOLVED are available. default is OUTDATED.
+
+### `hide_details`
+
+**Optional** Hide summary tags in the previously created comment. Only `true` is allowed. Just skip this item when you don't need it.
+
+### `hide_and_recreate`
+
+**Optional** Indicate if previous comment should be removed before creating a new comment. Only `true` is allowed. Just skip this option when you don't need it.
 
 ### `message`
 

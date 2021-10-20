@@ -4,6 +4,9 @@ beforeEach(() => {
   process.env["INPUT_APPEND"] = "false"
   process.env["INPUT_RECREATE"] = "false"
   process.env["INPUT_DELETE"] = "false"
+  process.env["INPUT_HIDE"] = "false"
+  process.env["INPUT_HIDE_AND_RECREATE"] = "false"
+  process.env["INPUT_HIDE_CLASSIFY"] = "OUTDATED"
   process.env["INPUT_HIDE_DETAILS"] = "false"
   process.env["INPUT_GITHUB_TOKEN"] = "some-token"
 })
@@ -18,6 +21,9 @@ afterEach(() => {
   delete process.env["INPUT_APPEND"]
   delete process.env["INPUT_RECREATE"]
   delete process.env["INPUT_DELETE"]
+  delete process.env["INPUT_HIDE"]
+  delete process.env["INPUT_HIDE_AND_RECREATE"]
+  delete process.env["INPUT_HIDE_CLASSIFY"]
   delete process.env["INPUT_HIDE_DETAILS"]
   delete process.env["INPUT_GITHUB_TOKEN"]
   delete process.env["INPUT_PATH"]
@@ -33,6 +39,9 @@ test("repo", () => {
     append: false,
     recreate: false,
     deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: 'OUTDATED',
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -47,6 +56,9 @@ test("header", () => {
     append: false,
     recreate: false,
     deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: 'OUTDATED',
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -61,6 +73,9 @@ test("append", () => {
     append: true,
     recreate: false,
     deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: 'OUTDATED',
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -75,6 +90,9 @@ test("recreate", () => {
     append: false,
     recreate: true,
     deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: 'OUTDATED',
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -89,6 +107,60 @@ test("delete", () => {
     append: false,
     recreate: false,
     deleteOldComment: true,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: 'OUTDATED',
+    hideDetails: false,
+    githubToken: "some-token"
+  })
+})
+test("hideOldComment", () => {
+  process.env["INPUT_HIDE"] = "true"
+  expect(require("../src/config")).toMatchObject({
+    pullRequestNumber: expect.any(Number),
+    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
+    body: "",
+    header: "",
+    append: false,
+    recreate: false,
+    deleteOldComment: false,
+    hideOldComment: true,
+    hideAndRecreate: false,
+    hideClassify: 'OUTDATED',
+    hideDetails: false,
+    githubToken: "some-token"
+  })
+})
+test("hideAndRecreate", () => {
+  process.env["INPUT_HIDE_AND_RECREATE"] = "true"
+  expect(require("../src/config")).toMatchObject({
+    pullRequestNumber: expect.any(Number),
+    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
+    body: "",
+    header: "",
+    append: false,
+    recreate: false,
+    deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: true,
+    hideClassify: 'OUTDATED',
+    hideDetails: false,
+    githubToken: "some-token"
+  })
+})
+test("hideClassify", () => {
+  process.env["INPUT_HIDE_CLASSIFY"] = "OFF_TOPIC"
+  expect(require("../src/config")).toMatchObject({
+    pullRequestNumber: expect.any(Number),
+    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
+    body: "",
+    header: "",
+    append: false,
+    recreate: false,
+    deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: 'OFF_TOPIC',
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -103,6 +175,9 @@ test("hideDetails", () => {
     append: false,
     recreate: false,
     deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: 'OUTDATED',
     hideDetails: true,
     githubToken: "some-token"
   })
@@ -118,6 +193,9 @@ describe("path", () => {
       append: false,
       recreate: false,
       deleteOldComment: false,
+      hideOldComment: false,
+      hideAndRecreate: false,
+      hideClassify: 'OUTDATED',
       hideDetails: false,
       githubToken: "some-token"
     })
@@ -133,6 +211,9 @@ describe("path", () => {
       append: false,
       recreate: false,
       deleteOldComment: false,
+      hideOldComment: false,
+      hideAndRecreate: false,
+      hideClassify: 'OUTDATED',
       hideDetails: false,
       githubToken: "some-token"
     })
@@ -149,6 +230,9 @@ test("message", () => {
     append: false,
     recreate: false,
     deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: 'OUTDATED',
     hideDetails: false,
     githubToken: "some-token"
   })
