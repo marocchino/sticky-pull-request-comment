@@ -45,12 +45,11 @@ export async function findPreviousComment(
       `,
       {...repo, after, number}
     )
+    core.warning(JSON.stringify(data))
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const viewer = data.viewer as User
-    core.debug(viewer.login)
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const repository = data.repository as Repository
-    core.debug(JSON.stringify(repository))
     const target = repository.pullRequest?.comments?.nodes?.find(
       (node: IssueComment | null | undefined) =>
         node?.author?.login === viewer.login &&
