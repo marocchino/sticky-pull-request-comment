@@ -45,7 +45,9 @@ export async function findPreviousComment(
       `,
       {...repo, after, number}
     )
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const viewer = data.viewer as User
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const repository = data.repository as Repository
     const target = repository.pullRequest?.comments?.nodes?.find(
       (node: IssueComment | null | undefined) =>
@@ -75,7 +77,7 @@ export async function updateComment(
 
   await octokit.graphql(
     `
-    mutation($input: UpdateIssueCommentInput!) { 
+    mutation($input: UpdateIssueCommentInput!) {
       updateIssueComment(input: $input) {
         issueComment {
           id
@@ -122,7 +124,7 @@ export async function deleteComment(
 ): Promise<void> {
   await octokit.graphql(
     `
-    mutation($id: ID!) { 
+    mutation($id: ID!) {
       deleteIssueComment(input: { id: $id }) {
         clientMutationId
       }
