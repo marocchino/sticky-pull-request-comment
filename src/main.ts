@@ -6,7 +6,10 @@ import {
   deleteOldComment,
   githubToken,
   header,
+  hideAndRecreate,
+  hideClassify,
   hideDetails,
+  hideOldComment,
   pullRequestNumber,
   recreate,
   repo
@@ -16,6 +19,7 @@ import {
   deleteComment,
   findPreviousComment,
   getBodyOf,
+  minimizeComment,
   updateComment
 } from "./comment"
 
@@ -26,12 +30,16 @@ async function run(): Promise<undefined> {
   }
 
   try {
-    if (!deleteOldComment && !body) {
+    if (!deleteOldComment && !hideOldComment && !body) {
       throw new Error("Either message or path input is required")
     }
 
     if (deleteOldComment && recreate) {
       throw new Error("delete and recreate cannot be both set to true")
+    }
+
+    if (hideOldComment && hideAndRecreate) {
+      throw new Error("hide and hide_and_recreate cannot be both set to true")
     }
 
     const octokit = github.getOctokit(githubToken)
@@ -51,6 +59,10 @@ async function run(): Promise<undefined> {
       await deleteComment(octokit, previous.id)
       return
     }
+    if (hideOldComment) {
+      await minimizeComment(octokit, previous.id, hideClassify)
+      return
+    }
 
     const previousBody = getBodyOf(previous, append, hideDetails)
     if (recreate) {
@@ -63,6 +75,12 @@ async function run(): Promise<undefined> {
         header,
         previousBody
       )
+      return
+    }
+
+    if (hideAndRecreate) {
+      await minimizeComment(octokit, previous.id, hideClassify)
+      await createComment(octokit, repo, pullRequestNumber, body, header)
       return
     }
 

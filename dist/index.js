@@ -190,7 +190,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.body = exports.githubToken = exports.deleteOldComment = exports.recreate = exports.hideDetails = exports.append = exports.header = exports.repo = exports.pullRequestNumber = void 0;
+exports.body = exports.githubToken = exports.hideOldComment = exports.deleteOldComment = exports.hideClassify = exports.hideAndRecreate = exports.recreate = exports.hideDetails = exports.append = exports.header = exports.repo = exports.pullRequestNumber = void 0;
 const core = __importStar(__nccwpck_require__(186));
 const github_1 = __nccwpck_require__(438);
 const fs_1 = __nccwpck_require__(747);
@@ -203,7 +203,14 @@ exports.hideDetails = core.getBooleanInput("hide_details", {
     required: true
 });
 exports.recreate = core.getBooleanInput("recreate", { required: true });
+exports.hideAndRecreate = core.getBooleanInput("hide_and_recreate", {
+    required: true
+});
+exports.hideClassify = core.getInput("hide_classify", {
+    required: true
+});
 exports.deleteOldComment = core.getBooleanInput("delete", { required: true });
+exports.hideOldComment = core.getBooleanInput("hide", { required: true });
 exports.githubToken = core.getInput("GITHUB_TOKEN", { required: true });
 exports.body = buildBody();
 function buildRepo() {
@@ -278,11 +285,14 @@ function run() {
             return;
         }
         try {
-            if (!config_1.deleteOldComment && !config_1.body) {
+            if (!config_1.deleteOldComment && !config_1.hideOldComment && !config_1.body) {
                 throw new Error("Either message or path input is required");
             }
             if (config_1.deleteOldComment && config_1.recreate) {
                 throw new Error("delete and recreate cannot be both set to true");
+            }
+            if (config_1.hideOldComment && config_1.hideAndRecreate) {
+                throw new Error("hide and hide_and_recreate cannot be both set to true");
             }
             const octokit = github.getOctokit(config_1.githubToken);
             const previous = yield (0, comment_1.findPreviousComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.header);
@@ -294,10 +304,19 @@ function run() {
                 yield (0, comment_1.deleteComment)(octokit, previous.id);
                 return;
             }
+            if (config_1.hideOldComment) {
+                yield (0, comment_1.minimizeComment)(octokit, previous.id, config_1.hideClassify);
+                return;
+            }
             const previousBody = (0, comment_1.getBodyOf)(previous, config_1.append, config_1.hideDetails);
             if (config_1.recreate) {
                 yield (0, comment_1.deleteComment)(octokit, previous.id);
                 yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header, previousBody);
+                return;
+            }
+            if (config_1.hideAndRecreate) {
+                yield (0, comment_1.minimizeComment)(octokit, previous.id, config_1.hideClassify);
+                yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header);
                 return;
             }
             yield (0, comment_1.updateComment)(octokit, previous.id, config_1.body, config_1.header, previousBody);
