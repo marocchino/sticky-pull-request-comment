@@ -48,13 +48,13 @@ async function run(): Promise<undefined> {
     }
 
     if (deleteOldComment) {
-      await deleteComment(octokit, repo, previous.id)
+      await deleteComment(octokit, previous.id)
       return
     }
 
     const previousBody = getBodyOf(previous, append, hideDetails)
     if (recreate) {
-      await deleteComment(octokit, repo, previous.id)
+      await deleteComment(octokit, previous.id)
       await createComment(
         octokit,
         repo,
@@ -66,7 +66,7 @@ async function run(): Promise<undefined> {
       return
     }
 
-    await updateComment(octokit, repo, previous.id, body, header, previousBody)
+    await updateComment(octokit, previous.id, body, header, previousBody)
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message)
