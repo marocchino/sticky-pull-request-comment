@@ -41,7 +41,7 @@ test("repo", () => {
     deleteOldComment: false,
     hideOldComment: false,
     hideAndRecreate: false,
-    hideClassify: 'OUTDATED',
+    hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -58,7 +58,7 @@ test("header", () => {
     deleteOldComment: false,
     hideOldComment: false,
     hideAndRecreate: false,
-    hideClassify: 'OUTDATED',
+    hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -75,7 +75,7 @@ test("append", () => {
     deleteOldComment: false,
     hideOldComment: false,
     hideAndRecreate: false,
-    hideClassify: 'OUTDATED',
+    hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -92,7 +92,7 @@ test("recreate", () => {
     deleteOldComment: false,
     hideOldComment: false,
     hideAndRecreate: false,
-    hideClassify: 'OUTDATED',
+    hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -109,7 +109,7 @@ test("delete", () => {
     deleteOldComment: true,
     hideOldComment: false,
     hideAndRecreate: false,
-    hideClassify: 'OUTDATED',
+    hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -126,7 +126,7 @@ test("hideOldComment", () => {
     deleteOldComment: false,
     hideOldComment: true,
     hideAndRecreate: false,
-    hideClassify: 'OUTDATED',
+    hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -143,7 +143,7 @@ test("hideAndRecreate", () => {
     deleteOldComment: false,
     hideOldComment: false,
     hideAndRecreate: true,
-    hideClassify: 'OUTDATED',
+    hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -160,7 +160,7 @@ test("hideClassify", () => {
     deleteOldComment: false,
     hideOldComment: false,
     hideAndRecreate: false,
-    hideClassify: 'OFF_TOPIC',
+    hideClassify: "OFF_TOPIC",
     hideDetails: false,
     githubToken: "some-token"
   })
@@ -177,7 +177,7 @@ test("hideDetails", () => {
     deleteOldComment: false,
     hideOldComment: false,
     hideAndRecreate: false,
-    hideClassify: 'OUTDATED',
+    hideClassify: "OUTDATED",
     hideDetails: true,
     githubToken: "some-token"
   })
@@ -195,7 +195,7 @@ describe("path", () => {
       deleteOldComment: false,
       hideOldComment: false,
       hideAndRecreate: false,
-      hideClassify: 'OUTDATED',
+      hideClassify: "OUTDATED",
       hideDetails: false,
       githubToken: "some-token"
     })
@@ -213,7 +213,7 @@ describe("path", () => {
       deleteOldComment: false,
       hideOldComment: false,
       hideAndRecreate: false,
-      hideClassify: 'OUTDATED',
+      hideClassify: "OUTDATED",
       hideDetails: false,
       githubToken: "some-token"
     })
@@ -232,7 +232,7 @@ test("message", () => {
     deleteOldComment: false,
     hideOldComment: false,
     hideAndRecreate: false,
-    hideClassify: 'OUTDATED',
+    hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token"
   })
