@@ -50,8 +50,12 @@ async function run(): Promise<undefined> {
       header
     )
 
-    if (!previous) {
+    if (!previous && !deleteOldComment) {
       await createComment(octokit, repo, pullRequestNumber, body, header)
+      return
+    }
+
+    if (!previous) {
       return
     }
 
