@@ -55,14 +55,17 @@ async function run(): Promise<undefined> {
       return
     }
 
+    if (deleteOldComment) {
+      if (previous) {
+        await deleteComment(octokit, previous.id)
+      }
+      return
+    }
+
     if (!previous) {
       return
     }
 
-    if (deleteOldComment) {
-      await deleteComment(octokit, previous.id)
-      return
-    }
     if (hideOldComment) {
       await minimizeComment(octokit, previous.id, hideClassify)
       return

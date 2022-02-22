@@ -300,11 +300,13 @@ function run() {
                 yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header);
                 return;
             }
-            if (!previous) {
+            if (config_1.deleteOldComment) {
+                if (previous) {
+                    yield (0, comment_1.deleteComment)(octokit, previous.id);
+                }
                 return;
             }
-            if (config_1.deleteOldComment) {
-                yield (0, comment_1.deleteComment)(octokit, previous.id);
+            if (!previous) {
                 return;
             }
             if (config_1.hideOldComment) {
