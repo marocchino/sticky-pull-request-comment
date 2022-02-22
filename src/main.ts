@@ -50,11 +50,6 @@ async function run(): Promise<undefined> {
       header
     )
 
-    if (!previous && !deleteOldComment) {
-      await createComment(octokit, repo, pullRequestNumber, body, header)
-      return
-    }
-
     if (deleteOldComment) {
       if (previous) {
         await deleteComment(octokit, previous.id)
@@ -63,6 +58,7 @@ async function run(): Promise<undefined> {
     }
 
     if (!previous) {
+      await createComment(octokit, repo, pullRequestNumber, body, header)
       return
     }
 
