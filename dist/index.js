@@ -296,10 +296,6 @@ function run() {
             }
             const octokit = github.getOctokit(config_1.githubToken);
             const previous = yield (0, comment_1.findPreviousComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.header);
-            if (!previous && !config_1.deleteOldComment) {
-                yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header);
-                return;
-            }
             if (config_1.deleteOldComment) {
                 if (previous) {
                     yield (0, comment_1.deleteComment)(octokit, previous.id);
@@ -307,6 +303,7 @@ function run() {
                 return;
             }
             if (!previous) {
+                yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.body, config_1.header);
                 return;
             }
             if (config_1.hideOldComment) {
