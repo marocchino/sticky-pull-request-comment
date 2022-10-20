@@ -1156,10 +1156,10 @@
     is-plain-object "^5.0.0"
     universal-user-agent "^6.0.0"
 
-"@octokit/graphql-schema@^12.11.0":
-  version "12.11.0"
-  resolved "https://registry.yarnpkg.com/@octokit/graphql-schema/-/graphql-schema-12.11.0.tgz#2c93ed73febae5e6558c9f229e176b052a4c8e95"
-  integrity sha512-bJNi8JuOK5dlBsmzTwh5vUkUZ3ZGW39+f84Qdd5CdB2S0eTLFBiQi5dagc+aMNUbLNNz6Cf27qiVWSZRrX/nsg==
+"@octokit/graphql-schema@^12.15.1":
+  version "12.15.1"
+  resolved "https://registry.yarnpkg.com/@octokit/graphql-schema/-/graphql-schema-12.15.1.tgz#90bc71bfaacb802b1a8a2be4a6b690e561c0897a"
+  integrity sha512-zntS7dMYmfGhFjHqdniHPsPfveTsdOvN5OmE5VYWYPS9AgLhnD9oxCe5Dt2vKMMKeJHZprJMcfIA2to/GaAgaw==
   dependencies:
     graphql "^16.0.0"
     graphql-tag "^2.10.3"
