@@ -38,7 +38,10 @@ inputs:
     description: "comment message"
     required: false
   path:
-    description: "path to file containing comment message"
+    description: "glob path to file(s) containing comment message"
+    required: false
+  follow-symbolic-links:
+    description: "Indicates whether to follow symbolic links for path"
     required: false
   number:
     description: "pull request number for push event"

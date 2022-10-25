@@ -2,7 +2,7 @@ import * as core from "@actions/core"
 import * as github from "@actions/github"
 import {
   append,
-  body,
+  getBody,
   deleteOldComment,
   githubToken,
   header,
@@ -30,6 +30,8 @@ async function run(): Promise<undefined> {
   }
 
   try {
+    const body = await getBody()
+
     if (!deleteOldComment && !hideOldComment && !body) {
       throw new Error("Either message or path input is required")
     }
