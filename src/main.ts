@@ -12,7 +12,8 @@ import {
   hideOldComment,
   pullRequestNumber,
   recreate,
-  repo
+  repo,
+  ignoreEmpty
 } from "./config"
 import {
   createComment,
@@ -31,6 +32,10 @@ async function run(): Promise<undefined> {
 
   try {
     const body = await getBody()
+
+    if (!body && ignoreEmpty) {
+      return
+    }
 
     if (!deleteOldComment && !hideOldComment && !body) {
       throw new Error("Either message or path input is required")

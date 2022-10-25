@@ -207,7 +207,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getBody = exports.githubToken = exports.hideOldComment = exports.deleteOldComment = exports.hideClassify = exports.hideAndRecreate = exports.recreate = exports.hideDetails = exports.append = exports.header = exports.repo = exports.pullRequestNumber = void 0;
+exports.getBody = exports.ignoreEmpty = exports.githubToken = exports.hideOldComment = exports.deleteOldComment = exports.hideClassify = exports.hideAndRecreate = exports.recreate = exports.hideDetails = exports.append = exports.header = exports.repo = exports.pullRequestNumber = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github_1 = __nccwpck_require__(5438);
 const fs_1 = __nccwpck_require__(7147);
@@ -230,6 +230,9 @@ exports.hideClassify = core.getInput("hide_classify", {
 exports.deleteOldComment = core.getBooleanInput("delete", { required: true });
 exports.hideOldComment = core.getBooleanInput("hide", { required: true });
 exports.githubToken = core.getInput("GITHUB_TOKEN", { required: true });
+exports.ignoreEmpty = core.getBooleanInput("ignore_empty", {
+    required: true
+});
 function buildRepo() {
     return {
         owner: github_1.context.repo.owner,
@@ -239,7 +242,9 @@ function buildRepo() {
 function getBody() {
     return __awaiter(this, void 0, void 0, function* () {
         const pathInput = core.getMultilineInput("path", { required: false });
-        const followSymbolicLinks = core.getInput("follow-symbolic-links").toLocaleUpperCase() !== "FALSE";
+        const followSymbolicLinks = core.getBooleanInput("follow_symbolic_links", {
+            required: true
+        });
         if (pathInput && pathInput.length > 0) {
             try {
                 const globber = yield (0, glob_1.create)(pathInput.join("\n"), {
@@ -317,6 +322,9 @@ function run() {
         }
         try {
             const body = yield (0, config_1.getBody)();
+            if (!body && config_1.ignoreEmpty) {
+                return;
+            }
             if (!config_1.deleteOldComment && !config_1.hideOldComment && !body) {
                 throw new Error("Either message or path input is required");
             }

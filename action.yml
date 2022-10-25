@@ -40,8 +40,13 @@ inputs:
   path:
     description: "glob path to file(s) containing comment message"
     required: false
-  follow-symbolic-links:
+  ignore_empty:
+    description: "Indicates whether to ignore missing or empty messages"
+    default: "true"
+    required: false
+  follow_symbolic_links:
     description: "Indicates whether to follow symbolic links for path"
+    default: "false"
     required: false
   number:
     description: "pull request number for push event"

@@ -24,6 +24,9 @@ export const hideClassify = core.getInput("hide_classify", {
 export const deleteOldComment = core.getBooleanInput("delete", {required: true})
 export const hideOldComment = core.getBooleanInput("hide", {required: true})
 export const githubToken = core.getInput("GITHUB_TOKEN", {required: true})
+export const ignoreEmpty = core.getBooleanInput("ignore_empty", {
+  required: true
+})
 
 function buildRepo(): {repo: string; owner: string} {
   return {
@@ -34,8 +37,9 @@ function buildRepo(): {repo: string; owner: string} {
 
 export async function getBody(): Promise<string> {
   const pathInput = core.getMultilineInput("path", {required: false})
-  const followSymbolicLinks =
-    core.getInput("follow-symbolic-links").toLocaleUpperCase() !== "FALSE"
+  const followSymbolicLinks = core.getBooleanInput("follow_symbolic_links", {
+    required: true
+  })
   if (pathInput && pathInput.length > 0) {
     try {
       const globber = await create(pathInput.join("\n"), {
