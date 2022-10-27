@@ -36,7 +36,7 @@ test:
       OUTPUT="${OUTPUT//'%'/'%25'}​【7,6 m】"
       OUTPUT="${OUTPUT//$'\n'/'%0A'}"
       OUTPUT="${OUTPUT//$'\r'/'%0D'}"
-      echo "::set-output name=result::$OUTPUT"
+      echo "result=$OUTPUT" >> $GITHUB_OUTPUT
   - uses: marocchino/sticky-pull-request-comment@v2
     with:
       header: test
@@ -58,7 +58,7 @@ test:
       OUTPUT="${OUTPUT//'%'/'%25'}​【7,6 m】"
       OUTPUT="${OUTPUT//$'\n'/'%0A'}"
       OUTPUT="${OUTPUT//$'\r'/'%0D'}"
-      echo "::set-output name=result::$OUTPUT"
+      echo "result=$OUTPUT" >> $GITHUB_OUTPUT
   - uses: marocchino/sticky-pull-request-comment@v2
     with:
       append: true
