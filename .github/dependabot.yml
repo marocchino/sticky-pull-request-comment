@@ -1,24 +1,14 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: daily
-    time: "20:00"
-  open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: "@types/node"
-    versions:
-    - 14.14.27
-    - 15.0.0
-  - dependency-name: eslint
-    versions:
-    - 7.22.0
-    - 7.24.0
-  - dependency-name: "@vercel/ncc"
-    versions:
-    - 0.28.1
-    - 0.28.2
-  - dependency-name: eslint-plugin-jest
-    versions:
-    - 24.3.1
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "05:00"
+      timezone: "Asia/Tokyo"
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "20:00"
+    open-pull-requests-limit: 10
