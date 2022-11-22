@@ -323,6 +323,7 @@ function run() {
         try {
             const body = yield (0, config_1.getBody)();
             if (!body && config_1.ignoreEmpty) {
+                core.info("no body given: skip step by ignoreEmpty");
                 return;
             }
             if (!config_1.deleteOldComment && !config_1.hideOldComment && !body) {

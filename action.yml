@@ -42,7 +42,7 @@ inputs:
     required: false
   ignore_empty:
     description: "Indicates whether to ignore missing or empty messages"
-    default: "true"
+    default: "false"
     required: false
   follow_symbolic_links:
     description: "Indicates whether to follow symbolic links for path"
@@ -55,8 +55,8 @@ inputs:
     description: "other repo name limited use on github enterprise. If not set, the current repo is used by default. Note that When you trying changing a repo, be aware that GITHUB_TOKEN should also use that repo's."
     required: false
   GITHUB_TOKEN:
-    description: 'The GitHub access token (e.g. secrets.GITHUB_TOKEN) used to create or update the comment. This defaults to {{ github.token }}.'
-    default: '${{ github.token }}'
+    description: "The GitHub access token (e.g. secrets.GITHUB_TOKEN) used to create or update the comment. This defaults to {{ github.token }}."
+    default: "${{ github.token }}"
     required: false
 runs:
   using: "node16"
