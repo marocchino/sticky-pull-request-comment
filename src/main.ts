@@ -34,6 +34,7 @@ async function run(): Promise<undefined> {
     const body = await getBody()
 
     if (!body && ignoreEmpty) {
+      core.info("no body given: skip step by ignoreEmpty")
       return
     }
 
