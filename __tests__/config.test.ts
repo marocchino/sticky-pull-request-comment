@@ -9,6 +9,8 @@ beforeEach(() => {
   process.env["INPUT_HIDE_CLASSIFY"] = "OUTDATED"
   process.env["INPUT_HIDE_DETAILS"] = "false"
   process.env["INPUT_GITHUB_TOKEN"] = "some-token"
+  process.env["INPUT_IGNORE_EMPTY"] = "false"
+  process.env["INPUT_FOLLOW_SYMBOLIC_LINKS"] = "false"
 })
 
 afterEach(() => {
@@ -27,14 +29,15 @@ afterEach(() => {
   delete process.env["INPUT_HIDE_DETAILS"]
   delete process.env["INPUT_GITHUB_TOKEN"]
   delete process.env["INPUT_PATH"]
+  delete process.env["INPUT_IGNORE_EMPTY"]
+  delete process.env["INPUT_FOLLOW_SYMBOLIC_LINKS"]
 })
 
-test("repo", () => {
+test("repo", async () => {
   process.env["INPUT_REPO"] = "other"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "other"},
-    body: "",
     header: "",
     append: false,
     recreate: false,
@@ -43,15 +46,16 @@ test("repo", () => {
     hideAndRecreate: false,
     hideClassify: "OUTDATED",
     hideDetails: false,
-    githubToken: "some-token"
+    githubToken: "some-token",
+    ignoreEmpty: false
   })
+  expect(await require("../src/config").getBody()).toEqual("")
 })
-test("header", () => {
+test("header", async () => {
   process.env["INPUT_HEADER"] = "header"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    body: "",
     header: "header",
     append: false,
     recreate: false,
@@ -60,15 +64,16 @@ test("header", () => {
     hideAndRecreate: false,
     hideClassify: "OUTDATED",
     hideDetails: false,
-    githubToken: "some-token"
+    githubToken: "some-token",
+    ignoreEmpty: false
   })
+  expect(await require("../src/config").getBody()).toEqual("")
 })
-test("append", () => {
+test("append", async () => {
   process.env["INPUT_APPEND"] = "true"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    body: "",
     header: "",
     append: true,
     recreate: false,
@@ -77,15 +82,16 @@ test("append", () => {
     hideAndRecreate: false,
     hideClassify: "OUTDATED",
     hideDetails: false,
-    githubToken: "some-token"
+    githubToken: "some-token",
+    ignoreEmpty: false
   })
+  expect(await require("../src/config").getBody()).toEqual("")
 })
-test("recreate", () => {
+test("recreate", async () => {
   process.env["INPUT_RECREATE"] = "true"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    body: "",
     header: "",
     append: false,
     recreate: true,
@@ -94,15 +100,16 @@ test("recreate", () => {
     hideAndRecreate: false,
     hideClassify: "OUTDATED",
     hideDetails: false,
-    githubToken: "some-token"
+    githubToken: "some-token",
+    ignoreEmpty: false
   })
+  expect(await require("../src/config").getBody()).toEqual("")
 })
-test("delete", () => {
+test("delete", async () => {
   process.env["INPUT_DELETE"] = "true"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    body: "",
     header: "",
     append: false,
     recreate: false,
@@ -111,15 +118,16 @@ test("delete", () => {
     hideAndRecreate: false,
     hideClassify: "OUTDATED",
     hideDetails: false,
-    githubToken: "some-token"
+    githubToken: "some-token",
+    ignoreEmpty: false
   })
+  expect(await require("../src/config").getBody()).toEqual("")
 })
-test("hideOldComment", () => {
+test("hideOldComment", async () => {
   process.env["INPUT_HIDE"] = "true"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    body: "",
     header: "",
     append: false,
     recreate: false,
@@ -128,15 +136,16 @@ test("hideOldComment", () => {
     hideAndRecreate: false,
     hideClassify: "OUTDATED",
     hideDetails: false,
-    githubToken: "some-token"
+    githubToken: "some-token",
+    ignoreEmpty: false
   })
+  expect(await require("../src/config").getBody()).toEqual("")
 })
-test("hideAndRecreate", () => {
+test("hideAndRecreate", async () => {
   process.env["INPUT_HIDE_AND_RECREATE"] = "true"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    body: "",
     header: "",
     append: false,
     recreate: false,
@@ -145,15 +154,16 @@ test("hideAndRecreate", () => {
     hideAndRecreate: true,
     hideClassify: "OUTDATED",
     hideDetails: false,
-    githubToken: "some-token"
+    githubToken: "some-token",
+    ignoreEmpty: false
   })
+  expect(await require("../src/config").getBody()).toEqual("")
 })
-test("hideClassify", () => {
+test("hideClassify", async () => {
   process.env["INPUT_HIDE_CLASSIFY"] = "OFF_TOPIC"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    body: "",
     header: "",
     append: false,
     recreate: false,
@@ -162,15 +172,16 @@ test("hideClassify", () => {
     hideAndRecreate: false,
     hideClassify: "OFF_TOPIC",
     hideDetails: false,
-    githubToken: "some-token"
+    githubToken: "some-token",
+    ignoreEmpty: false
   })
+  expect(await require("../src/config").getBody()).toEqual("")
 })
-test("hideDetails", () => {
+test("hideDetails", async () => {
   process.env["INPUT_HIDE_DETAILS"] = "true"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    body: "",
     header: "",
     append: false,
     recreate: false,
@@ -179,16 +190,17 @@ test("hideDetails", () => {
     hideAndRecreate: false,
     hideClassify: "OUTDATED",
     hideDetails: true,
-    githubToken: "some-token"
+    githubToken: "some-token",
+    ignoreEmpty: false
   })
+  expect(await require("../src/config").getBody()).toEqual("")
 })
 describe("path", () => {
-  test("when exists return content of a file", () => {
+  test("when exists return content of a file", async () => {
     process.env["INPUT_PATH"] = "./__tests__/assets/result"
     expect(require("../src/config")).toMatchObject({
       pullRequestNumber: expect.any(Number),
       repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-      body: "hi there\n",
       header: "",
       append: false,
       recreate: false,
@@ -197,16 +209,38 @@ describe("path", () => {
       hideAndRecreate: false,
       hideClassify: "OUTDATED",
       hideDetails: false,
-      githubToken: "some-token"
+      githubToken: "some-token",
+      ignoreEmpty: false
     })
+    expect(await require("../src/config").getBody()).toEqual("hi there\n")
   })
 
-  test("when not exists return null string", () => {
+  test("glob match files", async () => {
+    process.env["INPUT_PATH"] = "./__tests__/assets/*"
+    expect(require("../src/config")).toMatchObject({
+      pullRequestNumber: expect.any(Number),
+      repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
+      header: "",
+      append: false,
+      recreate: false,
+      deleteOldComment: false,
+      hideOldComment: false,
+      hideAndRecreate: false,
+      hideClassify: "OUTDATED",
+      hideDetails: false,
+      githubToken: "some-token",
+      ignoreEmpty: false
+    })
+    expect(await require("../src/config").getBody()).toEqual(
+      "hi there\n\nhey there\n"
+    )
+  })
+
+  test("when not exists return null string", async () => {
     process.env["INPUT_PATH"] = "./__tests__/assets/not_exists"
     expect(require("../src/config")).toMatchObject({
       pullRequestNumber: expect.any(Number),
       repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-      body: "",
       header: "",
       append: false,
       recreate: false,
@@ -215,17 +249,18 @@ describe("path", () => {
       hideAndRecreate: false,
       hideClassify: "OUTDATED",
       hideDetails: false,
-      githubToken: "some-token"
+      githubToken: "some-token",
+      ignoreEmpty: false
     })
+    expect(await require("../src/config").getBody()).toEqual("")
   })
 })
 
-test("message", () => {
+test("message", async () => {
   process.env["INPUT_MESSAGE"] = "hello there"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    body: "hello there",
     header: "",
     append: false,
     recreate: false,
@@ -234,6 +269,27 @@ test("message", () => {
     hideAndRecreate: false,
     hideClassify: "OUTDATED",
     hideDetails: false,
-    githubToken: "some-token"
+    githubToken: "some-token",
+    ignoreEmpty: false
   })
+  expect(await require("../src/config").getBody()).toEqual("hello there")
+})
+
+test("ignore_empty", async () => {
+  process.env["INPUT_IGNORE_EMPTY"] = "true"
+  expect(require("../src/config")).toMatchObject({
+    pullRequestNumber: expect.any(Number),
+    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
+    header: "",
+    append: false,
+    recreate: false,
+    deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: "OUTDATED",
+    hideDetails: false,
+    githubToken: "some-token",
+    ignoreEmpty: true
+  })
+  expect(await require("../src/config").getBody()).toEqual("")
 })

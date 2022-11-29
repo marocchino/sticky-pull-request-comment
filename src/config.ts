@@ -2,6 +2,7 @@ import * as core from "@actions/core"
 import {ReportedContentClassifiers} from "@octokit/graphql-schema"
 import {context} from "@actions/github"
 import {readFileSync} from "fs"
+import {create} from "@actions/glob"
 
 export const pullRequestNumber =
   context?.payload?.pull_request?.number ||
@@ -23,8 +24,9 @@ export const hideClassify = core.getInput("hide_classify", {
 export const deleteOldComment = core.getBooleanInput("delete", {required: true})
 export const hideOldComment = core.getBooleanInput("hide", {required: true})
 export const githubToken = core.getInput("GITHUB_TOKEN", {required: true})
-
-export const body = buildBody()
+export const ignoreEmpty = core.getBooleanInput("ignore_empty", {
+  required: true
+})
 
 function buildRepo(): {repo: string; owner: string} {
   return {
@@ -33,11 +35,20 @@ function buildRepo(): {repo: string; owner: string} {
   }
 }
 
-function buildBody(): string {
-  const path = core.getInput("path", {required: false})
-  if (path) {
+export async function getBody(): Promise<string> {
+  const pathInput = core.getMultilineInput("path", {required: false})
+  const followSymbolicLinks = core.getBooleanInput("follow_symbolic_links", {
+    required: true
+  })
+  if (pathInput && pathInput.length > 0) {
     try {
-      return readFileSync(path, "utf-8")
+      const globber = await create(pathInput.join("\n"), {
+        followSymbolicLinks,
+        matchDirectories: false
+      })
+      return (await globber.glob())
+        .map(path => readFileSync(path, "utf-8"))
+        .join("\n")
     } catch (error) {
       if (error instanceof Error) {
         core.setFailed(error.message)
