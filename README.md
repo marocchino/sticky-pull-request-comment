@@ -155,6 +155,10 @@ is explicitly passed, this problem can be solved by just removing it.
 
 **Optional** Delete a previously created comment. Use `header` to point to which comment you want to delete. Only `true` is allowed (i.e. delete this option if you don't need it).
 
+### `only_create`
+
+**Optional** Only create a new comment if there is no existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it.
+
 ### `hide`
 
 **Optional** Hide a previously created comment. Use `header` to point to which comment you want to delete. Only `true` is allowed (i.e. delete this option if you don't need it).
