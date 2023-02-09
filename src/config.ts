@@ -23,7 +23,7 @@ export const hideClassify = core.getInput("hide_classify", {
 }) as ReportedContentClassifiers
 export const deleteOldComment = core.getBooleanInput("delete", {required: true})
 export const onlyCreateComment = core.getBooleanInput("only_create", {
-  required: false
+  required: true
 })
 export const hideOldComment = core.getBooleanInput("hide", {required: true})
 export const githubToken = core.getInput("GITHUB_TOKEN", {required: true})

@@ -229,7 +229,7 @@ exports.hideClassify = core.getInput("hide_classify", {
 });
 exports.deleteOldComment = core.getBooleanInput("delete", { required: true });
 exports.onlyCreateComment = core.getBooleanInput("only_create", {
-    required: false
+    required: true
 });
 exports.hideOldComment = core.getBooleanInput("hide", { required: true });
 exports.githubToken = core.getInput("GITHUB_TOKEN", { required: true });
@@ -350,9 +350,9 @@ function run() {
                 yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header);
                 return;
             }
-            if (previous && config_1.onlyCreateComment) {
-                // don't comment anything, user specified only_create, so this is probably
-                // a placeholder / introduction comment.
+            if (config_1.onlyCreateComment) {
+                // don't comment anything, user specified only_create and there is an
+                // existing comment, so this is probably a placeholder / introduction one.
                 return;
             }
             if (config_1.hideOldComment) {

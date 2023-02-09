@@ -19,7 +19,7 @@ inputs:
     default: "false"
     required: false
   only_create:
-    description: "only create a new comment if there is no existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it."
+    description: "only create a new comment if there is no existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it. This options has higher priority than hide_and_recreate, hide."
     default: "false"
     required: false
   hide_details:

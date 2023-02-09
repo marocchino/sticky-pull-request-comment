@@ -71,9 +71,9 @@ async function run(): Promise<undefined> {
       return
     }
 
-    if (previous && onlyCreateComment) {
-      // don't comment anything, user specified only_create, so this is probably
-      // a placeholder / introduction comment.
+    if (onlyCreateComment) {
+      // don't comment anything, user specified only_create and there is an
+      // existing comment, so this is probably a placeholder / introduction one.
       return
     }
 
