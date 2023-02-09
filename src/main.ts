@@ -13,7 +13,8 @@ import {
   pullRequestNumber,
   recreate,
   repo,
-  ignoreEmpty
+  ignoreEmpty,
+  onlyCreateComment
 } from "./config"
 import {
   createComment,
@@ -67,6 +68,12 @@ async function run(): Promise<undefined> {
 
     if (!previous) {
       await createComment(octokit, repo, pullRequestNumber, body, header)
+      return
+    }
+
+    if (onlyCreateComment) {
+      // don't comment anything, user specified only_create and there is an
+      // existing comment, so this is probably a placeholder / introduction one.
       return
     }
 
