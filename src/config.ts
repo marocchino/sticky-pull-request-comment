@@ -36,7 +36,7 @@ export const ignoreEmpty = core.getBooleanInput("ignore_empty", {
 
 function buildRepo(): {repo: string; owner: string} {
   return {
-    owner: context.repo.owner,
+    owner: core.getInput("owner", {required: false}) || context.repo.owner,
     repo: core.getInput("repo", {required: false}) || context.repo.repo
   }
 }

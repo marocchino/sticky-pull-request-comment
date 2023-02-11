@@ -191,6 +191,10 @@ is explicitly passed, this problem can be solved by just removing it.
 
 **Optional** Pull request number for push event. Note that this has a **lower priority** than the number of a pull_request event.
 
+### `owner`
+
+**Optional** Another repository owner, If not set, the current repository owner is used by default. Note that when you trying changing a repo, be aware that `GITHUB_TOKEN` should also have permission for that repository.
+
 ### `repo`
 
 **Optional** Another repository name. Of limited use on GitHub enterprise. If not set, the current repository is used by default. Note that when you trying changing a repo, be aware that `GITHUB_TOKEN` should also have permission for that repository.
