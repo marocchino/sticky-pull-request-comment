@@ -18,6 +18,7 @@ beforeEach(() => {
 afterEach(() => {
   jest.resetModules()
   delete process.env["GITHUB_REPOSITORY"]
+  delete process.env["INPUT_OWNER"]
   delete process.env["INPUT_REPO"]
   delete process.env["INPUT_HEADER"]
   delete process.env["INPUT_MESSAGE"]
@@ -38,10 +39,11 @@ afterEach(() => {
 })
 
 test("repo", async () => {
+  process.env["INPUT_OWNER"] = "jin"
   process.env["INPUT_REPO"] = "other"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "other"},
+    repo: {owner: "jin", repo: "other"},
     header: "",
     append: false,
     recreate: false,

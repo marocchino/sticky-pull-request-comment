@@ -241,7 +241,7 @@ exports.ignoreEmpty = core.getBooleanInput("ignore_empty", {
 });
 function buildRepo() {
     return {
-        owner: github_1.context.repo.owner,
+        owner: core.getInput("owner", { required: false }) || github_1.context.repo.owner,
         repo: core.getInput("repo", { required: false }) || github_1.context.repo.repo
     };
 }
