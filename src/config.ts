@@ -25,6 +25,9 @@ export const deleteOldComment = core.getBooleanInput("delete", {required: true})
 export const onlyCreateComment = core.getBooleanInput("only_create", {
   required: true
 })
+export const onlyUpdateComment = core.getBooleanInput("only_update", {
+  required: true
+})
 export const hideOldComment = core.getBooleanInput("hide", {required: true})
 export const githubToken = core.getInput("GITHUB_TOKEN", {required: true})
 export const ignoreEmpty = core.getBooleanInput("ignore_empty", {
