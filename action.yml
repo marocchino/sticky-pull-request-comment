@@ -22,6 +22,10 @@ inputs:
     description: "only create a new comment if there is no existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it. This options has higher priority than hide_and_recreate, hide."
     default: "false"
     required: false
+  only_update:
+    description: "only update a exist comment if there is existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it."
+    default: "false"
+    required: false
   hide_details:
     description: "hide summary tags in the previously created comment. Only `true` is allowed. Just skip this item when you don't need it."
     default: "false"

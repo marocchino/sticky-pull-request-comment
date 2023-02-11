@@ -5,6 +5,7 @@ beforeEach(() => {
   process.env["INPUT_RECREATE"] = "false"
   process.env["INPUT_DELETE"] = "false"
   process.env["INPUT_ONLY_CREATE"] = "false"
+  process.env["INPUT_ONLY_UPDATE"] = "false"
   process.env["INPUT_HIDE"] = "false"
   process.env["INPUT_HIDE_AND_RECREATE"] = "false"
   process.env["INPUT_HIDE_CLASSIFY"] = "OUTDATED"
@@ -25,6 +26,7 @@ afterEach(() => {
   delete process.env["INPUT_RECREATE"]
   delete process.env["INPUT_DELETE"]
   delete process.env["INPUT_ONLY_CREATE"]
+  delete process.env["INPUT_ONLY_UPDATE"]
   delete process.env["INPUT_HIDE"]
   delete process.env["INPUT_HIDE_AND_RECREATE"]
   delete process.env["INPUT_HIDE_CLASSIFY"]

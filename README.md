@@ -157,7 +157,11 @@ is explicitly passed, this problem can be solved by just removing it.
 
 ### `only_create`
 
-**Optional** Only create a new comment if there is no existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it.
+**Optional** Only create a new comment if there is no existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it. This options has higher priority than hide_and_recreate, hide.
+
+### `only_update`
+
+**Optional** Only update a exist comment if there is existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it.
 
 ### `hide`
 
