@@ -1,6 +1,15 @@
 name: "Sticky Pull Request Comment"
 description: "Create comment on pull request, if exists update that comment."
 author: "marocchino"
+github-token:
+  action-input:
+    input: GITHUB_TOKEN
+    is-default: true
+
+  permissions:
+    pull-requests: write
+    pull-requests-reason: to create or update PR comment
+
 inputs:
   header:
     description: "Header to determine if the comment is to be updated, not shown on screen. It can be used when you want to add multiple comments independently at the same time."
