@@ -1,6 +1,15 @@
 name: "Sticky Pull Request Comment"
 description: "Create comment on pull request, if exists update that comment."
 author: "marocchino"
+github-token:
+  action-input:
+    input: GITHUB_TOKEN
+    is-default: true
+
+  permissions:
+    pull-requests: write
+    pull-requests-reason: to create or update PR comment
+
 inputs:
   header:
     description: "Header to determine if the comment is to be updated, not shown on screen. It can be used when you want to add multiple comments independently at the same time."
@@ -16,6 +25,14 @@ inputs:
     required: false
   delete:
     description: "delete the previously created comment. Only `true` is allowed. Just skip this item when you don't need it."
+    default: "false"
+    required: false
+  only_create:
+    description: "only create a new comment if there is no existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it. This options has higher priority than hide_and_recreate, hide."
+    default: "false"
+    required: false
+  only_update:
+    description: "only update a exist comment if there is existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it."
     default: "false"
     required: false
   hide_details:
@@ -51,8 +68,11 @@ inputs:
   number:
     description: "pull request number for push event"
     required: false
+  owner:
+    description: "Another repo owner, If not set, the current repo owner is used by default. Note that when you trying changing a repo, be aware that GITHUB_TOKEN should also have permission for that repository."
+    required: false
   repo:
-    description: "other repo name limited use on github enterprise. If not set, the current repo is used by default. Note that When you trying changing a repo, be aware that GITHUB_TOKEN should also use that repo's."
+    description: "Another repo name limited use on github enterprise. If not set, the current repo is used by default. Note that When you trying changing a repo, be aware that GITHUB_TOKEN should also use that repo's."
     required: false
   GITHUB_TOKEN:
     description: "The GitHub access token (e.g. secrets.GITHUB_TOKEN) used to create or update the comment. This defaults to {{ github.token }}."

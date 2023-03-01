@@ -207,7 +207,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getBody = exports.ignoreEmpty = exports.githubToken = exports.hideOldComment = exports.deleteOldComment = exports.hideClassify = exports.hideAndRecreate = exports.recreate = exports.hideDetails = exports.append = exports.header = exports.repo = exports.pullRequestNumber = void 0;
+exports.getBody = exports.ignoreEmpty = exports.githubToken = exports.hideOldComment = exports.onlyUpdateComment = exports.onlyCreateComment = exports.deleteOldComment = exports.hideClassify = exports.hideAndRecreate = exports.recreate = exports.hideDetails = exports.append = exports.header = exports.repo = exports.pullRequestNumber = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github_1 = __nccwpck_require__(5438);
 const fs_1 = __nccwpck_require__(7147);
@@ -228,6 +228,12 @@ exports.hideClassify = core.getInput("hide_classify", {
     required: true
 });
 exports.deleteOldComment = core.getBooleanInput("delete", { required: true });
+exports.onlyCreateComment = core.getBooleanInput("only_create", {
+    required: true
+});
+exports.onlyUpdateComment = core.getBooleanInput("only_update", {
+    required: true
+});
 exports.hideOldComment = core.getBooleanInput("hide", { required: true });
 exports.githubToken = core.getInput("GITHUB_TOKEN", { required: true });
 exports.ignoreEmpty = core.getBooleanInput("ignore_empty", {
@@ -235,7 +241,7 @@ exports.ignoreEmpty = core.getBooleanInput("ignore_empty", {
 });
 function buildRepo() {
     return {
-        owner: github_1.context.repo.owner,
+        owner: core.getInput("owner", { required: false }) || github_1.context.repo.owner,
         repo: core.getInput("repo", { required: false }) || github_1.context.repo.repo
     };
 }
@@ -332,6 +338,9 @@ function run() {
             if (config_1.deleteOldComment && config_1.recreate) {
                 throw new Error("delete and recreate cannot be both set to true");
             }
+            if (config_1.onlyCreateComment && config_1.onlyUpdateComment) {
+                throw new Error("only_create and only_update cannot be both set to true");
+            }
             if (config_1.hideOldComment && config_1.hideAndRecreate) {
                 throw new Error("hide and hide_and_recreate cannot be both set to true");
             }
@@ -344,7 +353,15 @@ function run() {
                 return;
             }
             if (!previous) {
+                if (config_1.onlyUpdateComment) {
+                    return;
+                }
                 yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header);
+                return;
+            }
+            if (config_1.onlyCreateComment) {
+                // don't comment anything, user specified only_create and there is an
+                // existing comment, so this is probably a placeholder / introduction one.
                 return;
             }
             if (config_1.hideOldComment) {
@@ -1619,16 +1636,18 @@ exports.create = create;
  * Computes the sha256 hash of a glob
  *
  * @param patterns  Patterns separated by newlines
+ * @param currentWorkspace  Workspace used when matching files
  * @param options   Glob options
+ * @param verbose   Enables verbose logging
  */
-function hashFiles(patterns, options, verbose = false) {
+function hashFiles(patterns, currentWorkspace = '', options, verbose = false) {
     return __awaiter(this, void 0, void 0, function* () {
         let followSymbolicLinks = true;
         if (options && typeof options.followSymbolicLinks === 'boolean') {
             followSymbolicLinks = options.followSymbolicLinks;
         }
         const globber = yield create(patterns, { followSymbolicLinks });
-        return internal_hash_files_1.hashFiles(globber, verbose);
+        return internal_hash_files_1.hashFiles(globber, currentWorkspace, verbose);
     });
 }
 exports.hashFiles = hashFiles;
@@ -1988,13 +2007,15 @@ const fs = __importStar(__nccwpck_require__(7147));
 const stream = __importStar(__nccwpck_require__(2781));
 const util = __importStar(__nccwpck_require__(3837));
 const path = __importStar(__nccwpck_require__(1017));
-function hashFiles(globber, verbose = false) {
+function hashFiles(globber, currentWorkspace, verbose = false) {
     var e_1, _a;
     var _b;
     return __awaiter(this, void 0, void 0, function* () {
         const writeDelegate = verbose ? core.info : core.debug;
         let hasMatch = false;
-        const githubWorkspace = (_b = process.env['GITHUB_WORKSPACE']) !== null && _b !== void 0 ? _b : process.cwd();
+        const githubWorkspace = currentWorkspace
+            ? currentWorkspace
+            : (_b = process.env['GITHUB_WORKSPACE']) !== null && _b !== void 0 ? _b : process.cwd();
         const result = crypto.createHash('sha256');
         let count = 0;
         try {

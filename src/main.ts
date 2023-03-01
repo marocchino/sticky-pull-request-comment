@@ -13,7 +13,9 @@ import {
   pullRequestNumber,
   recreate,
   repo,
-  ignoreEmpty
+  ignoreEmpty,
+  onlyCreateComment,
+  onlyUpdateComment
 } from "./config"
 import {
   createComment,
@@ -46,6 +48,10 @@ async function run(): Promise<undefined> {
       throw new Error("delete and recreate cannot be both set to true")
     }
 
+    if (onlyCreateComment && onlyUpdateComment) {
+      throw new Error("only_create and only_update cannot be both set to true")
+    }
+
     if (hideOldComment && hideAndRecreate) {
       throw new Error("hide and hide_and_recreate cannot be both set to true")
     }
@@ -66,7 +72,16 @@ async function run(): Promise<undefined> {
     }
 
     if (!previous) {
+      if (onlyUpdateComment) {
+        return
+      }
       await createComment(octokit, repo, pullRequestNumber, body, header)
+      return
+    }
+
+    if (onlyCreateComment) {
+      // don't comment anything, user specified only_create and there is an
+      // existing comment, so this is probably a placeholder / introduction one.
       return
     }
 

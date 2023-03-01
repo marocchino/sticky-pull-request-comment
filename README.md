@@ -155,6 +155,14 @@ is explicitly passed, this problem can be solved by just removing it.
 
 **Optional** Delete a previously created comment. Use `header` to point to which comment you want to delete. Only `true` is allowed (i.e. delete this option if you don't need it).
 
+### `only_create`
+
+**Optional** Only create a new comment if there is no existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it. This options has higher priority than hide_and_recreate, hide.
+
+### `only_update`
+
+**Optional** Only update a exist comment if there is existing one, otherwise do nothing. Only `true` is allowed. Just skip this item when you don't need it.
+
 ### `hide`
 
 **Optional** Hide a previously created comment. Use `header` to point to which comment you want to delete. Only `true` is allowed (i.e. delete this option if you don't need it).
@@ -182,6 +190,10 @@ is explicitly passed, this problem can be solved by just removing it.
 ### `number`
 
 **Optional** Pull request number for push event. Note that this has a **lower priority** than the number of a pull_request event.
+
+### `owner`
+
+**Optional** Another repository owner, If not set, the current repository owner is used by default. Note that when you trying changing a repo, be aware that `GITHUB_TOKEN` should also have permission for that repository.
 
 ### `repo`
 

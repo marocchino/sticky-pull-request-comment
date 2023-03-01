@@ -22,6 +22,12 @@ export const hideClassify = core.getInput("hide_classify", {
   required: true
 }) as ReportedContentClassifiers
 export const deleteOldComment = core.getBooleanInput("delete", {required: true})
+export const onlyCreateComment = core.getBooleanInput("only_create", {
+  required: true
+})
+export const onlyUpdateComment = core.getBooleanInput("only_update", {
+  required: true
+})
 export const hideOldComment = core.getBooleanInput("hide", {required: true})
 export const githubToken = core.getInput("GITHUB_TOKEN", {required: true})
 export const ignoreEmpty = core.getBooleanInput("ignore_empty", {
@@ -30,7 +36,7 @@ export const ignoreEmpty = core.getBooleanInput("ignore_empty", {
 
 function buildRepo(): {repo: string; owner: string} {
   return {
-    owner: context.repo.owner,
+    owner: core.getInput("owner", {required: false}) || context.repo.owner,
     repo: core.getInput("repo", {required: false}) || context.repo.repo
   }
 }

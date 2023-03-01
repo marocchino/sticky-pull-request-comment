@@ -4,6 +4,8 @@ beforeEach(() => {
   process.env["INPUT_APPEND"] = "false"
   process.env["INPUT_RECREATE"] = "false"
   process.env["INPUT_DELETE"] = "false"
+  process.env["INPUT_ONLY_CREATE"] = "false"
+  process.env["INPUT_ONLY_UPDATE"] = "false"
   process.env["INPUT_HIDE"] = "false"
   process.env["INPUT_HIDE_AND_RECREATE"] = "false"
   process.env["INPUT_HIDE_CLASSIFY"] = "OUTDATED"
@@ -16,6 +18,7 @@ beforeEach(() => {
 afterEach(() => {
   jest.resetModules()
   delete process.env["GITHUB_REPOSITORY"]
+  delete process.env["INPUT_OWNER"]
   delete process.env["INPUT_REPO"]
   delete process.env["INPUT_HEADER"]
   delete process.env["INPUT_MESSAGE"]
@@ -23,6 +26,8 @@ afterEach(() => {
   delete process.env["INPUT_APPEND"]
   delete process.env["INPUT_RECREATE"]
   delete process.env["INPUT_DELETE"]
+  delete process.env["INPUT_ONLY_CREATE"]
+  delete process.env["INPUT_ONLY_UPDATE"]
   delete process.env["INPUT_HIDE"]
   delete process.env["INPUT_HIDE_AND_RECREATE"]
   delete process.env["INPUT_HIDE_CLASSIFY"]
@@ -34,10 +39,11 @@ afterEach(() => {
 })
 
 test("repo", async () => {
+  process.env["INPUT_OWNER"] = "jin"
   process.env["INPUT_REPO"] = "other"
   expect(require("../src/config")).toMatchObject({
     pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "other"},
+    repo: {owner: "jin", repo: "other"},
     header: "",
     append: false,
     recreate: false,
