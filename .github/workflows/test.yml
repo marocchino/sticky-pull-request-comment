@@ -15,9 +15,26 @@ jobs:
           set -o pipefail
           mkdir -p ./pr
           echo ${{ github.event.number }} | tee ./pr/number
-          yarn all |& tee ./pr/all_result
-      - uses: actions/upload-artifact@v3
-        if: ${{ github.event_name == 'pull_request' && (success() || failure()) }}
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "all_result<<$EOF" >> "$GITHUB_ENV"
+          yarn all >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
+        id: all
+      - uses: ./
         with:
-          name: all
-          path: pr/
+          header: All
+          message: |
+            <details open>
+            <summary>output of yarn all</summary>
+
+            ```
+            ${{ env.all_result }}
+            ```
+            </details>
+      - uses: ./
+        with:
+          header: All
+          append: true
+          hide_details: true
+          message: |
+            The build is over.

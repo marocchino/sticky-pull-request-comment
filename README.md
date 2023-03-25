@@ -7,6 +7,13 @@ This library runs with GitHub Actions. If you feel that the example grammar belo
 
 ### Basic
 
+You need to add permissions for this tool.
+
+```yaml
+permissions:
+  pull-requests: write
+```
+
 ```yaml
 uses: marocchino/sticky-pull-request-comment@v2
 with:
@@ -30,19 +37,17 @@ release:
 test:
   ...
   - name: Run Test
-    id: test
     run: |
-      OUTPUT=$(rake test)
-      OUTPUT="${OUTPUT//'%'/'%25'}​【7,6 m】"
-      OUTPUT="${OUTPUT//$'\n'/'%0A'}"
-      OUTPUT="${OUTPUT//$'\r'/'%0D'}"
-      echo "result=$OUTPUT" >> $GITHUB_OUTPUT
+      EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+      echo "test_result<<$EOF" >> "$GITHUB_ENV"
+      rake test >> "$GITHUB_ENV"
+      echo "$EOF" >> "$GITHUB_ENV"
   - uses: marocchino/sticky-pull-request-comment@v2
     with:
       header: test
       message: |
         ```
-        ${{ steps.test.outputs.result }}
+        ${{ env.test_result }}
         ```
 ````
 
@@ -52,20 +57,18 @@ test:
 test:
   ...
   - name: Run Test
-    id: test
     run: |
-      OUTPUT=$(rake test)
-      OUTPUT="${OUTPUT//'%'/'%25'}​【7,6 m】"
-      OUTPUT="${OUTPUT//$'\n'/'%0A'}"
-      OUTPUT="${OUTPUT//$'\r'/'%0D'}"
-      echo "result=$OUTPUT" >> $GITHUB_OUTPUT
+      EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+      echo "test_result<<$EOF" >> "$GITHUB_ENV"
+      rake test >> "$GITHUB_ENV"
+      echo "$EOF" >> "$GITHUB_ENV"
   - uses: marocchino/sticky-pull-request-comment@v2
     with:
       append: true
       message: |
         Test with ${{ github.sha }}.
         ```
-        ${{ steps.test.outputs.result }}
+        ${{ env.test_result }}
         ```
 ````
 
@@ -134,8 +137,18 @@ with:
 
 ### Error: Resource not accessible by integration
 
-This message means the requester does not have enough permission. If `secrets.GITHUB_TOKEN`
-is explicitly passed, this problem can be solved by just removing it.
+This tool requires write permission, and that message means the requester does not have enough permission.
+Recently, GitHub sets permissions conservatively for newly created repositories. If it's a newly created repository, check your Settings > Actions > General > Workflow permissions, and make sure to enable read and write permissions.
+
+Then, you can specify permissions for the job like this:
+
+```yaml
+permissions:
+  pull-requests: write
+```
+
+For more detailed information about permissions, you can read from the link below:
+<https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs>
 
 ## Inputs
 
