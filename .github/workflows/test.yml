@@ -23,6 +23,7 @@ jobs:
       - uses: ./
         with:
           header: All
+          GITHUB_TOKEN: ${{ secrets.PAT }}
           message: |
             <details open>
             <summary>output of yarn all</summary>
@@ -34,6 +35,7 @@ jobs:
       - uses: ./
         with:
           header: All
+          GITHUB_TOKEN: ${{ secrets.PAT }}
           append: true
           hide_details: true
           message: |
