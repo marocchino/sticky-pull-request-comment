@@ -1,6 +1,6 @@
 name: Test
 on:
-  pull_request:
+  pull_request_target:
   push:
     branches:
       - main
@@ -21,6 +21,7 @@ jobs:
           echo "$EOF" >> "$GITHUB_ENV"
         id: all
       - uses: ./
+        if: ${{ github.event_name == 'pull_request_target' }}
         with:
           header: All
           GITHUB_TOKEN: ${{ secrets.PAT }}
@@ -33,6 +34,7 @@ jobs:
             ```
             </details>
       - uses: ./
+        if: ${{ github.event_name == 'pull_request_target' }}
         with:
           header: All
           GITHUB_TOKEN: ${{ secrets.PAT }}
