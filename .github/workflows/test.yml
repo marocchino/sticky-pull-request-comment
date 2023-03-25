@@ -8,6 +8,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
       - run: yarn install
@@ -24,7 +26,6 @@ jobs:
         if: ${{ github.event_name == 'pull_request_target' }}
         with:
           header: All
-          GITHUB_TOKEN: ${{ secrets.PAT }}
           message: |
             <details open>
             <summary>output of yarn all</summary>
@@ -37,7 +38,6 @@ jobs:
         if: ${{ github.event_name == 'pull_request_target' }}
         with:
           header: All
-          GITHUB_TOKEN: ${{ secrets.PAT }}
           append: true
           hide_details: true
           message: |
