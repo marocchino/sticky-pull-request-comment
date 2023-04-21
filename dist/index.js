@@ -207,13 +207,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getBody = exports.ignoreEmpty = exports.githubToken = exports.hideOldComment = exports.onlyUpdateComment = exports.onlyCreateComment = exports.deleteOldComment = exports.hideClassify = exports.hideAndRecreate = exports.recreate = exports.hideDetails = exports.append = exports.header = exports.repo = exports.pullRequestNumber = void 0;
+exports.getBody = exports.ignoreEmpty = exports.githubToken = exports.hideOldComment = exports.onlyUpdateComment = exports.onlyCreateComment = exports.deleteOldComment = exports.hideClassify = exports.hideAndRecreate = exports.recreate = exports.hideDetails = exports.append = exports.header = exports.repo = exports.baseUrl = exports.pullRequestNumber = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github_1 = __nccwpck_require__(5438);
 const fs_1 = __nccwpck_require__(7147);
 const glob_1 = __nccwpck_require__(8090);
 exports.pullRequestNumber = ((_b = (_a = github_1.context === null || github_1.context === void 0 ? void 0 : github_1.context.payload) === null || _a === void 0 ? void 0 : _a.pull_request) === null || _b === void 0 ? void 0 : _b.number) ||
     +core.getInput("number", { required: false });
+exports.baseUrl = core.getInput("base_url", { required: true });
 exports.repo = buildRepo();
 exports.header = core.getInput("header", { required: false });
 exports.append = core.getBooleanInput("append", { required: true });
@@ -344,7 +345,7 @@ function run() {
             if (config_1.hideOldComment && config_1.hideAndRecreate) {
                 throw new Error("hide and hide_and_recreate cannot be both set to true");
             }
-            const octokit = github.getOctokit(config_1.githubToken);
+            const octokit = github.getOctokit(config_1.githubToken, { baseUrl: config_1.baseUrl });
             const previous = yield (0, comment_1.findPreviousComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.header);
             if (config_1.deleteOldComment) {
                 if (previous) {
