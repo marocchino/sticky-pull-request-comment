@@ -11,10 +11,6 @@ github-token:
     pull-requests-reason: to create or update PR comment
 
 inputs:
-  base_url:
-    description: "base api url. default to: ${{ env.GITHUB_API_URL }}"
-    default: "${{ env.GITHUB_API_URL }}"
-    required: false
   header:
     description: "Header to determine if the comment is to be updated, not shown on screen. It can be used when you want to add multiple comments independently at the same time."
     default: ""
