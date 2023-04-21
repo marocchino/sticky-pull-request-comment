@@ -8,7 +8,6 @@ export const pullRequestNumber =
   context?.payload?.pull_request?.number ||
   +core.getInput("number", {required: false})
 
-export const baseUrl = core.getInput("base_url", {required: true})
 export const repo = buildRepo()
 export const header = core.getInput("header", {required: false})
 export const append = core.getBooleanInput("append", {required: true})
