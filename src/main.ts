@@ -3,6 +3,7 @@ import * as github from "@actions/github"
 import {
   append,
   getBody,
+  baseUrl,
   deleteOldComment,
   githubToken,
   header,
@@ -56,7 +57,7 @@ async function run(): Promise<undefined> {
       throw new Error("hide and hide_and_recreate cannot be both set to true")
     }
 
-    const octokit = github.getOctokit(githubToken)
+    const octokit = github.getOctokit(githubToken, {baseUrl})
     const previous = await findPreviousComment(
       octokit,
       repo,

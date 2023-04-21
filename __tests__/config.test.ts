@@ -1,5 +1,6 @@
 beforeEach(() => {
   process.env["GITHUB_REPOSITORY"] = "marocchino/stick-pull-request-comment"
+  process.env["INPUT_BASE_URL"] = "https://api.github.com"
   process.env["INPUT_NUMBER"] = "123"
   process.env["INPUT_APPEND"] = "false"
   process.env["INPUT_RECREATE"] = "false"
@@ -18,6 +19,7 @@ beforeEach(() => {
 afterEach(() => {
   jest.resetModules()
   delete process.env["GITHUB_REPOSITORY"]
+  delete process.env["INPUT_BASE_URL"]
   delete process.env["INPUT_OWNER"]
   delete process.env["INPUT_REPO"]
   delete process.env["INPUT_HEADER"]
@@ -38,10 +40,29 @@ afterEach(() => {
   delete process.env["INPUT_FOLLOW_SYMBOLIC_LINKS"]
 })
 
+test("baseUrl", async () => {
+  process.env["INPUT_BASE_URL"] = "https://repo.yourcompany.com"
+  expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://repo.yourcompany.com",
+    pullRequestNumber: expect.any(Number),
+    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
+    header: "",
+    append: false,
+    recreate: false,
+    deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: "OUTDATED",
+    hideDetails: false,
+    githubToken: "some-token",
+    ignoreEmpty: false
+  })
+})
 test("repo", async () => {
   process.env["INPUT_OWNER"] = "jin"
   process.env["INPUT_REPO"] = "other"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "jin", repo: "other"},
     header: "",
@@ -60,6 +81,7 @@ test("repo", async () => {
 test("header", async () => {
   process.env["INPUT_HEADER"] = "header"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "header",
@@ -78,6 +100,7 @@ test("header", async () => {
 test("append", async () => {
   process.env["INPUT_APPEND"] = "true"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -96,6 +119,7 @@ test("append", async () => {
 test("recreate", async () => {
   process.env["INPUT_RECREATE"] = "true"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -114,6 +138,7 @@ test("recreate", async () => {
 test("delete", async () => {
   process.env["INPUT_DELETE"] = "true"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -132,6 +157,7 @@ test("delete", async () => {
 test("hideOldComment", async () => {
   process.env["INPUT_HIDE"] = "true"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -150,6 +176,7 @@ test("hideOldComment", async () => {
 test("hideAndRecreate", async () => {
   process.env["INPUT_HIDE_AND_RECREATE"] = "true"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -168,6 +195,7 @@ test("hideAndRecreate", async () => {
 test("hideClassify", async () => {
   process.env["INPUT_HIDE_CLASSIFY"] = "OFF_TOPIC"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -186,6 +214,7 @@ test("hideClassify", async () => {
 test("hideDetails", async () => {
   process.env["INPUT_HIDE_DETAILS"] = "true"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -205,6 +234,7 @@ describe("path", () => {
   test("when exists return content of a file", async () => {
     process.env["INPUT_PATH"] = "./__tests__/assets/result"
     expect(require("../src/config")).toMatchObject({
+      baseUrl: "https://api.github.com",
       pullRequestNumber: expect.any(Number),
       repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
       header: "",
@@ -224,6 +254,7 @@ describe("path", () => {
   test("glob match files", async () => {
     process.env["INPUT_PATH"] = "./__tests__/assets/*"
     expect(require("../src/config")).toMatchObject({
+      baseUrl: "https://api.github.com",
       pullRequestNumber: expect.any(Number),
       repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
       header: "",
@@ -245,6 +276,7 @@ describe("path", () => {
   test("when not exists return null string", async () => {
     process.env["INPUT_PATH"] = "./__tests__/assets/not_exists"
     expect(require("../src/config")).toMatchObject({
+      baseUrl: "https://api.github.com",
       pullRequestNumber: expect.any(Number),
       repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
       header: "",
@@ -265,6 +297,7 @@ describe("path", () => {
 test("message", async () => {
   process.env["INPUT_MESSAGE"] = "hello there"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -284,6 +317,7 @@ test("message", async () => {
 test("ignore_empty", async () => {
   process.env["INPUT_IGNORE_EMPTY"] = "true"
   expect(require("../src/config")).toMatchObject({
+    baseUrl: "https://api.github.com",
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
