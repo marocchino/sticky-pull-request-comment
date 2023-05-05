@@ -159,13 +159,13 @@ describe("createComment", () => {
   beforeEach(() => {
     jest
       .spyOn<any, string>(octokit.rest.issues, "createComment")
-      .mockResolvedValue("")
+      .mockResolvedValue("<return value>")
   })
 
   it("with comment body or previousBody", async () => {
-    expect(
-      await createComment(octokit, repo, 456, "hello there", "")
-    ).toBeUndefined()
+    expect(await createComment(octokit, repo, 456, "hello there", "")).toEqual(
+      "<return value>"
+    )
     expect(octokit.rest.issues.createComment).toBeCalledWith({
       issue_number: 456,
       owner: "marocchino",
@@ -174,7 +174,7 @@ describe("createComment", () => {
     })
     expect(
       await createComment(octokit, repo, 456, "hello there", "TypeA")
-    ).toBeUndefined()
+    ).toEqual("<return value>")
     expect(octokit.rest.issues.createComment).toBeCalledWith({
       issue_number: 456,
       owner: "marocchino",
