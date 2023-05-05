@@ -115,7 +115,7 @@ export async function createComment(
   if (!body && !previousBody)
     return core.warning("Comment body cannot be blank")
 
-  await octokit.rest.issues.createComment({
+  let x = await octokit.rest.issues.createComment({
     ...repo,
     issue_number,
     body: previousBody

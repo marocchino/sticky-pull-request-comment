@@ -78,6 +78,11 @@ inputs:
     description: "The GitHub access token (e.g. secrets.GITHUB_TOKEN) used to create or update the comment. This defaults to {{ github.token }}."
     default: "${{ github.token }}"
     required: false
+outputs:
+  previous_comment_id:
+    description: "ID of previous comment, if found"
+  created_comment_id:
+    description: "ID of newly created comment, if any"
 runs:
   using: "node16"
   main: "dist/index.js"
