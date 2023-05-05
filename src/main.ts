@@ -64,6 +64,8 @@ async function run(): Promise<undefined> {
       header
     )
 
+    core.setOutput("previous_comment_id", previous?.id)
+
     if (deleteOldComment) {
       if (previous) {
         await deleteComment(octokit, previous.id)
@@ -75,7 +77,14 @@ async function run(): Promise<undefined> {
       if (onlyUpdateComment) {
         return
       }
-      await createComment(octokit, repo, pullRequestNumber, body, header)
+      const created = await createComment(
+        octokit,
+        repo,
+        pullRequestNumber,
+        body,
+        header
+      )
+      core.setOutput("created_comment_id", created?.data.id)
       return
     }
 
@@ -93,7 +102,7 @@ async function run(): Promise<undefined> {
     const previousBody = getBodyOf(previous, append, hideDetails)
     if (recreate) {
       await deleteComment(octokit, previous.id)
-      await createComment(
+      const created = await createComment(
         octokit,
         repo,
         pullRequestNumber,
@@ -101,12 +110,20 @@ async function run(): Promise<undefined> {
         header,
         previousBody
       )
+      core.setOutput("created_comment_id", created?.data.id)
       return
     }
 
     if (hideAndRecreate) {
       await minimizeComment(octokit, previous.id, hideClassify)
-      await createComment(octokit, repo, pullRequestNumber, body, header)
+      const created = await createComment(
+        octokit,
+        repo,
+        pullRequestNumber,
+        body,
+        header
+      )
+      core.setOutput("created_comment_id", created?.data.id)
       return
     }
 

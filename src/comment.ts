@@ -7,6 +7,10 @@ import {
 } from "@octokit/graphql-schema"
 import {GitHub} from "@actions/github/lib/utils"
 
+type CreateCommentResponse = Awaited<
+  ReturnType<InstanceType<typeof GitHub>["rest"]["issues"]["createComment"]>
+>
+
 function headerComment(header: String): string {
   return `<!-- Sticky Pull Request Comment${header} -->`
 }
@@ -111,11 +115,13 @@ export async function createComment(
   body: string,
   header: string,
   previousBody?: string
-): Promise<void> {
-  if (!body && !previousBody)
-    return core.warning("Comment body cannot be blank")
+): Promise<CreateCommentResponse | undefined> {
+  if (!body && !previousBody) {
+    core.warning("Comment body cannot be blank")
+    return
+  }
 
-  let x = await octokit.rest.issues.createComment({
+  return await octokit.rest.issues.createComment({
     ...repo,
     issue_number,
     body: previousBody
@@ -145,7 +151,7 @@ export async function minimizeComment(
 ): Promise<void> {
   await octokit.graphql(
     `
-    mutation($input: MinimizeCommentInput!) { 
+    mutation($input: MinimizeCommentInput!) {
       minimizeComment(input: $input) {
         clientMutationId
       }
