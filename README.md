@@ -222,7 +222,13 @@ For more detailed information about permissions, you can read from the link belo
 
 ## Outputs
 
-None
+### `previous_comment_id`
+
+ID of previous comment, if found
+
+### `created_comment_id`
+
+ID of newly created comment, if any
 
 ## Any problem?
 
