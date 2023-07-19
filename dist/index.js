@@ -121,9 +121,11 @@ function updateComment(octokit, id, body, header, previousBody) {
 exports.updateComment = updateComment;
 function createComment(octokit, repo, issue_number, body, header, previousBody) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!body && !previousBody)
-            return core.warning("Comment body cannot be blank");
-        yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, repo), { issue_number, body: previousBody
+        if (!body && !previousBody) {
+            core.warning("Comment body cannot be blank");
+            return;
+        }
+        return yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, repo), { issue_number, body: previousBody
                 ? `${previousBody}\n${body}`
                 : `${body}\n${headerComment(header)}` }));
     });
@@ -144,7 +146,7 @@ exports.deleteComment = deleteComment;
 function minimizeComment(octokit, subjectId, classifier) {
     return __awaiter(this, void 0, void 0, function* () {
         yield octokit.graphql(`
-    mutation($input: MinimizeCommentInput!) { 
+    mutation($input: MinimizeCommentInput!) {
       minimizeComment(input: $input) {
         clientMutationId
       }
@@ -346,6 +348,7 @@ function run() {
             }
             const octokit = github.getOctokit(config_1.githubToken);
             const previous = yield (0, comment_1.findPreviousComment)(octokit, config_1.repo, config_1.pullRequestNumber, config_1.header);
+            core.setOutput("previous_comment_id", previous === null || previous === void 0 ? void 0 : previous.id);
             if (config_1.deleteOldComment) {
                 if (previous) {
                     yield (0, comment_1.deleteComment)(octokit, previous.id);
@@ -356,7 +359,8 @@ function run() {
                 if (config_1.onlyUpdateComment) {
                     return;
                 }
-                yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header);
+                const created = yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header);
+                core.setOutput("created_comment_id", created === null || created === void 0 ? void 0 : created.data.id);
                 return;
             }
             if (config_1.onlyCreateComment) {
@@ -371,12 +375,14 @@ function run() {
             const previousBody = (0, comment_1.getBodyOf)(previous, config_1.append, config_1.hideDetails);
             if (config_1.recreate) {
                 yield (0, comment_1.deleteComment)(octokit, previous.id);
-                yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header, previousBody);
+                const created = yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header, previousBody);
+                core.setOutput("created_comment_id", created === null || created === void 0 ? void 0 : created.data.id);
                 return;
             }
             if (config_1.hideAndRecreate) {
                 yield (0, comment_1.minimizeComment)(octokit, previous.id, config_1.hideClassify);
-                yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header);
+                const created = yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header);
+                core.setOutput("created_comment_id", created === null || created === void 0 ? void 0 : created.data.id);
                 return;
             }
             yield (0, comment_1.updateComment)(octokit, previous.id, body, config_1.header, previousBody);
