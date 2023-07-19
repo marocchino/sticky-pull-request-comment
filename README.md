@@ -212,6 +212,10 @@ For more detailed information about permissions, you can read from the link belo
 
 **Optional** Another repository name. Of limited use on GitHub enterprise. If not set, the current repository is used by default. Note that when you trying changing a repo, be aware that `GITHUB_TOKEN` should also have permission for that repository.
 
+### `ignore_empty`
+
+**Optional** By default this is `false`. If set to `true`, no comment will be posted if the comment body is empty. Note that enabling this will prevent comment hiding & deletion from working when the body is empty.
+
 ### `GITHUB_TOKEN`
 
 **Optional**, You can set [PAT](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) here. If not set, this will use `${{ github.token }}`.
