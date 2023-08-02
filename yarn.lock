@@ -951,10 +951,10 @@
     is-plain-object "^5.0.0"
     universal-user-agent "^6.0.0"
 
-"@octokit/graphql-schema@^14.24.1":
-  version "14.24.1"
-  resolved "https://registry.yarnpkg.com/@octokit/graphql-schema/-/graphql-schema-14.24.1.tgz#45188b76baff660077217976f1ab76cf78eeba19"
-  integrity sha512-MK/axY/v3D6EEnahL5zEXezuyJBKtEHZTiBOEwBw7McO/FFKx8WAmdsQXUeMxKIFnUwufAQr8QVAqVk+8uUm7A==
+"@octokit/graphql-schema@^14.25.0":
+  version "14.25.0"
+  resolved "https://registry.yarnpkg.com/@octokit/graphql-schema/-/graphql-schema-14.25.0.tgz#884e67cb268bc8eb50ce0294c772ad0fc32e51c4"
+  integrity sha512-wVkHTxDozsxAjP5UwyndKlCGiPTnBGd3TuG283uTluugq7RAHzZiWo0OjDEfr3793L1Al7W5oPgwedFgDNTaLQ==
   dependencies:
     graphql "^16.0.0"
     graphql-tag "^2.10.3"
