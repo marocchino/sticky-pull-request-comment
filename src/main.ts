@@ -14,6 +14,7 @@ import {
   recreate,
   repo,
   ignoreEmpty,
+  skipUnchanged,
   onlyCreateComment,
   onlyUpdateComment
 } from "./config"
@@ -23,7 +24,8 @@ import {
   findPreviousComment,
   getBodyOf,
   minimizeComment,
-  updateComment
+  updateComment,
+  commentsEqual
 } from "./comment"
 
 async function run(): Promise<undefined> {
@@ -96,6 +98,11 @@ async function run(): Promise<undefined> {
 
     if (hideOldComment) {
       await minimizeComment(octokit, previous.id, hideClassify)
+      return
+    }
+
+    if (skipUnchanged && commentsEqual(body, previous.body, header)) {
+      // don't recreate or update if the message is unchanged
       return
     }
 

@@ -15,6 +15,10 @@ function headerComment(header: String): string {
   return `<!-- Sticky Pull Request Comment${header} -->`
 }
 
+function bodyWithHeader(body: string, header: string): string {
+  return `${body}\n${headerComment(header)}`
+}
+
 export async function findPreviousComment(
   octokit: InstanceType<typeof GitHub>,
   repo: {
@@ -100,7 +104,7 @@ export async function updateComment(
         id,
         body: previousBody
           ? `${previousBody}\n${body}`
-          : `${body}\n${headerComment(header)}`
+          : bodyWithHeader(body, header)
       }
     }
   )
@@ -126,7 +130,7 @@ export async function createComment(
     issue_number,
     body: previousBody
       ? `${previousBody}\n${body}`
-      : `${body}\n${headerComment(header)}`
+      : bodyWithHeader(body, header)
   })
 }
 export async function deleteComment(
@@ -162,7 +166,7 @@ export async function minimizeComment(
 }
 
 export function getBodyOf(
-  previous: {body?: string},
+  previous: {body: string},
   append: boolean,
   hideDetails: boolean
 ): string | undefined {
@@ -175,4 +179,13 @@ export function getBodyOf(
   }
 
   return previous.body?.replace(/(<details.*?)\s*\bopen\b(.*>)/g, "$1$2")
+}
+
+export function commentsEqual(
+  body: string,
+  previous: string,
+  header: string
+): boolean {
+  const newBody = bodyWithHeader(body, header)
+  return newBody === previous
 }
