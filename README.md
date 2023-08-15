@@ -216,6 +216,10 @@ For more detailed information about permissions, you can read from the link belo
 
 **Optional** By default this is `false`. If set to `true`, no comment will be posted if the comment body is empty. Note that enabling this will prevent comment hiding & deletion from working when the body is empty.
 
+### `skip_unchanged`
+
+**Optional** By default this is `false`. If set to `true`, recreating or updating a comment will be skipped if the new message is identical to the current message.
+
 ### `GITHUB_TOKEN`
 
 **Optional**, You can set [PAT](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) here. If not set, this will use `${{ github.token }}`.
