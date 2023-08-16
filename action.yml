@@ -61,6 +61,10 @@ inputs:
     description: "Indicates whether to ignore missing or empty messages"
     default: "false"
     required: false
+  skip_unchanged:
+    description: "only update or recreate if message is different from previous. Only `true` is allowed. Just skip this item when you don't need it."
+    default: "false"
+    required: false
   follow_symbolic_links:
     description: "Indicates whether to follow symbolic links for path"
     default: "false"

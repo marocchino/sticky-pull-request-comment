@@ -12,6 +12,7 @@ beforeEach(() => {
   process.env["INPUT_HIDE_DETAILS"] = "false"
   process.env["INPUT_GITHUB_TOKEN"] = "some-token"
   process.env["INPUT_IGNORE_EMPTY"] = "false"
+  process.env["INPUT_SKIP_UNCHANGED"] = "false"
   process.env["INPUT_FOLLOW_SYMBOLIC_LINKS"] = "false"
 })
 
@@ -35,6 +36,7 @@ afterEach(() => {
   delete process.env["INPUT_GITHUB_TOKEN"]
   delete process.env["INPUT_PATH"]
   delete process.env["INPUT_IGNORE_EMPTY"]
+  delete process.env["INPUT_SKIP_UNCHANGED"]
   delete process.env["INPUT_FOLLOW_SYMBOLIC_LINKS"]
 })
 
@@ -53,7 +55,8 @@ test("repo", async () => {
     hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token",
-    ignoreEmpty: false
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await require("../src/config").getBody()).toEqual("")
 })
@@ -71,7 +74,8 @@ test("header", async () => {
     hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token",
-    ignoreEmpty: false
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await require("../src/config").getBody()).toEqual("")
 })
@@ -89,7 +93,8 @@ test("append", async () => {
     hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token",
-    ignoreEmpty: false
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await require("../src/config").getBody()).toEqual("")
 })
@@ -107,7 +112,8 @@ test("recreate", async () => {
     hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token",
-    ignoreEmpty: false
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await require("../src/config").getBody()).toEqual("")
 })
@@ -125,7 +131,8 @@ test("delete", async () => {
     hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token",
-    ignoreEmpty: false
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await require("../src/config").getBody()).toEqual("")
 })
@@ -143,7 +150,8 @@ test("hideOldComment", async () => {
     hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token",
-    ignoreEmpty: false
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await require("../src/config").getBody()).toEqual("")
 })
@@ -161,7 +169,8 @@ test("hideAndRecreate", async () => {
     hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token",
-    ignoreEmpty: false
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await require("../src/config").getBody()).toEqual("")
 })
@@ -179,7 +188,8 @@ test("hideClassify", async () => {
     hideClassify: "OFF_TOPIC",
     hideDetails: false,
     githubToken: "some-token",
-    ignoreEmpty: false
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await require("../src/config").getBody()).toEqual("")
 })
@@ -197,7 +207,8 @@ test("hideDetails", async () => {
     hideClassify: "OUTDATED",
     hideDetails: true,
     githubToken: "some-token",
-    ignoreEmpty: false
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await require("../src/config").getBody()).toEqual("")
 })
@@ -216,7 +227,8 @@ describe("path", () => {
       hideClassify: "OUTDATED",
       hideDetails: false,
       githubToken: "some-token",
-      ignoreEmpty: false
+      ignoreEmpty: false,
+      skipUnchanged: false
     })
     expect(await require("../src/config").getBody()).toEqual("hi there\n")
   })
@@ -235,7 +247,8 @@ describe("path", () => {
       hideClassify: "OUTDATED",
       hideDetails: false,
       githubToken: "some-token",
-      ignoreEmpty: false
+      ignoreEmpty: false,
+      skipUnchanged: false
     })
     expect(await require("../src/config").getBody()).toEqual(
       "hi there\n\nhey there\n"
@@ -256,7 +269,8 @@ describe("path", () => {
       hideClassify: "OUTDATED",
       hideDetails: false,
       githubToken: "some-token",
-      ignoreEmpty: false
+      ignoreEmpty: false,
+      skipUnchanged: false
     })
     expect(await require("../src/config").getBody()).toEqual("")
   })
@@ -276,7 +290,8 @@ test("message", async () => {
     hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token",
-    ignoreEmpty: false
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await require("../src/config").getBody()).toEqual("hello there")
 })
@@ -295,7 +310,28 @@ test("ignore_empty", async () => {
     hideClassify: "OUTDATED",
     hideDetails: false,
     githubToken: "some-token",
-    ignoreEmpty: true
+    ignoreEmpty: true,
+    skipUnchanged: false
+  })
+  expect(await require("../src/config").getBody()).toEqual("")
+})
+
+test("skip_unchanged", async () => {
+  process.env["INPUT_SKIP_UNCHANGED"] = "true"
+  expect(require("../src/config")).toMatchObject({
+    pullRequestNumber: expect.any(Number),
+    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
+    header: "",
+    append: false,
+    recreate: false,
+    deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: "OUTDATED",
+    hideDetails: false,
+    githubToken: "some-token",
+    ignoreEmpty: false,
+    skipUnchanged: true
   })
   expect(await require("../src/config").getBody()).toEqual("")
 })
