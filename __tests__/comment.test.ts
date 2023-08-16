@@ -254,12 +254,27 @@ describe("getBodyOf", () => {
 
 describe("commentsEqual", () => {
   test.each([
-    { body: "body", previous: "body\n<!-- Sticky Pull Request Commentheader -->", header: "header", expected: true },
-    { body: "body", previous: "body\n<!-- Sticky Pull Request Comment -->", header: "", expected: true },
-    { body: "body", previous: "body\n<!-- Sticky Pull Request Commenta different header -->", header: "header", expected: false },
-    { body: "body", previous: "body", header: "header", expected: false },
-    { body: "body", previous: "", header: "header", expected: false },
-    { body: "", previous: "body", header: "header", expected: false },
+    {
+      body: "body",
+      previous: "body\n<!-- Sticky Pull Request Commentheader -->",
+      header: "header",
+      expected: true
+    },
+    {
+      body: "body",
+      previous: "body\n<!-- Sticky Pull Request Comment -->",
+      header: "",
+      expected: true
+    },
+    {
+      body: "body",
+      previous: "body\n<!-- Sticky Pull Request Commenta different header -->",
+      header: "header",
+      expected: false
+    },
+    {body: "body", previous: "body", header: "header", expected: false},
+    {body: "body", previous: "", header: "header", expected: false},
+    {body: "", previous: "body", header: "header", expected: false}
   ])("commentsEqual(%s, %s, %s)", ({body, previous, header, expected}) => {
     expect(commentsEqual(body, previous, header)).toEqual(expected)
   })

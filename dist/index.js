@@ -39,10 +39,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getBodyOf = exports.minimizeComment = exports.deleteComment = exports.createComment = exports.updateComment = exports.findPreviousComment = void 0;
+exports.commentsEqual = exports.getBodyOf = exports.minimizeComment = exports.deleteComment = exports.createComment = exports.updateComment = exports.findPreviousComment = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 function headerComment(header) {
     return `<!-- Sticky Pull Request Comment${header} -->`;
+}
+function bodyWithHeader(body, header) {
+    return `${body}\n${headerComment(header)}`;
 }
 function findPreviousComment(octokit, repo, number, header) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
@@ -113,7 +116,7 @@ function updateComment(octokit, id, body, header, previousBody) {
                 id,
                 body: previousBody
                     ? `${previousBody}\n${body}`
-                    : `${body}\n${headerComment(header)}`
+                    : bodyWithHeader(body, header)
             }
         });
     });
@@ -127,7 +130,7 @@ function createComment(octokit, repo, issue_number, body, header, previousBody) 
         }
         return yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, repo), { issue_number, body: previousBody
                 ? `${previousBody}\n${body}`
-                : `${body}\n${headerComment(header)}` }));
+                : bodyWithHeader(body, header) }));
     });
 }
 exports.createComment = createComment;
@@ -166,6 +169,11 @@ function getBodyOf(previous, append, hideDetails) {
     return (_a = previous.body) === null || _a === void 0 ? void 0 : _a.replace(/(<details.*?)\s*\bopen\b(.*>)/g, "$1$2");
 }
 exports.getBodyOf = getBodyOf;
+function commentsEqual(body, previous, header) {
+    const newBody = bodyWithHeader(body, header);
+    return newBody === previous;
+}
+exports.commentsEqual = commentsEqual;
 
 
 /***/ }),
@@ -209,7 +217,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getBody = exports.ignoreEmpty = exports.githubToken = exports.hideOldComment = exports.onlyUpdateComment = exports.onlyCreateComment = exports.deleteOldComment = exports.hideClassify = exports.hideAndRecreate = exports.recreate = exports.hideDetails = exports.append = exports.header = exports.repo = exports.pullRequestNumber = void 0;
+exports.getBody = exports.ignoreEmpty = exports.githubToken = exports.hideOldComment = exports.skipUnchanged = exports.onlyUpdateComment = exports.onlyCreateComment = exports.deleteOldComment = exports.hideClassify = exports.hideAndRecreate = exports.recreate = exports.hideDetails = exports.append = exports.header = exports.repo = exports.pullRequestNumber = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github_1 = __nccwpck_require__(5438);
 const fs_1 = __nccwpck_require__(7147);
@@ -234,6 +242,9 @@ exports.onlyCreateComment = core.getBooleanInput("only_create", {
     required: true
 });
 exports.onlyUpdateComment = core.getBooleanInput("only_update", {
+    required: true
+});
+exports.skipUnchanged = core.getBooleanInput("skip_unchanged", {
     required: true
 });
 exports.hideOldComment = core.getBooleanInput("hide", { required: true });
@@ -370,6 +381,10 @@ function run() {
             }
             if (config_1.hideOldComment) {
                 yield (0, comment_1.minimizeComment)(octokit, previous.id, config_1.hideClassify);
+                return;
+            }
+            if (config_1.skipUnchanged && (0, comment_1.commentsEqual)(body, previous.body, config_1.header)) {
+                // don't recreate or update if the message is unchanged
                 return;
             }
             const previousBody = (0, comment_1.getBodyOf)(previous, config_1.append, config_1.hideDetails);
