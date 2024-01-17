@@ -147,6 +147,15 @@ permissions:
   pull-requests: write
 ```
 
+If your repository is private, setting this setting removes all default permissions on your workflow, so for the actions/checkout step to work which is highly common, you will also need the `contents` permissions set.
+Otherwise you will get an error such as "fatal: repository *** not found"
+
+```yaml
+permissions:
+  pull-requests: write
+  contents: read
+```
+
 For more detailed information about permissions, you can read from the link below:
 <https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs>
 
