@@ -45,6 +45,6 @@
     "js-yaml": "^4.1.0",
     "prettier": "3.2.5",
     "ts-jest": "^29.1.2",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   }
 }
