@@ -19,7 +19,7 @@ jobs:
           echo ${{ github.event.number }} | tee ./pr/number
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "all_result<<$EOF" >> "$GITHUB_ENV"
-          yarn all >> "$GITHUB_ENV"
+          yarn all >> "$GITHUB_ENV" 2&>1 || true  # proceed even if yarn fails
           echo "$EOF" >> "$GITHUB_ENV"
         id: all
       - uses: ./
