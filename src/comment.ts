@@ -16,7 +16,7 @@ function headerComment(header: String): string {
 }
 
 function bodyWithHeader(body: string, header: string): string {
-  return `${body}\n${headerComment(header)}`
+  return `${headerComment(header)}\n{body}`
 }
 
 export async function findPreviousComment(
