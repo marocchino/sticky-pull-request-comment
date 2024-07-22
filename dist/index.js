@@ -53,6 +53,9 @@ function headerComment(header) {
 function bodyWithHeader(body, header) {
     return `${body}\n${headerComment(header)}`;
 }
+function bodyWithoutHeader(body, header) {
+    return body.replace(`\n${headerComment(header)}`, "");
+}
 function findPreviousComment(octokit, repo, number, header) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
@@ -107,6 +110,9 @@ function updateComment(octokit, id, body, header, previousBody) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!body && !previousBody)
             return core.warning("Comment body cannot be blank");
+        const rawPreviousBody = previousBody
+            ? bodyWithoutHeader(previousBody, header)
+            : "";
         yield octokit.graphql(`
     mutation($input: UpdateIssueCommentInput!) {
       updateIssueComment(input: $input) {
@@ -120,7 +126,7 @@ function updateComment(octokit, id, body, header, previousBody) {
             input: {
                 id,
                 body: previousBody
-                    ? `${previousBody}\n${body}`
+                    ? bodyWithHeader(`${rawPreviousBody}\n${body}`, header)
                     : bodyWithHeader(body, header)
             }
         });
