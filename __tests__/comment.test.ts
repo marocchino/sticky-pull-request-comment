@@ -142,7 +142,7 @@ describe("updateComment", () => {
     expect(octokit.graphql).toBeCalledWith(expect.any(String), {
       input: {
         id: "456",
-        body: "hello there\n<!-- Sticky Pull Request CommentTypeA -->\nhello there"
+        body: "hello there\nhello there\n<!-- Sticky Pull Request CommentTypeA -->"
       }
     })
   })

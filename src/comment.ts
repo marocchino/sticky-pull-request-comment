@@ -20,7 +20,7 @@ function bodyWithHeader(body: string, header: string): string {
 }
 
 function bodyWithoutHeader(body: string, header: string): string {
-  return body.replace(`\n${headerComment(header)}`, "");
+  return body.replace(`\n${headerComment(header)}`, "")
 }
 
 export async function findPreviousComment(
@@ -92,8 +92,9 @@ export async function updateComment(
   if (!body && !previousBody)
     return core.warning("Comment body cannot be blank")
 
-  if (previousBody)
-    let rawPreviousBody = bodyWithoutHeader(previousBody, header)
+  const rawPreviousBody: String = previousBody
+    ? bodyWithoutHeader(previousBody, header)
+    : ""
 
   await octokit.graphql(
     `
