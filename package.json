@@ -32,7 +32,7 @@
     "@octokit/graphql-schema": "^14.52.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.11",
+    "@types/jest": "^29.5.13",
     "@types/node": "^20.14.11",
     "@typescript-eslint/parser": "^7.17.0",
     "@vercel/ncc": "^0.38.1",
