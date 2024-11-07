@@ -39,15 +39,17 @@ test:
   - name: Run Test
     run: |
       EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-      echo "test_result<<$EOF" >> "$GITHUB_ENV"
-      rake test >> "$GITHUB_ENV"
-      echo "$EOF" >> "$GITHUB_ENV"
+      {
+        echo "TEST_RESULT<<$EOF"
+        rake test
+        echo "$EOF"
+      } >> "$GITHUB_ENV"
   - uses: marocchino/sticky-pull-request-comment@v2
     with:
       header: test
       message: |
         ```
-        ${{ env.test_result }}
+        ${{ env.TEST_RESULT }}
         ```
 ````
 
@@ -59,16 +61,18 @@ test:
   - name: Run Test
     run: |
       EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-      echo "test_result<<$EOF" >> "$GITHUB_ENV"
-      rake test >> "$GITHUB_ENV"
-      echo "$EOF" >> "$GITHUB_ENV"
+      {
+        echo "TEST_RESULT<<$EOF"
+        rake test
+        echo "$EOF"
+      } >> "$GITHUB_ENV"
   - uses: marocchino/sticky-pull-request-comment@v2
     with:
       append: true
       message: |
         Test with ${{ github.sha }}.
         ```
-        ${{ env.test_result }}
+        ${{ env.TEST_RESULT }}
         ```
 ````
 
