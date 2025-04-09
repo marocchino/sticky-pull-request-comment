@@ -2,7 +2,7 @@ import {readFileSync} from "node:fs"
 import * as core from "@actions/core"
 import {context} from "@actions/github"
 import {create} from "@actions/glob"
-import type {ReportedContentClassifiers} from "@octokit/graphql-schema/schema.d"
+import type {ReportedContentClassifiers} from "@octokit/graphql-schema"
 
 export const pullRequestNumber =
   context?.payload?.pull_request?.number || +core.getInput("number", {required: false})

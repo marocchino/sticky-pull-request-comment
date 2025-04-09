@@ -5,7 +5,7 @@ import type {
   ReportedContentClassifiers,
   Repository,
   User
-} from "@octokit/graphql-schema/schema.d"
+} from "@octokit/graphql-schema"
 
 type CreateCommentResponse = Awaited<
   ReturnType<InstanceType<typeof GitHub>["rest"]["issues"]["createComment"]>
