@@ -90,12 +90,8 @@ it("findPreviousComment", async () => {
   } as any)
 
   expect(await findPreviousComment(octokit, repo, 123, "")).toBe(comment)
-  expect(await findPreviousComment(octokit, repo, 123, "TypeA")).toBe(
-    commentWithCustomHeader
-  )
-  expect(await findPreviousComment(octokit, repo, 123, "LegacyComment")).toBe(
-    headerFirstComment
-  )
+  expect(await findPreviousComment(octokit, repo, 123, "TypeA")).toBe(commentWithCustomHeader)
+  expect(await findPreviousComment(octokit, repo, 123, "LegacyComment")).toBe(headerFirstComment)
   expect(octokit.graphql).toBeCalledWith(expect.any(String), {
     after: null,
     number: 123,
@@ -112,18 +108,14 @@ describe("updateComment", () => {
   })
 
   it("with comment body", async () => {
-    expect(
-      await updateComment(octokit, "456", "hello there", "")
-    ).toBeUndefined()
+    expect(await updateComment(octokit, "456", "hello there", "")).toBeUndefined()
     expect(octokit.graphql).toBeCalledWith(expect.any(String), {
       input: {
         id: "456",
         body: "hello there\n<!-- Sticky Pull Request Comment -->"
       }
     })
-    expect(
-      await updateComment(octokit, "456", "hello there", "TypeA")
-    ).toBeUndefined()
+    expect(await updateComment(octokit, "456", "hello there", "TypeA")).toBeUndefined()
     expect(octokit.graphql).toBeCalledWith(expect.any(String), {
       input: {
         id: "456",
@@ -164,18 +156,16 @@ describe("createComment", () => {
   })
 
   it("with comment body or previousBody", async () => {
-    expect(await createComment(octokit, repo, 456, "hello there", "")).toEqual(
-      "<return value>"
-    )
+    expect(await createComment(octokit, repo, 456, "hello there", "")).toEqual("<return value>")
     expect(octokit.rest.issues.createComment).toBeCalledWith({
       issue_number: 456,
       owner: "marocchino",
       repo: "sticky-pull-request-comment",
       body: "hello there\n<!-- Sticky Pull Request Comment -->"
     })
-    expect(
-      await createComment(octokit, repo, 456, "hello there", "TypeA")
-    ).toEqual("<return value>")
+    expect(await createComment(octokit, repo, 456, "hello there", "TypeA")).toEqual(
+      "<return value>"
+    )
     expect(octokit.rest.issues.createComment).toBeCalledWith({
       issue_number: 456,
       owner: "marocchino",

@@ -250,9 +250,7 @@ describe("path", () => {
       ignoreEmpty: false,
       skipUnchanged: false
     })
-    expect(await require("../src/config").getBody()).toEqual(
-      "hi there\n\nhey there\n"
-    )
+    expect(await require("../src/config").getBody()).toEqual("hi there\n\nhey there\n")
   })
 
   test("when not exists return null string", async () => {
