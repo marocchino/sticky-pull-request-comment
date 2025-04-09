@@ -43,3 +43,7 @@ jobs:
           hide_details: true
           message: |
             The build is over.
+      - name: Lint
+        run: npm run lint
+      - name: Format Check
+        run: npm run format-check

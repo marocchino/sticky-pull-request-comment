@@ -1,17 +1,17 @@
 import * as core from "@actions/core"
-import {
+import type {GitHub} from "@actions/github/lib/utils"
+import type {
   IssueComment,
   ReportedContentClassifiers,
   Repository,
   User
 } from "@octokit/graphql-schema/schema.d"
-import {GitHub} from "@actions/github/lib/utils"
 
 type CreateCommentResponse = Awaited<
   ReturnType<InstanceType<typeof GitHub>["rest"]["issues"]["createComment"]>
 >
 
-function headerComment(header: String): string {
+function headerComment(header: string): string {
   return `<!-- Sticky Pull Request Comment${header} -->`
 }
 
@@ -76,8 +76,7 @@ export async function findPreviousComment(
       return target
     }
     after = repository.pullRequest?.comments?.pageInfo?.endCursor
-    hasNextPage =
-      repository.pullRequest?.comments?.pageInfo?.hasNextPage ?? false
+    hasNextPage = repository.pullRequest?.comments?.pageInfo?.hasNextPage ?? false
   }
   return undefined
 }
@@ -89,12 +88,9 @@ export async function updateComment(
   header: string,
   previousBody?: string
 ): Promise<void> {
-  if (!body && !previousBody)
-    return core.warning("Comment body cannot be blank")
+  if (!body && !previousBody) return core.warning("Comment body cannot be blank")
 
-  const rawPreviousBody: String = previousBody
-    ? bodyWithoutHeader(previousBody, header)
-    : ""
+  const rawPreviousBody: string = previousBody ? bodyWithoutHeader(previousBody, header) : ""
 
   await octokit.graphql(
     `
@@ -136,9 +132,7 @@ export async function createComment(
   return await octokit.rest.issues.createComment({
     ...repo,
     issue_number,
-    body: previousBody
-      ? `${previousBody}\n${body}`
-      : bodyWithHeader(body, header)
+    body: previousBody ? `${previousBody}\n${body}` : bodyWithHeader(body, header)
   })
 }
 export async function deleteComment(
@@ -189,11 +183,7 @@ export function getBodyOf(
   return previous.body.replace(/(<details.*?)\s*\bopen\b(.*>)/g, "$1$2")
 }
 
-export function commentsEqual(
-  body: string,
-  previous: string | undefined,
-  header: string
-): boolean {
+export function commentsEqual(body: string, previous: string | undefined, header: string): boolean {
   const newBody = bodyWithHeader(body, header)
   return newBody === previous
 }

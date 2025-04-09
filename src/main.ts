@@ -1,35 +1,35 @@
 import * as core from "@actions/core"
 import * as github from "@actions/github"
 import {
+  commentsEqual,
+  createComment,
+  deleteComment,
+  findPreviousComment,
+  getBodyOf,
+  minimizeComment,
+  updateComment
+} from "./comment"
+import {
   append,
-  getBody,
   deleteOldComment,
+  getBody,
   githubToken,
   header,
   hideAndRecreate,
   hideClassify,
   hideDetails,
   hideOldComment,
+  ignoreEmpty,
+  onlyCreateComment,
+  onlyUpdateComment,
   pullRequestNumber,
   recreate,
   repo,
-  ignoreEmpty,
-  skipUnchanged,
-  onlyCreateComment,
-  onlyUpdateComment
+  skipUnchanged
 } from "./config"
-import {
-  createComment,
-  deleteComment,
-  findPreviousComment,
-  getBodyOf,
-  minimizeComment,
-  updateComment,
-  commentsEqual
-} from "./comment"
 
 async function run(): Promise<undefined> {
-  if (isNaN(pullRequestNumber) || pullRequestNumber < 1) {
+  if (Number.isNaN(pullRequestNumber) || pullRequestNumber < 1) {
     core.info("no pull request numbers given: skip step")
     return
   }
@@ -59,12 +59,7 @@ async function run(): Promise<undefined> {
     }
 
     const octokit = github.getOctokit(githubToken)
-    const previous = await findPreviousComment(
-      octokit,
-      repo,
-      pullRequestNumber,
-      header
-    )
+    const previous = await findPreviousComment(octokit, repo, pullRequestNumber, header)
 
     core.setOutput("previous_comment_id", previous?.id)
 
@@ -79,13 +74,7 @@ async function run(): Promise<undefined> {
       if (onlyUpdateComment) {
         return
       }
-      const created = await createComment(
-        octokit,
-        repo,
-        pullRequestNumber,
-        body,
-        header
-      )
+      const created = await createComment(octokit, repo, pullRequestNumber, body, header)
       core.setOutput("created_comment_id", created?.data.id)
       return
     }
@@ -106,11 +95,7 @@ async function run(): Promise<undefined> {
       return
     }
 
-    const previousBody = getBodyOf(
-      {body: previous.body || ""},
-      append,
-      hideDetails
-    )
+    const previousBody = getBodyOf({body: previous.body || ""}, append, hideDetails)
     if (recreate) {
       await deleteComment(octokit, previous.id)
       const created = await createComment(
@@ -127,13 +112,7 @@ async function run(): Promise<undefined> {
 
     if (hideAndRecreate) {
       await minimizeComment(octokit, previous.id, hideClassify)
-      const created = await createComment(
-        octokit,
-        repo,
-        pullRequestNumber,
-        body,
-        header
-      )
+      const created = await createComment(octokit, repo, pullRequestNumber, body, header)
       core.setOutput("created_comment_id", created?.data.id)
       return
     }

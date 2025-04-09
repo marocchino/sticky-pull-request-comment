@@ -1,12 +1,11 @@
+import {readFileSync} from "node:fs"
 import * as core from "@actions/core"
-import {ReportedContentClassifiers} from "@octokit/graphql-schema/schema.d"
 import {context} from "@actions/github"
-import {readFileSync} from "fs"
 import {create} from "@actions/glob"
+import type {ReportedContentClassifiers} from "@octokit/graphql-schema/schema.d"
 
 export const pullRequestNumber =
-  context?.payload?.pull_request?.number ||
-  +core.getInput("number", {required: false})
+  context?.payload?.pull_request?.number || +core.getInput("number", {required: false})
 
 export const repo = buildRepo()
 export const header = core.getInput("header", {required: false})
@@ -55,9 +54,7 @@ export async function getBody(): Promise<string> {
         followSymbolicLinks,
         matchDirectories: false
       })
-      return (await globber.glob())
-        .map(path => readFileSync(path, "utf-8"))
-        .join("\n")
+      return (await globber.glob()).map(path => readFileSync(path, "utf-8")).join("\n")
     } catch (error) {
       if (error instanceof Error) {
         core.setFailed(error.message)
