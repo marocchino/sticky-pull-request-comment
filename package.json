@@ -29,7 +29,7 @@
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
     "@actions/glob": "^0.5.0",
-    "@octokit/graphql-schema": "^14.52.0"
+    "@octokit/graphql-schema": "^15.26.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

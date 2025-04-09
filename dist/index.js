@@ -176,14 +176,13 @@ function minimizeComment(octokit, subjectId, classifier) {
     });
 }
 function getBodyOf(previous, append, hideDetails) {
-    var _a;
     if (!append) {
         return undefined;
     }
-    if (!hideDetails) {
+    if (!hideDetails || !previous.body) {
         return previous.body;
     }
-    return (_a = previous.body) === null || _a === void 0 ? void 0 : _a.replace(/(<details.*?)\s*\bopen\b(.*>)/g, "$1$2");
+    return previous.body.replace(/(<details.*?)\s*\bopen\b(.*>)/g, "$1$2");
 }
 function commentsEqual(body, previous, header) {
     const newBody = bodyWithHeader(body, header);
@@ -418,11 +417,11 @@ function run() {
                 yield (0, comment_1.minimizeComment)(octokit, previous.id, config_1.hideClassify);
                 return;
             }
-            if (config_1.skipUnchanged && (0, comment_1.commentsEqual)(body, previous.body, config_1.header)) {
+            if (config_1.skipUnchanged && (0, comment_1.commentsEqual)(body, previous.body || "", config_1.header)) {
                 // don't recreate or update if the message is unchanged
                 return;
             }
-            const previousBody = (0, comment_1.getBodyOf)(previous, config_1.append, config_1.hideDetails);
+            const previousBody = (0, comment_1.getBodyOf)({ body: previous.body || "" }, config_1.append, config_1.hideDetails);
             if (config_1.recreate) {
                 yield (0, comment_1.deleteComment)(octokit, previous.id);
                 const created = yield (0, comment_1.createComment)(octokit, config_1.repo, config_1.pullRequestNumber, body, config_1.header, previousBody);

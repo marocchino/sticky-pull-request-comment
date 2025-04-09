@@ -1,5 +1,5 @@
 import * as core from "@actions/core"
-import {ReportedContentClassifiers} from "@octokit/graphql-schema"
+import {ReportedContentClassifiers} from "@octokit/graphql-schema/schema.d"
 import {context} from "@actions/github"
 import {readFileSync} from "fs"
 import {create} from "@actions/glob"

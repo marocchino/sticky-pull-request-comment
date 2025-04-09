@@ -4,7 +4,7 @@ import {
   ReportedContentClassifiers,
   Repository,
   User
-} from "@octokit/graphql-schema"
+} from "@octokit/graphql-schema/schema.d"
 import {GitHub} from "@actions/github/lib/utils"
 
 type CreateCommentResponse = Awaited<
@@ -174,7 +174,7 @@ export async function minimizeComment(
 }
 
 export function getBodyOf(
-  previous: {body: string},
+  previous: {body?: string},
   append: boolean,
   hideDetails: boolean
 ): string | undefined {
@@ -182,16 +182,16 @@ export function getBodyOf(
     return undefined
   }
 
-  if (!hideDetails) {
+  if (!hideDetails || !previous.body) {
     return previous.body
   }
 
-  return previous.body?.replace(/(<details.*?)\s*\bopen\b(.*>)/g, "$1$2")
+  return previous.body.replace(/(<details.*?)\s*\bopen\b(.*>)/g, "$1$2")
 }
 
 export function commentsEqual(
   body: string,
-  previous: string,
+  previous: string | undefined,
   header: string
 ): boolean {
   const newBody = bodyWithHeader(body, header)

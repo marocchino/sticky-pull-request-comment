@@ -101,12 +101,16 @@ async function run(): Promise<undefined> {
       return
     }
 
-    if (skipUnchanged && commentsEqual(body, previous.body, header)) {
+    if (skipUnchanged && commentsEqual(body, previous.body || "", header)) {
       // don't recreate or update if the message is unchanged
       return
     }
 
-    const previousBody = getBodyOf(previous, append, hideDetails)
+    const previousBody = getBodyOf(
+      {body: previous.body || ""},
+      append,
+      hideDetails
+    )
     if (recreate) {
       await deleteComment(octokit, previous.id)
       const created = await createComment(
