@@ -16,10 +16,9 @@ jobs:
       - run: |
           set -o pipefail
           mkdir -p ./pr
-          echo ${{ github.event.number }} | tee ./pr/number
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "all_result<<$EOF" >> "$GITHUB_ENV"
-          yarn all >> "$GITHUB_ENV" 2&>1 || true  # proceed even if yarn fails
+          yarn all >> "$GITHUB_ENV" 2>&1 || true  # proceed even if yarn fails
           echo >> "$GITHUB_ENV"  # yarn all doesn't necessarily produce a newline
           echo "$EOF" >> "$GITHUB_ENV"
         id: all
@@ -29,9 +28,9 @@ jobs:
           header: All
           message: |
             <details open>
-            <summary>output of yarn all</summary>
+            <summary>Output of yarn all</summary>
 
-            ```
+            ```shell
             ${{ env.all_result }}
             ```
             </details>

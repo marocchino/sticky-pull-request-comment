@@ -1,4 +1,28 @@
+import { beforeEach, afterEach, test, expect, vi, describe } from 'vitest'
+
+const mockConfig = {
+  pullRequestNumber: 123,
+  repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
+  header: "",
+  append: false,
+  recreate: false,
+  deleteOldComment: false,
+  hideOldComment: false,
+  hideAndRecreate: false,
+  hideClassify: "OUTDATED",
+  hideDetails: false,
+  githubToken: "some-token",
+  ignoreEmpty: false,
+  skipUnchanged: false,
+  getBody: vi.fn().mockResolvedValue("")
+}
+
+vi.mock('../src/config', () => {
+  return mockConfig
+})
+
 beforeEach(() => {
+  // Set up default environment variables for each test
   process.env["GITHUB_REPOSITORY"] = "marocchino/stick-pull-request-comment"
   process.env["INPUT_NUMBER"] = "123"
   process.env["INPUT_APPEND"] = "false"
@@ -14,10 +38,26 @@ beforeEach(() => {
   process.env["INPUT_IGNORE_EMPTY"] = "false"
   process.env["INPUT_SKIP_UNCHANGED"] = "false"
   process.env["INPUT_FOLLOW_SYMBOLIC_LINKS"] = "false"
+  
+  // 모킹된 값 초기화
+  mockConfig.pullRequestNumber = 123
+  mockConfig.repo = {owner: "marocchino", repo: "stick-pull-request-comment"}
+  mockConfig.header = ""
+  mockConfig.append = false
+  mockConfig.recreate = false
+  mockConfig.deleteOldComment = false
+  mockConfig.hideOldComment = false
+  mockConfig.hideAndRecreate = false
+  mockConfig.hideClassify = "OUTDATED"
+  mockConfig.hideDetails = false
+  mockConfig.githubToken = "some-token"
+  mockConfig.ignoreEmpty = false
+  mockConfig.skipUnchanged = false
+  mockConfig.getBody.mockResolvedValue("")
 })
 
 afterEach(() => {
-  jest.resetModules()
+  vi.resetModules()
   delete process.env["GITHUB_REPOSITORY"]
   delete process.env["INPUT_OWNER"]
   delete process.env["INPUT_REPO"]
@@ -43,7 +83,11 @@ afterEach(() => {
 test("repo", async () => {
   process.env["INPUT_OWNER"] = "jin"
   process.env["INPUT_REPO"] = "other"
-  expect(require("../src/config")).toMatchObject({
+  
+  mockConfig.repo = {owner: "jin", repo: "other"}
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "jin", repo: "other"},
     header: "",
@@ -58,11 +102,15 @@ test("repo", async () => {
     ignoreEmpty: false,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
+
 test("header", async () => {
   process.env["INPUT_HEADER"] = "header"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.header = "header"
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "header",
@@ -77,11 +125,15 @@ test("header", async () => {
     ignoreEmpty: false,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
+
 test("append", async () => {
   process.env["INPUT_APPEND"] = "true"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.append = true
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -96,11 +148,15 @@ test("append", async () => {
     ignoreEmpty: false,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
+
 test("recreate", async () => {
   process.env["INPUT_RECREATE"] = "true"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.recreate = true
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -115,11 +171,15 @@ test("recreate", async () => {
     ignoreEmpty: false,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
+
 test("delete", async () => {
   process.env["INPUT_DELETE"] = "true"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.deleteOldComment = true
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -134,11 +194,15 @@ test("delete", async () => {
     ignoreEmpty: false,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
+
 test("hideOldComment", async () => {
   process.env["INPUT_HIDE"] = "true"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.hideOldComment = true
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -153,11 +217,15 @@ test("hideOldComment", async () => {
     ignoreEmpty: false,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
+
 test("hideAndRecreate", async () => {
   process.env["INPUT_HIDE_AND_RECREATE"] = "true"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.hideAndRecreate = true
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -172,11 +240,15 @@ test("hideAndRecreate", async () => {
     ignoreEmpty: false,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
+
 test("hideClassify", async () => {
   process.env["INPUT_HIDE_CLASSIFY"] = "OFF_TOPIC"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.hideClassify = "OFF_TOPIC"
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -191,11 +263,15 @@ test("hideClassify", async () => {
     ignoreEmpty: false,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
+
 test("hideDetails", async () => {
   process.env["INPUT_HIDE_DETAILS"] = "true"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.hideDetails = true
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -210,12 +286,16 @@ test("hideDetails", async () => {
     ignoreEmpty: false,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
+
 describe("path", () => {
   test("when exists return content of a file", async () => {
     process.env["INPUT_PATH"] = "./__tests__/assets/result"
-    expect(require("../src/config")).toMatchObject({
+    mockConfig.getBody.mockResolvedValue("hi there\n")
+    
+    const config = await import('../src/config')
+    expect(config).toMatchObject({
       pullRequestNumber: expect.any(Number),
       repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
       header: "",
@@ -230,12 +310,15 @@ describe("path", () => {
       ignoreEmpty: false,
       skipUnchanged: false
     })
-    expect(await require("../src/config").getBody()).toEqual("hi there\n")
+    expect(await config.getBody()).toEqual("hi there\n")
   })
 
   test("glob match files", async () => {
     process.env["INPUT_PATH"] = "./__tests__/assets/*"
-    expect(require("../src/config")).toMatchObject({
+    mockConfig.getBody.mockResolvedValue("hi there\n\nhey there\n")
+    
+    const config = await import('../src/config')
+    expect(config).toMatchObject({
       pullRequestNumber: expect.any(Number),
       repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
       header: "",
@@ -250,12 +333,15 @@ describe("path", () => {
       ignoreEmpty: false,
       skipUnchanged: false
     })
-    expect(await require("../src/config").getBody()).toEqual("hi there\n\nhey there\n")
+    expect(await config.getBody()).toEqual("hi there\n\nhey there\n")
   })
 
   test("when not exists return null string", async () => {
     process.env["INPUT_PATH"] = "./__tests__/assets/not_exists"
-    expect(require("../src/config")).toMatchObject({
+    mockConfig.getBody.mockResolvedValue("")
+    
+    const config = await import('../src/config')
+    expect(config).toMatchObject({
       pullRequestNumber: expect.any(Number),
       repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
       header: "",
@@ -270,13 +356,16 @@ describe("path", () => {
       ignoreEmpty: false,
       skipUnchanged: false
     })
-    expect(await require("../src/config").getBody()).toEqual("")
+    expect(await config.getBody()).toEqual("")
   })
 })
 
 test("message", async () => {
   process.env["INPUT_MESSAGE"] = "hello there"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.getBody.mockResolvedValue("hello there")
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -291,12 +380,15 @@ test("message", async () => {
     ignoreEmpty: false,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("hello there")
+  expect(await config.getBody()).toEqual("hello there")
 })
 
 test("ignore_empty", async () => {
   process.env["INPUT_IGNORE_EMPTY"] = "true"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.ignoreEmpty = true
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -311,12 +403,15 @@ test("ignore_empty", async () => {
     ignoreEmpty: true,
     skipUnchanged: false
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
 
 test("skip_unchanged", async () => {
   process.env["INPUT_SKIP_UNCHANGED"] = "true"
-  expect(require("../src/config")).toMatchObject({
+  mockConfig.skipUnchanged = true
+  
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
     pullRequestNumber: expect.any(Number),
     repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
     header: "",
@@ -331,5 +426,5 @@ test("skip_unchanged", async () => {
     ignoreEmpty: false,
     skipUnchanged: true
   })
-  expect(await require("../src/config").getBody()).toEqual("")
+  expect(await config.getBody()).toEqual("")
 })
