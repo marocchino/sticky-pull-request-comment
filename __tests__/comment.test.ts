@@ -1,5 +1,6 @@
 import {getOctokit} from "@actions/github"
 import * as core from "@actions/core"
+import { vi, describe, it, expect, beforeEach } from 'vitest'
 
 import {
   createComment,
@@ -11,8 +12,8 @@ import {
   commentsEqual
 } from "../src/comment"
 
-jest.mock("@actions/core", () => ({
-  warning: jest.fn()
+vi.mock("@actions/core", () => ({
+  warning: vi.fn()
 }))
 
 const repo = {
@@ -68,7 +69,7 @@ it("findPreviousComment", async () => {
     }
   ]
   const octokit = getOctokit("github-token")
-  jest.spyOn(octokit, "graphql").mockResolvedValue({
+  vi.spyOn(octokit, "graphql").mockResolvedValue({
     viewer: authenticatedBotUser,
     repository: {
       pullRequest: {
@@ -104,7 +105,7 @@ describe("updateComment", () => {
   const octokit = getOctokit("github-token")
 
   beforeEach(() => {
-    jest.spyOn<any, string>(octokit, "graphql").mockResolvedValue("")
+    vi.spyOn(octokit, "graphql").mockResolvedValue("")
   })
 
   it("with comment body", async () => {
@@ -150,13 +151,12 @@ describe("createComment", () => {
   const octokit = getOctokit("github-token")
 
   beforeEach(() => {
-    jest
-      .spyOn<any, string>(octokit.rest.issues, "createComment")
-      .mockResolvedValue("<return value>")
+    vi.spyOn(octokit.rest.issues, "createComment")
+      .mockResolvedValue({ data: "<return value>" } as any)
   })
 
   it("with comment body or previousBody", async () => {
-    expect(await createComment(octokit, repo, 456, "hello there", "")).toEqual("<return value>")
+    expect(await createComment(octokit, repo, 456, "hello there", "")).toEqual({ data: "<return value>" })
     expect(octokit.rest.issues.createComment).toBeCalledWith({
       issue_number: 456,
       owner: "marocchino",
@@ -164,7 +164,7 @@ describe("createComment", () => {
       body: "hello there\n<!-- Sticky Pull Request Comment -->"
     })
     expect(await createComment(octokit, repo, 456, "hello there", "TypeA")).toEqual(
-      "<return value>"
+      { data: "<return value>" }
     )
     expect(octokit.rest.issues.createComment).toBeCalledWith({
       issue_number: 456,
@@ -183,7 +183,7 @@ describe("createComment", () => {
 it("deleteComment", async () => {
   const octokit = getOctokit("github-token")
 
-  jest.spyOn(octokit, "graphql").mockReturnValue(undefined as any)
+  vi.spyOn(octokit, "graphql").mockReturnValue(undefined as any)
   expect(await deleteComment(octokit, "456")).toBeUndefined()
   expect(octokit.graphql).toBeCalledWith(expect.any(String), {
     id: "456"
@@ -193,7 +193,7 @@ it("deleteComment", async () => {
 it("minimizeComment", async () => {
   const octokit = getOctokit("github-token")
 
-  jest.spyOn(octokit, "graphql").mockReturnValue(undefined as any)
+  vi.spyOn(octokit, "graphql").mockReturnValue(undefined as any)
   expect(await minimizeComment(octokit, "456", "OUTDATED")).toBeUndefined()
   expect(octokit.graphql).toBeCalledWith(expect.any(String), {
     input: {
@@ -226,7 +226,7 @@ describe("getBodyOf", () => {
     </details>
     <!-- Sticky Pull Request CommentTypeA -->
   `
-  test.each`
+  it.each`
     append   | hideDetails | previous           | expected
     ${false} | ${false}    | ${detailsPrevious} | ${undefined}
     ${true}  | ${false}    | ${nullPrevious}    | ${undefined}
@@ -243,7 +243,7 @@ describe("getBodyOf", () => {
 })
 
 describe("commentsEqual", () => {
-  test.each([
+  it.each([
     {
       body: "body",
       previous: "body\n<!-- Sticky Pull Request Commentheader -->",
