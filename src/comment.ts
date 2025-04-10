@@ -4,7 +4,7 @@ import type {
   IssueComment,
   ReportedContentClassifiers,
   Repository,
-  User
+  User,
 } from "@octokit/graphql-schema"
 
 type CreateCommentResponse = Awaited<
@@ -30,7 +30,7 @@ export async function findPreviousComment(
     repo: string
   },
   number: number,
-  header: string
+  header: string,
 ): Promise<IssueComment | undefined> {
   let after = null
   let hasNextPage = true
@@ -60,7 +60,7 @@ export async function findPreviousComment(
         }
       }
       `,
-      {...repo, after, number}
+      {...repo, after, number},
     )
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const viewer = data.viewer as User
@@ -70,7 +70,7 @@ export async function findPreviousComment(
       (node: IssueComment | null | undefined) =>
         node?.author?.login === viewer.login.replace("[bot]", "") &&
         !node?.isMinimized &&
-        node?.body?.includes(h)
+        node?.body?.includes(h),
     )
     if (target) {
       return target
@@ -86,7 +86,7 @@ export async function updateComment(
   id: string,
   body: string,
   header: string,
-  previousBody?: string
+  previousBody?: string,
 ): Promise<void> {
   if (!body && !previousBody) return core.warning("Comment body cannot be blank")
 
@@ -108,9 +108,9 @@ export async function updateComment(
         id,
         body: previousBody
           ? bodyWithHeader(`${rawPreviousBody}\n${body}`, header)
-          : bodyWithHeader(body, header)
-      }
-    }
+          : bodyWithHeader(body, header),
+      },
+    },
   )
 }
 export async function createComment(
@@ -122,7 +122,7 @@ export async function createComment(
   issue_number: number,
   body: string,
   header: string,
-  previousBody?: string
+  previousBody?: string,
 ): Promise<CreateCommentResponse | undefined> {
   if (!body && !previousBody) {
     core.warning("Comment body cannot be blank")
@@ -132,12 +132,12 @@ export async function createComment(
   return await octokit.rest.issues.createComment({
     ...repo,
     issue_number,
-    body: previousBody ? `${previousBody}\n${body}` : bodyWithHeader(body, header)
+    body: previousBody ? `${previousBody}\n${body}` : bodyWithHeader(body, header),
   })
 }
 export async function deleteComment(
   octokit: InstanceType<typeof GitHub>,
-  id: string
+  id: string,
 ): Promise<void> {
   await octokit.graphql(
     `
@@ -147,13 +147,13 @@ export async function deleteComment(
       }
     }
     `,
-    {id}
+    {id},
   )
 }
 export async function minimizeComment(
   octokit: InstanceType<typeof GitHub>,
   subjectId: string,
-  classifier: ReportedContentClassifiers
+  classifier: ReportedContentClassifiers,
 ): Promise<void> {
   await octokit.graphql(
     `
@@ -163,14 +163,14 @@ export async function minimizeComment(
       }
     }
     `,
-    {input: {subjectId, classifier}}
+    {input: {subjectId, classifier}},
   )
 }
 
 export function getBodyOf(
   previous: {body?: string},
   append: boolean,
-  hideDetails: boolean
+  hideDetails: boolean,
 ): string | undefined {
   if (!append) {
     return undefined

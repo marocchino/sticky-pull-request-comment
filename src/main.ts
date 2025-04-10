@@ -7,7 +7,7 @@ import {
   findPreviousComment,
   getBodyOf,
   minimizeComment,
-  updateComment
+  updateComment,
 } from "./comment"
 import {
   append,
@@ -25,7 +25,7 @@ import {
   pullRequestNumber,
   recreate,
   repo,
-  skipUnchanged
+  skipUnchanged,
 } from "./config"
 
 async function run(): Promise<undefined> {
@@ -104,7 +104,7 @@ async function run(): Promise<undefined> {
         pullRequestNumber,
         body,
         header,
-        previousBody
+        previousBody,
       )
       core.setOutput("created_comment_id", created?.data.id)
       return

@@ -118,8 +118,8 @@ async function updateComment(octokit, id, body, header, previousBody) {
             id,
             body: previousBody
                 ? bodyWithHeader(`${rawPreviousBody}\n${body}`, header)
-                : bodyWithHeader(body, header)
-        }
+                : bodyWithHeader(body, header),
+        },
     });
 }
 async function createComment(octokit, repo, issue_number, body, header, previousBody) {
@@ -130,7 +130,7 @@ async function createComment(octokit, repo, issue_number, body, header, previous
     return await octokit.rest.issues.createComment({
         ...repo,
         issue_number,
-        body: previousBody ? `${previousBody}\n${body}` : bodyWithHeader(body, header)
+        body: previousBody ? `${previousBody}\n${body}` : bodyWithHeader(body, header),
     });
 }
 async function deleteComment(octokit, id) {
@@ -218,46 +218,46 @@ exports.repo = buildRepo();
 exports.header = core.getInput("header", { required: false });
 exports.append = core.getBooleanInput("append", { required: true });
 exports.hideDetails = core.getBooleanInput("hide_details", {
-    required: true
+    required: true,
 });
 exports.recreate = core.getBooleanInput("recreate", { required: true });
 exports.hideAndRecreate = core.getBooleanInput("hide_and_recreate", {
-    required: true
+    required: true,
 });
 exports.hideClassify = core.getInput("hide_classify", {
-    required: true
+    required: true,
 });
 exports.deleteOldComment = core.getBooleanInput("delete", { required: true });
 exports.onlyCreateComment = core.getBooleanInput("only_create", {
-    required: true
+    required: true,
 });
 exports.onlyUpdateComment = core.getBooleanInput("only_update", {
-    required: true
+    required: true,
 });
 exports.skipUnchanged = core.getBooleanInput("skip_unchanged", {
-    required: true
+    required: true,
 });
 exports.hideOldComment = core.getBooleanInput("hide", { required: true });
 exports.githubToken = core.getInput("GITHUB_TOKEN", { required: true });
 exports.ignoreEmpty = core.getBooleanInput("ignore_empty", {
-    required: true
+    required: true,
 });
 function buildRepo() {
     return {
         owner: core.getInput("owner", { required: false }) || github_1.context.repo.owner,
-        repo: core.getInput("repo", { required: false }) || github_1.context.repo.repo
+        repo: core.getInput("repo", { required: false }) || github_1.context.repo.repo,
     };
 }
 async function getBody() {
     const pathInput = core.getMultilineInput("path", { required: false });
     const followSymbolicLinks = core.getBooleanInput("follow_symbolic_links", {
-        required: true
+        required: true,
     });
     if (pathInput && pathInput.length > 0) {
         try {
             const globber = await (0, glob_1.create)(pathInput.join("\n"), {
                 followSymbolicLinks,
-                matchDirectories: false
+                matchDirectories: false,
             });
             return (await globber.glob()).map(path => (0, node_fs_1.readFileSync)(path, "utf-8")).join("\n");
         }

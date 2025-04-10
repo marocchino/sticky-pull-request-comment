@@ -6,14 +6,11 @@
   },
   "formatter": {
     "enabled": true,
-    "useEditorconfig": true,
     "formatWithErrors": false,
     "indentStyle": "space",
     "indentWidth": 2,
     "lineEnding": "lf",
     "lineWidth": 100,
-    "attributePosition": "auto",
-    "bracketSpacing": true,
     "ignore": ["**/dist/", "**/lib/", "**/node_modules/"]
   },
   "organizeImports": { "enabled": true },
@@ -92,12 +89,10 @@
     "formatter": {
       "jsxQuoteStyle": "double",
       "quoteProperties": "asNeeded",
-      "trailingCommas": "none",
       "semicolons": "asNeeded",
       "arrowParentheses": "asNeeded",
       "bracketSameLine": false,
       "quoteStyle": "double",
-      "attributePosition": "auto",
       "bracketSpacing": false
     },
     "globals": ["jest"]
