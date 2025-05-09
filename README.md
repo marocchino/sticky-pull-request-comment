@@ -7,7 +7,7 @@ This library runs with GitHub Actions. If you feel that the example grammar belo
 
 ### Basic
 
-You need to add permissions for this tool.
+You need to add permissions for this tool:
 
 ```yaml
 permissions:
