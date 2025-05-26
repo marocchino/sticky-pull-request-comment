@@ -1,430 +1,234 @@
-import { beforeEach, afterEach, test, expect, vi, describe } from 'vitest'
+import { beforeEach, test, expect, vi, describe } from 'vitest';
+// import * as core from '@actions/core'; // Not imported directly
+// import * as github from '@actions/github'; // Not imported directly
+import * as glob from '@actions/glob'; 
+import * as fs from 'node:fs';
 
-const mockConfig = {
-  pullRequestNumber: 123,
-  repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-  header: "",
-  append: false,
-  recreate: false,
-  deleteOldComment: false,
-  hideOldComment: false,
-  hideAndRecreate: false,
-  hideClassify: "OUTDATED",
-  hideDetails: false,
-  githubToken: "some-token",
-  ignoreEmpty: false,
-  skipUnchanged: false,
-  getBody: vi.fn().mockResolvedValue("")
-}
+// Mock dependencies at the top level
+vi.mock('@actions/core', () => ({
+  getInput: vi.fn(),
+  getBooleanInput: vi.fn(),
+  getMultilineInput: vi.fn(),
+  setFailed: vi.fn(),
+}));
 
-vi.mock('../src/config', () => {
-  return mockConfig
-})
+vi.mock('@actions/github', () => ({
+  context: {
+    repo: { owner: 'defaultOwner', repo: 'defaultRepo' },
+    payload: { pull_request: { number: 123 } },
+  },
+}));
 
-beforeEach(() => {
-  // Set up default environment variables for each test
-  process.env["GITHUB_REPOSITORY"] = "marocchino/stick-pull-request-comment"
-  process.env["INPUT_NUMBER"] = "123"
-  process.env["INPUT_APPEND"] = "false"
-  process.env["INPUT_RECREATE"] = "false"
-  process.env["INPUT_DELETE"] = "false"
-  process.env["INPUT_ONLY_CREATE"] = "false"
-  process.env["INPUT_ONLY_UPDATE"] = "false"
-  process.env["INPUT_HIDE"] = "false"
-  process.env["INPUT_HIDE_AND_RECREATE"] = "false"
-  process.env["INPUT_HIDE_CLASSIFY"] = "OUTDATED"
-  process.env["INPUT_HIDE_DETAILS"] = "false"
-  process.env["INPUT_GITHUB_TOKEN"] = "some-token"
-  process.env["INPUT_IGNORE_EMPTY"] = "false"
-  process.env["INPUT_SKIP_UNCHANGED"] = "false"
-  process.env["INPUT_FOLLOW_SYMBOLIC_LINKS"] = "false"
+vi.mock('node:fs', () => ({
+  readFileSync: vi.fn(),
+}));
+
+vi.mock('@actions/glob', async () => {
+  const actual = await vi.importActual<typeof glob>('@actions/glob');
+  return {
+    ...actual,
+    create: vi.fn().mockResolvedValue({
+      glob: vi.fn().mockResolvedValue([]),
+    }),
+  };
+});
+
+// These will hold the dynamically imported mocked modules for use in tests/setup
+let coreMock: typeof import('@actions/core');
+let githubMock: typeof import('@actions/github');
+
+beforeEach(async () => {
+  // Dynamically import the mocked modules to get their references for setup
+  coreMock = await import('@actions/core');
+  githubMock = await import('@actions/github'); 
+
+  vi.clearAllMocks(); // Clear mock call history before each test.
+
+  // Setup mock implementations for coreMock based on process.env
+  vi.mocked(coreMock.getInput).mockImplementation((name: string, options?: any) => {
+    const envVarName = `INPUT_${name.toUpperCase()}`;
+    const value = process.env[envVarName];
+    if (options?.required && (value === undefined || value === '')) { /* Simplified for tests */ }
+    return value || '';
+  });
+
+  vi.mocked(coreMock.getBooleanInput).mockImplementation((name: string, options?: any) => {
+    const envVarName = `INPUT_${name.toUpperCase()}`;
+    if (options?.required && process.env[envVarName] === undefined) { /* Simplified for tests */ }
+    return process.env[envVarName] === 'true';
+  });
+
+  vi.mocked(coreMock.getMultilineInput).mockImplementation((name: string, options?: any) => {
+    const envVarName = `INPUT_${name.toUpperCase()}`;
+    const value = process.env[envVarName];
+    if (options?.required && (value === undefined || value === '')) { /* Simplified for tests */ }
+    return value ? [value] : []; 
+  });
   
-  // 모킹된 값 초기화
-  mockConfig.pullRequestNumber = 123
-  mockConfig.repo = {owner: "marocchino", repo: "stick-pull-request-comment"}
-  mockConfig.header = ""
-  mockConfig.append = false
-  mockConfig.recreate = false
-  mockConfig.deleteOldComment = false
-  mockConfig.hideOldComment = false
-  mockConfig.hideAndRecreate = false
-  mockConfig.hideClassify = "OUTDATED"
-  mockConfig.hideDetails = false
-  mockConfig.githubToken = "some-token"
-  mockConfig.ignoreEmpty = false
-  mockConfig.skipUnchanged = false
-  mockConfig.getBody.mockResolvedValue("")
-})
-
-afterEach(() => {
-  vi.resetModules()
-  delete process.env["GITHUB_REPOSITORY"]
-  delete process.env["INPUT_OWNER"]
-  delete process.env["INPUT_REPO"]
-  delete process.env["INPUT_HEADER"]
-  delete process.env["INPUT_MESSAGE"]
-  delete process.env["INPUT_NUMBER"]
-  delete process.env["INPUT_APPEND"]
-  delete process.env["INPUT_RECREATE"]
-  delete process.env["INPUT_DELETE"]
-  delete process.env["INPUT_ONLY_CREATE"]
-  delete process.env["INPUT_ONLY_UPDATE"]
-  delete process.env["INPUT_HIDE"]
-  delete process.env["INPUT_HIDE_AND_RECREATE"]
-  delete process.env["INPUT_HIDE_CLASSIFY"]
-  delete process.env["INPUT_HIDE_DETAILS"]
-  delete process.env["INPUT_GITHUB_TOKEN"]
-  delete process.env["INPUT_PATH"]
-  delete process.env["INPUT_IGNORE_EMPTY"]
-  delete process.env["INPUT_SKIP_UNCHANGED"]
-  delete process.env["INPUT_FOLLOW_SYMBOLIC_LINKS"]
-})
-
-test("repo", async () => {
-  process.env["INPUT_OWNER"] = "jin"
-  process.env["INPUT_REPO"] = "other"
+  // Set default githubMock.context values. Tests can override if necessary.
+  githubMock.context.repo = { owner: 'defaultOwner', repo: 'defaultRepo' };
+  if (githubMock.context.payload.pull_request) {
+    githubMock.context.payload.pull_request.number = 123;
+  } else {
+    githubMock.context.payload.pull_request = { number: 123 };
+  }
   
-  mockConfig.repo = {owner: "jin", repo: "other"}
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "jin", repo: "other"},
-    header: "",
-    append: false,
-    recreate: false,
-    deleteOldComment: false,
-    hideOldComment: false,
-    hideAndRecreate: false,
-    hideClassify: "OUTDATED",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("")
-})
+  // Set up default environment variables for each test 
+  process.env["GITHUB_REPOSITORY"] = "marocchino/stick-pull-request-comment"; // Used by default context
+  process.env["INPUT_NUMBER"] = "123"; 
+  process.env["INPUT_APPEND"] = "false";
+  process.env["INPUT_RECREATE"] = "false";
+  process.env["INPUT_DELETE"] = "false";
+  process.env["INPUT_HIDE_CLASSIFY"] = "OUTDATED";
+  process.env["INPUT_GITHUB_TOKEN"] = "some-token";
+  // Clear specific env vars that control repo owner/name for repo constant tests
+  delete process.env["INPUT_OWNER"];
+  delete process.env["INPUT_REPO"];
+});
 
-test("header", async () => {
-  process.env["INPUT_HEADER"] = "header"
-  mockConfig.header = "header"
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "header",
-    append: false,
-    recreate: false,
-    deleteOldComment: false,
-    hideOldComment: false,
-    hideAndRecreate: false,
-    hideClassify: "OUTDATED",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("")
-})
+describe("Basic Configuration Properties", () => {
+  beforeEach(() => {
+    vi.resetModules(); 
+  });
 
-test("append", async () => {
-  process.env["INPUT_APPEND"] = "true"
-  mockConfig.append = true
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "",
-    append: true,
-    recreate: false,
-    deleteOldComment: false,
-    hideOldComment: false,
-    hideAndRecreate: false,
-    hideClassify: "OUTDATED",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("")
-})
+  test("loads various configuration properties correctly", async () => {
+    process.env["INPUT_HEADER"] = "Specific Header";
+    process.env["INPUT_APPEND"] = "true";
+    process.env["INPUT_RECREATE"] = "true";
+    process.env["INPUT_HIDE_CLASSIFY"] = "SPAM";
 
-test("recreate", async () => {
-  process.env["INPUT_RECREATE"] = "true"
-  mockConfig.recreate = true
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "",
-    append: false,
-    recreate: true,
-    deleteOldComment: false,
-    hideOldComment: false,
-    hideAndRecreate: false,
-    hideClassify: "OUTDATED",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("")
-})
-
-test("delete", async () => {
-  process.env["INPUT_DELETE"] = "true"
-  mockConfig.deleteOldComment = true
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "",
-    append: false,
-    recreate: false,
-    deleteOldComment: true,
-    hideOldComment: false,
-    hideAndRecreate: false,
-    hideClassify: "OUTDATED",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("")
-})
-
-test("hideOldComment", async () => {
-  process.env["INPUT_HIDE"] = "true"
-  mockConfig.hideOldComment = true
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "",
-    append: false,
-    recreate: false,
-    deleteOldComment: false,
-    hideOldComment: true,
-    hideAndRecreate: false,
-    hideClassify: "OUTDATED",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("")
-})
-
-test("hideAndRecreate", async () => {
-  process.env["INPUT_HIDE_AND_RECREATE"] = "true"
-  mockConfig.hideAndRecreate = true
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "",
-    append: false,
-    recreate: false,
-    deleteOldComment: false,
-    hideOldComment: false,
-    hideAndRecreate: true,
-    hideClassify: "OUTDATED",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("")
-})
-
-test("hideClassify", async () => {
-  process.env["INPUT_HIDE_CLASSIFY"] = "OFF_TOPIC"
-  mockConfig.hideClassify = "OFF_TOPIC"
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "",
-    append: false,
-    recreate: false,
-    deleteOldComment: false,
-    hideOldComment: false,
-    hideAndRecreate: false,
-    hideClassify: "OFF_TOPIC",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("")
-})
-
-test("hideDetails", async () => {
-  process.env["INPUT_HIDE_DETAILS"] = "true"
-  mockConfig.hideDetails = true
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "",
-    append: false,
-    recreate: false,
-    deleteOldComment: false,
-    hideOldComment: false,
-    hideAndRecreate: false,
-    hideClassify: "OUTDATED",
-    hideDetails: true,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("")
-})
-
-describe("path", () => {
-  test("when exists return content of a file", async () => {
-    process.env["INPUT_PATH"] = "./__tests__/assets/result"
-    mockConfig.getBody.mockResolvedValue("hi there\n")
+    const config = await import('../src/config');
     
-    const config = await import('../src/config')
-    expect(config).toMatchObject({
-      pullRequestNumber: expect.any(Number),
-      repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-      header: "",
-      append: false,
-      recreate: false,
-      deleteOldComment: false,
-      hideOldComment: false,
-      hideAndRecreate: false,
-      hideClassify: "OUTDATED",
-      hideDetails: false,
-      githubToken: "some-token",
-      ignoreEmpty: false,
-      skipUnchanged: false
-    })
-    expect(await config.getBody()).toEqual("hi there\n")
-  })
+    expect(config.pullRequestNumber).toBe(123); 
+    expect(config.header).toBe("Specific Header");
+    expect(config.append).toBe(true);
+    expect(config.recreate).toBe(true);
+    expect(config.deleteOldComment).toBe(false); 
+    expect(config.hideClassify).toBe("SPAM"); 
+    expect(config.githubToken).toBe("some-token");
+  });
+});
 
-  test("glob match files", async () => {
-    process.env["INPUT_PATH"] = "./__tests__/assets/*"
-    mockConfig.getBody.mockResolvedValue("hi there\n\nhey there\n")
+describe("Repo Constant Logic", () => {
+  beforeEach(() => {
+    vi.resetModules(); 
+  });
+
+  test("repo constant uses owner and repo inputs if provided", async () => {
+    process.env["INPUT_OWNER"] = "inputOwner";
+    process.env["INPUT_REPO"] = "inputRepo";
     
-    const config = await import('../src/config')
-    expect(config).toMatchObject({
-      pullRequestNumber: expect.any(Number),
-      repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-      header: "",
-      append: false,
-      recreate: false,
-      deleteOldComment: false,
-      hideOldComment: false,
-      hideAndRecreate: false,
-      hideClassify: "OUTDATED",
-      hideDetails: false,
-      githubToken: "some-token",
-      ignoreEmpty: false,
-      skipUnchanged: false
-    })
-    expect(await config.getBody()).toEqual("hi there\n\nhey there\n")
-  })
+    const { repo } = await import('../src/config');
+    expect(repo).toEqual({ owner: "inputOwner", repo: "inputRepo" });
+  });
 
-  test("when not exists return null string", async () => {
-    process.env["INPUT_PATH"] = "./__tests__/assets/not_exists"
-    mockConfig.getBody.mockResolvedValue("")
+  test("repo constant uses context repo if inputs are not provided", async () => {
+    // INPUT_OWNER and INPUT_REPO are deleted in global beforeEach, so they are empty.
+    // Set context on the githubMock that config.ts will use.
+    githubMock.context.repo = { owner: 'contextOwnerConfigTest', repo: 'contextRepoConfigTest' };
+        
+    const { repo } = await import('../src/config');
+    expect(repo).toEqual({ owner: "contextOwnerConfigTest", repo: "contextRepoConfigTest" });
+  });
+
+  test("repo constant uses owner input and context repo if repo input is empty", async () => {
+    process.env["INPUT_OWNER"] = "inputOwnerOnly";
+    // INPUT_REPO is empty (deleted in global beforeEach)
+            
+    githubMock.context.repo = { owner: 'contextOwnerForRepo', repo: 'contextRepoActual' };
+
+    const { repo } = await import('../src/config');
+    expect(repo).toEqual({ owner: "inputOwnerOnly", repo: "contextRepoActual" });
+  });
+
+   test("repo constant uses context owner and repo input if owner input is empty", async () => {
+    // INPUT_OWNER is empty (deleted in global beforeEach)
+    process.env["INPUT_REPO"] = "inputRepoOnly";
+        
+    githubMock.context.repo = { owner: 'contextOwnerActual', repo: 'contextRepoForOwner' };
+
+    const { repo } = await import('../src/config');
+    expect(repo).toEqual({ owner: "contextOwnerActual", repo: "inputRepoOnly" });
+  });
+});
+
+describe("getBody Function", () => {
+  beforeEach(() => {
+    vi.resetModules(); 
+  });
+
+  test("returns message input when path is not provided", async () => {
+    process.env["INPUT_MESSAGE"] = "Test message";
+    process.env["INPUT_PATH"] = ""; 
     
-    const config = await import('../src/config')
-    expect(config).toMatchObject({
-      pullRequestNumber: expect.any(Number),
-      repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-      header: "",
-      append: false,
-      recreate: false,
-      deleteOldComment: false,
-      hideOldComment: false,
-      hideAndRecreate: false,
-      hideClassify: "OUTDATED",
-      hideDetails: false,
-      githubToken: "some-token",
-      ignoreEmpty: false,
-      skipUnchanged: false
-    })
-    expect(await config.getBody()).toEqual("")
-  })
-})
+    const { getBody } = await import('../src/config');
+    const body = await getBody();
+    expect(body).toBe("Test message");
+    expect(coreMock.getInput).toHaveBeenCalledWith("message", {required: false}); 
+    expect(coreMock.getMultilineInput).toHaveBeenCalledWith("path", {required: false});
+  });
 
-test("message", async () => {
-  process.env["INPUT_MESSAGE"] = "hello there"
-  mockConfig.getBody.mockResolvedValue("hello there")
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "",
-    append: false,
-    recreate: false,
-    deleteOldComment: false,
-    hideOldComment: false,
-    hideAndRecreate: false,
-    hideClassify: "OUTDATED",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("hello there")
-})
+  test("returns single file content when path is a single file", async () => {
+    const filePath = "single/file.txt";
+    const fileContent = "Hello from single file";
+    process.env["INPUT_PATH"] = filePath;
+    
+    const mockGlobber = { glob: vi.fn().mockResolvedValue([filePath]) };
+    vi.mocked(glob.create).mockResolvedValue(mockGlobber as any); 
+    vi.mocked(fs.readFileSync).mockReturnValue(fileContent); 
 
-test("ignore_empty", async () => {
-  process.env["INPUT_IGNORE_EMPTY"] = "true"
-  mockConfig.ignoreEmpty = true
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "",
-    append: false,
-    recreate: false,
-    deleteOldComment: false,
-    hideOldComment: false,
-    hideAndRecreate: false,
-    hideClassify: "OUTDATED",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: true,
-    skipUnchanged: false
-  })
-  expect(await config.getBody()).toEqual("")
-})
+    const { getBody } = await import('../src/config');
+    const body = await getBody();
+    expect(body).toBe(fileContent);
+    expect(glob.create).toHaveBeenCalledWith(filePath, {followSymbolicLinks: false, matchDirectories: false});
+    expect(mockGlobber.glob).toHaveBeenCalled();
+    expect(fs.readFileSync).toHaveBeenCalledWith(filePath, "utf-8");
+  });
 
-test("skip_unchanged", async () => {
-  process.env["INPUT_SKIP_UNCHANGED"] = "true"
-  mockConfig.skipUnchanged = true
-  
-  const config = await import('../src/config')
-  expect(config).toMatchObject({
-    pullRequestNumber: expect.any(Number),
-    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
-    header: "",
-    append: false,
-    recreate: false,
-    deleteOldComment: false,
-    hideOldComment: false,
-    hideAndRecreate: false,
-    hideClassify: "OUTDATED",
-    hideDetails: false,
-    githubToken: "some-token",
-    ignoreEmpty: false,
-    skipUnchanged: true
-  })
-  expect(await config.getBody()).toEqual("")
-})
+  test("returns concatenated content when path is a glob pattern matching multiple files", async () => {
+    const globPath = "multiple/*.txt";
+    const files = ["multiple/file1.txt", "multiple/file2.txt"];
+    const contents = ["Content file 1", "Content file 2"];
+    process.env["INPUT_PATH"] = globPath;
+
+    const mockGlobber = { glob: vi.fn().mockResolvedValue(files) };
+    vi.mocked(glob.create).mockResolvedValue(mockGlobber as any);
+    vi.mocked(fs.readFileSync).mockImplementation((path) => {
+      const index = files.indexOf(path as string);
+      return contents[index];
+    });
+
+    const { getBody } = await import('../src/config');
+    const body = await getBody();
+    expect(body).toBe(`${contents[0]}\n${contents[1]}`);
+    expect(glob.create).toHaveBeenCalledWith(globPath, {followSymbolicLinks: false, matchDirectories: false});
+    expect(fs.readFileSync).toHaveBeenCalledWith(files[0], "utf-8");
+    expect(fs.readFileSync).toHaveBeenCalledWith(files[1], "utf-8");
+  });
+
+  test("returns empty string when path matches no files", async () => {
+    const globPath = "nonexistent/*.txt";
+    process.env["INPUT_PATH"] = globPath;
+
+    const mockGlobber = { glob: vi.fn().mockResolvedValue([]) }; 
+    vi.mocked(glob.create).mockResolvedValue(mockGlobber as any);
+
+    const { getBody } = await import('../src/config');
+    const body = await getBody();
+    expect(body).toBe("");
+    expect(fs.readFileSync).not.toHaveBeenCalled();
+  });
+
+  test("returns empty string and sets failed when globbing fails", async () => {
+    const globPath = "error/path";
+    process.env["INPUT_PATH"] = globPath;
+    const errorMessage = "Globbing error";
+    vi.mocked(glob.create).mockRejectedValue(new Error(errorMessage));
+
+    const { getBody } = await import('../src/config');
+    const body = await getBody();
+    expect(body).toBe("");
+    expect(coreMock.setFailed).toHaveBeenCalledWith(errorMessage);
+    expect(fs.readFileSync).not.toHaveBeenCalled();
+  });
+});
