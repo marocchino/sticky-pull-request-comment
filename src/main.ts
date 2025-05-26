@@ -125,4 +125,6 @@ async function run(): Promise<undefined> {
   }
 }
 
-run()
+// Export run for testing, remove direct execution
+export {run}
+// run() // Do not run directly, let test runner or actual action trigger it

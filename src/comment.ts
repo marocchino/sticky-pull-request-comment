@@ -147,7 +147,8 @@ export async function deleteComment(
       }
     }
     `,
-    {id},
+    // Correctly wrap id in input object for the mutation
+    {input: {id}},
   )
 }
 export async function minimizeComment(
