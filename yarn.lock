@@ -464,10 +464,10 @@
   dependencies:
     undici-types "~7.10.0"
 
-"@vercel/ncc@^0.38.3":
-  version "0.38.3"
-  resolved "https://registry.npmjs.org/@vercel/ncc/-/ncc-0.38.3.tgz"
-  integrity sha512-rnK6hJBS6mwc+Bkab+PGPs9OiS0i/3kdTO+CkI8V0/VrW3vmz7O2Pxjw/owOlmo6PKEIxRSeZKv/kuL9itnpYA==
+"@vercel/ncc@^0.38.4":
+  version "0.38.4"
+  resolved "https://registry.yarnpkg.com/@vercel/ncc/-/ncc-0.38.4.tgz#e1fb8be9e7ed33bf44c121131d4c6e95f784afac"
+  integrity sha512-8LwjnlP39s08C08J5NstzriPvW1SP8Zfpp1BvC2sI35kPeZnHfxVkCwu4/+Wodgnd60UtT1n8K8zw+Mp7J9JmQ==
 
 "@vitest/expect@3.2.4":
   version "3.2.4"
