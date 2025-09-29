@@ -71,7 +71,7 @@ async function run(): Promise<undefined> {
     }
     
     if (hideOldComment) {
-      if (!previous) {
+      if (previous) {
         await minimizeComment(octokit, previous.id, hideClassify)
       }
       return
