@@ -69,6 +69,13 @@ async function run(): Promise<undefined> {
       }
       return
     }
+    
+    if (hideOldComment) {
+      if (previous) {
+        await minimizeComment(octokit, previous.id, hideClassify)
+      }
+      return
+    }
 
     if (!previous) {
       if (onlyUpdateComment) {
@@ -82,11 +89,6 @@ async function run(): Promise<undefined> {
     if (onlyCreateComment) {
       // don't comment anything, user specified only_create and there is an
       // existing comment, so this is probably a placeholder / introduction one.
-      return
-    }
-
-    if (hideOldComment) {
-      await minimizeComment(octokit, previous.id, hideClassify)
       return
     }
 
