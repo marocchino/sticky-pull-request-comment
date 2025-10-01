@@ -39,7 +39,7 @@
     "@types/node": "^24.5.2",
     "@vercel/ncc": "^0.38.3",
     "js-yaml": "^4.1.0",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   }
 }
