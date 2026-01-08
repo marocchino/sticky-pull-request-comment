@@ -17,12 +17,12 @@
   dependencies:
     "@actions/io" "^1.0.1"
 
-"@actions/github@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.npmjs.org/@actions/github/-/github-6.0.1.tgz"
-  integrity sha512-xbZVcaqD4XnQAe35qSQqskb3SqIAfRyLBrHMd/8TuL7hJSz2QtbDwnNM8zWx4zO5l2fnGtseNE3MbEvD7BxVMw==
+"@actions/github@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@actions/github/-/github-7.0.0.tgz#04366e4fcf76d5a357ef98c51902a34c2b671494"
+  integrity sha512-PyGODO938aoBTZd/IfN/+e+Pd5hUcVpyf+thm4CPESLeqhdSkq5QwMTGX9v84XHE1ifmHWBQ60KB8kIgm96opw==
   dependencies:
-    "@actions/http-client" "^2.2.0"
+    "@actions/http-client" "^3.0.1"
     "@octokit/core" "^5.0.1"
     "@octokit/plugin-paginate-rest" "^9.2.2"
     "@octokit/plugin-rest-endpoint-methods" "^10.4.0"
@@ -38,13 +38,21 @@
     "@actions/core" "^1.9.1"
     minimatch "^3.0.4"
 
-"@actions/http-client@^2.0.1", "@actions/http-client@^2.2.0":
+"@actions/http-client@^2.0.1":
   version "2.2.3"
   resolved "https://registry.npmjs.org/@actions/http-client/-/http-client-2.2.3.tgz"
   integrity sha512-mx8hyJi/hjFvbPokCg4uRd4ZX78t+YyRPtnKWwIl+RzNaVuFpQHfmlGVfsKEJN8LwTCvL+DfVgAM04XaHkm6bA==
   dependencies:
     tunnel "^0.0.6"
     undici "^5.25.4"
+
+"@actions/http-client@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@actions/http-client/-/http-client-3.0.1.tgz#0ac91c3abf179a401e23d40abf0d7caa92324268"
+  integrity sha512-SbGS8c/vySbNO3kjFgSW77n83C4MQx/Yoe+b1hAdpuvfHxnkHzDq2pWljUpAA56Si1Gae/7zjeZsV0CYjmLo/w==
+  dependencies:
+    tunnel "^0.0.6"
+    undici "^5.28.5"
 
 "@actions/io@^1.0.1":
   version "1.1.3"
