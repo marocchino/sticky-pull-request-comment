@@ -41,5 +41,8 @@
     "js-yaml": "^4.1.1",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
+  },
+  "resolutions": {
+    "undici": "^6.23.0"
   }
 }
