@@ -91,6 +91,19 @@ If for some reason, triggering on pr is not possible, you can use push.
       This message is from a push.
 ```
 
+### Override pull request number
+
+Use `number_force` to comment on a different pull request than the one that triggered the event.
+
+```yaml
+- uses: marocchino/sticky-pull-request-comment@v2
+  with:
+    number_force: 123
+    message: |
+      This comment will be posted to PR #123,
+      regardless of which PR triggered this workflow.
+```
+
 ### Read comment from a file
 
 ```yaml
@@ -216,6 +229,10 @@ For more detailed information about permissions, you can read from the link belo
 ### `number`
 
 **Optional** Pull request number for push event. Note that this has a **lower priority** than the number of a pull_request event.
+
+### `number_force`
+
+**Optional** Pull request number for any event. Note that this has the **highest priority** and will override the number from a pull_request event.
 
 ### `owner`
 
