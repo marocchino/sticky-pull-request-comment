@@ -24,7 +24,7 @@ jobs:
           echo "$EOF" >> "$GITHUB_ENV"
         id: all
       - uses: ./
-        if: ${{ github.event_name == 'pull_request_target' }}
+        if: ${{ github.event_name == 'pull_request' }}
         with:
           header: All
           message: |
@@ -36,7 +36,7 @@ jobs:
             ```
             </details>
       - uses: ./
-        if: ${{ github.event_name == 'pull_request_target' }}
+        if: ${{ github.event_name == 'pull_request' }}
         with:
           header: All
           append: true
