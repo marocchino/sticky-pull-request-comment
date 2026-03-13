@@ -10,7 +10,7 @@
     "format-check": "biome format --write .",
     "lint": "biome check .",
     "lint:fix": "biome check --apply .",
-    "package": "esbuild src/main.ts --bundle --platform=node --format=cjs --sourcemap --outfile=dist/index.js",
+    "package": "npx rimraf ./dist && npx rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
@@ -36,9 +36,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.6",
+    "@rollup/plugin-commonjs": "^29.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^25.5.0",
-    "esbuild": "0.27.4",
     "js-yaml": "^4.1.0",
+    "rimraf": "^6.1.3",
+    "rollup": "^4.59.0",
     "typescript": "^5.9.2",
     "vitest": "^4.0.16"
   }

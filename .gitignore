@@ -1,6 +1,7 @@
 __tests__/runner/*
 
 lib/*
+rollup.config.js
 # comment out in distribution branches
 node_modules/
 
