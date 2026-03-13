@@ -279,10 +279,10 @@
     "@octokit/types" "^13.1.0"
     universal-user-agent "^6.0.0"
 
-"@octokit/graphql-schema@^15.26.0":
-  version "15.26.0"
-  resolved "https://registry.npmjs.org/@octokit/graphql-schema/-/graphql-schema-15.26.0.tgz"
-  integrity sha512-SoVbh+sXe9nsoweFbLT3tAk3XWYbYLs5ku05wij1zhyQ2U3lewdrhjo5Tb7lfaOGWNHSkPZT4uuPZp8neF7P7A==
+"@octokit/graphql-schema@^15.26.1":
+  version "15.26.1"
+  resolved "https://registry.yarnpkg.com/@octokit/graphql-schema/-/graphql-schema-15.26.1.tgz#3de6552770dffd0fba0b3eaa0fbe57c47b45398a"
+  integrity sha512-RFDC2MpRBd4AxSRvUeBIVeBU7ojN/SxDfALUd7iVYOSeEK3gZaqR2MGOysj4Zh2xj2RY5fQAUT+Oqq7hWTraMA==
   dependencies:
     graphql "^16.0.0"
     graphql-tag "^2.10.3"

@@ -32,7 +32,7 @@
     "@actions/core": "^1.11.1",
     "@actions/github": "^7.0.0",
     "@actions/glob": "^0.5.0",
-    "@octokit/graphql-schema": "^15.26.0"
+    "@octokit/graphql-schema": "^15.26.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
