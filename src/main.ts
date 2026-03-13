@@ -27,6 +27,7 @@ import {
   repo,
   skipUnchanged,
 } from "./config"
+import {validateBody, validateExclusiveModes} from "./validate"
 
 async function run(): Promise<undefined> {
   if (Number.isNaN(pullRequestNumber) || pullRequestNumber < 1) {
@@ -42,25 +43,15 @@ async function run(): Promise<undefined> {
       return
     }
 
-    if (!deleteOldComment && !hideOldComment && !body) {
-      throw new Error("Either message or path input is required")
-    }
-
-    const exclusiveModes: [string, boolean][] = [
-      ["delete", deleteOldComment],
-      ["recreate", recreate],
-      ["only_create", onlyCreateComment],
-      ["only_update", onlyUpdateComment],
-      ["hide", hideOldComment],
-      ["hide_and_recreate", hideAndRecreate],
-    ]
-    const enabledModes = exclusiveModes.filter(([, flag]) => flag).map(([name]) => name)
-    if (enabledModes.length > 1) {
-      const last = enabledModes[enabledModes.length - 1]
-      const rest = enabledModes.slice(0, -1)
-      const joined = enabledModes.length === 2 ? `${rest[0]} and ${last}` : `${rest.join(", ")}, and ${last}`
-      throw new Error(`${joined} cannot be set to true simultaneously`)
-    }
+    validateBody(body, deleteOldComment, hideOldComment)
+    validateExclusiveModes(
+      deleteOldComment,
+      recreate,
+      onlyCreateComment,
+      onlyUpdateComment,
+      hideOldComment,
+      hideAndRecreate,
+    )
 
     const octokit = github.getOctokit(githubToken)
     const previous = await findPreviousComment(octokit, repo, pullRequestNumber, header)
