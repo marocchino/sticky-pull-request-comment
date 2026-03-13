@@ -15,7 +15,7 @@ permissions:
 ```
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v2
+uses: marocchino/sticky-pull-request-comment@v3
 with:
   message: |
     Release ${{ github.sha }} to <https://pr-${{ github.event.number }}.example.com>
@@ -28,7 +28,7 @@ In some cases, different actions may require different comments. The header allo
 ````yaml
 release:
   ...
-  - uses: marocchino/sticky-pull-request-comment@v2
+  - uses: marocchino/sticky-pull-request-comment@v3
     with:
       header: release
       message: |
@@ -44,7 +44,7 @@ test:
         rake test
         echo "$EOF"
       } >> "$GITHUB_ENV"
-  - uses: marocchino/sticky-pull-request-comment@v2
+  - uses: marocchino/sticky-pull-request-comment@v3
     with:
       header: test
       message: |
@@ -66,7 +66,7 @@ test:
         rake test
         echo "$EOF"
       } >> "$GITHUB_ENV"
-  - uses: marocchino/sticky-pull-request-comment@v2
+  - uses: marocchino/sticky-pull-request-comment@v3
     with:
       append: true
       message: |
@@ -83,7 +83,7 @@ If for some reason, triggering on pr is not possible, you can use push.
 ```yaml
 - uses: jwalton/gh-find-current-pr@v1
   id: finder
-- uses: marocchino/sticky-pull-request-comment@v2
+- uses: marocchino/sticky-pull-request-comment@v3
   with:
     number: ${{ steps.finder.outputs.pr }}
     message: |
@@ -94,7 +94,7 @@ If for some reason, triggering on pr is not possible, you can use push.
 ### Read comment from a file
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v2
+uses: marocchino/sticky-pull-request-comment@v3
 with:
   path: path-to-comment-contents.txt
 ```
@@ -102,7 +102,7 @@ with:
 ### Delete the previous comment and add a comment at the end
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v2
+uses: marocchino/sticky-pull-request-comment@v3
 with:
   recreate: true
   message: |
@@ -112,7 +112,7 @@ with:
 ### Delete previous comment
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v2
+uses: marocchino/sticky-pull-request-comment@v3
 with:
   header: <same-header-as-the-step-that-added-the-comment>
   delete: true
@@ -121,7 +121,7 @@ with:
 ### Hide the previous comment and add a comment at the end
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v2
+uses: marocchino/sticky-pull-request-comment@v3
 with:
   hide_and_recreate: true
   hide_classify: "OUTDATED"
@@ -132,7 +132,7 @@ with:
 ### Hide previous comment
 
 ```yaml
-uses: marocchino/sticky-pull-request-comment@v2
+uses: marocchino/sticky-pull-request-comment@v3
 with:
   header: <same-header-as-the-step-that-added-the-comment>
   hide: true
