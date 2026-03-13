@@ -1,6 +1,6 @@
 {
   "name": "sticky-pull-request-comment",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "description": "Create comment on pull request, if exists update that comment.",
   "main": "lib/main.js",
@@ -10,12 +10,12 @@
     "format-check": "biome format --write .",
     "lint": "biome check .",
     "lint:fix": "biome check --apply .",
-    "package": "ncc build --source-map --license licenses.txt",
+    "package": "npx rimraf ./dist && npx rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "build_test": "tsc && vitest run",
-    "all": "yarn build && yarn format && yarn lint && yarn package && yarn test"
+    "all": "npm run build && npm run format && npm run lint && npm run package && npm run test"
   },
   "repository": {
     "type": "git",
@@ -36,9 +36,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.6",
+    "@rollup/plugin-commonjs": "^29.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^25.5.0",
-    "@vercel/ncc": "^0.38.4",
     "js-yaml": "^4.1.0",
+    "rimraf": "^6.1.3",
+    "rollup": "^4.59.0",
     "typescript": "^5.9.2",
     "vitest": "^4.0.16"
   }

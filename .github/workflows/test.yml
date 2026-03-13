@@ -13,30 +13,30 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v6
-      - run: yarn install
+      - run: npm ci
       - run: |
           set -o pipefail
           mkdir -p ./pr
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "all_result<<$EOF" >> "$GITHUB_ENV"
-          yarn all >> "$GITHUB_ENV" 2>&1 || true  # proceed even if yarn fails
-          echo >> "$GITHUB_ENV"  # yarn all doesn't necessarily produce a newline
+          npm run all >> "$GITHUB_ENV" 2>&1 || true  # proceed even if npm run all fails
+          echo >> "$GITHUB_ENV"  # npm run all doesn't necessarily produce a newline
           echo "$EOF" >> "$GITHUB_ENV"
         id: all
       - uses: ./
-        if: ${{ github.event_name == 'pull_request_target' }}
+        if: ${{ github.event_name == 'pull_request' }}
         with:
           header: All
           message: |
             <details open>
-            <summary>Output of yarn all</summary>
+            <summary>Output of npm run all</summary>
 
             ```shell
             ${{ env.all_result }}
             ```
             </details>
       - uses: ./
-        if: ${{ github.event_name == 'pull_request_target' }}
+        if: ${{ github.event_name == 'pull_request' }}
         with:
           header: All
           append: true
