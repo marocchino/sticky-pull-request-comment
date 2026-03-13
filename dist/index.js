@@ -35434,6 +35434,12 @@ async function run() {
         if (deleteOldComment && recreate) {
             throw new Error("delete and recreate cannot be both set to true");
         }
+        if (deleteOldComment && onlyCreateComment) {
+            throw new Error("delete and only_create cannot be both set to true");
+        }
+        if (deleteOldComment && hideOldComment) {
+            throw new Error("delete and hide cannot be both set to true");
+        }
         if (onlyCreateComment && onlyUpdateComment) {
             throw new Error("only_create and only_update cannot be both set to true");
         }
@@ -35443,14 +35449,8 @@ async function run() {
         const octokit = getOctokit(githubToken);
         const previous = await findPreviousComment(octokit, repo, pullRequestNumber, header);
         setOutput("previous_comment_id", previous?.id);
-        if (deleteOldComment) {
-            if (previous) {
-                await deleteComment(octokit, previous.id);
-            }
-            return;
-        }
         if (!previous) {
-            if (onlyUpdateComment) {
+            if (onlyUpdateComment || hideOldComment || deleteOldComment) {
                 return;
             }
             const created = await createComment(octokit, repo, pullRequestNumber, body, header);
@@ -35464,6 +35464,10 @@ async function run() {
         }
         if (hideOldComment) {
             await minimizeComment(octokit, previous.id, hideClassify);
+            return;
+        }
+        if (deleteOldComment) {
+            await deleteComment(octokit, previous.id);
             return;
         }
         if (skipUnchanged && commentsEqual(body, previous.body || "", header)) {
