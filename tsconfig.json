@@ -21,5 +21,5 @@
     "outDir": "./lib",
     "rootDir": "./src"
   },
-  "exclude": ["node_modules", "**/*.test.ts", "vitest.config.ts"]
+  "exclude": ["node_modules", "**/*.test.ts", "vitest.config.ts", "rollup.config.ts", "rollup.config.js"]
 }
