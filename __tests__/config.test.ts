@@ -78,6 +78,7 @@ afterEach(() => {
   delete process.env["INPUT_IGNORE_EMPTY"]
   delete process.env["INPUT_SKIP_UNCHANGED"]
   delete process.env["INPUT_FOLLOW_SYMBOLIC_LINKS"]
+  delete process.env["INPUT_NUMBER_FORCE"]
 })
 
 test("repo", async () => {
@@ -425,6 +426,29 @@ test("skip_unchanged", async () => {
     githubToken: "some-token",
     ignoreEmpty: false,
     skipUnchanged: true
+  })
+  expect(await config.getBody()).toEqual("")
+})
+
+test("number_force", async () => {
+  process.env["INPUT_NUMBER_FORCE"] = "456"
+  mockConfig.pullRequestNumber = 456
+
+  const config = await import('../src/config')
+  expect(config).toMatchObject({
+    pullRequestNumber: 456,
+    repo: {owner: "marocchino", repo: "stick-pull-request-comment"},
+    header: "",
+    append: false,
+    recreate: false,
+    deleteOldComment: false,
+    hideOldComment: false,
+    hideAndRecreate: false,
+    hideClassify: "OUTDATED",
+    hideDetails: false,
+    githubToken: "some-token",
+    ignoreEmpty: false,
+    skipUnchanged: false
   })
   expect(await config.getBody()).toEqual("")
 })
