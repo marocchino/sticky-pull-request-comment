@@ -50,16 +50,16 @@ async function run(): Promise<undefined> {
       ["delete", deleteOldComment],
       ["recreate", recreate],
       ["only_create", onlyCreateComment],
+      ["only_update", onlyUpdateComment],
       ["hide", hideOldComment],
       ["hide_and_recreate", hideAndRecreate],
     ]
     const enabledModes = exclusiveModes.filter(([, flag]) => flag).map(([name]) => name)
     if (enabledModes.length > 1) {
-      throw new Error(`${enabledModes.join(" and ")} cannot be set to true simultaneously`)
-    }
-
-    if (onlyCreateComment && onlyUpdateComment) {
-      throw new Error("only_create and only_update cannot be both set to true")
+      const last = enabledModes[enabledModes.length - 1]
+      const rest = enabledModes.slice(0, -1)
+      const joined = enabledModes.length === 2 ? `${rest[0]} and ${last}` : `${rest.join(", ")}, and ${last}`
+      throw new Error(`${joined} cannot be set to true simultaneously`)
     }
 
     const octokit = github.getOctokit(githubToken)

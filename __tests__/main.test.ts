@@ -142,7 +142,7 @@ describe("run", () => {
     mockConfig.onlyUpdateComment = true
     const {core} = await runMain()
     expect(core.setFailed).toHaveBeenCalledWith(
-      "only_create and only_update cannot be both set to true",
+      "only_create and only_update cannot be set to true simultaneously",
     )
   })
 
