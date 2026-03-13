@@ -15,7 +15,7 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "build_test": "tsc && vitest run",
-    "all": "yarn build && yarn format && yarn lint && yarn package && yarn test"
+    "all": "npm run build && npm run format && npm run lint && npm run package && npm run test"
   },
   "repository": {
     "type": "git",
