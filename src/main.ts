@@ -46,24 +46,20 @@ async function run(): Promise<undefined> {
       throw new Error("Either message or path input is required")
     }
 
-    if (deleteOldComment && recreate) {
-      throw new Error("delete and recreate cannot be both set to true")
-    }
-
-    if (deleteOldComment && onlyCreateComment) {
-      throw new Error("delete and only_create cannot be both set to true")
-    }
-
-    if (deleteOldComment && hideOldComment) {
-      throw new Error("delete and hide cannot be both set to true")
+    const exclusiveModes: [string, boolean][] = [
+      ["delete", deleteOldComment],
+      ["recreate", recreate],
+      ["only_create", onlyCreateComment],
+      ["hide", hideOldComment],
+      ["hide_and_recreate", hideAndRecreate],
+    ]
+    const enabledModes = exclusiveModes.filter(([, flag]) => flag).map(([name]) => name)
+    if (enabledModes.length > 1) {
+      throw new Error(`${enabledModes.join(" and ")} cannot be set to true simultaneously`)
     }
 
     if (onlyCreateComment && onlyUpdateComment) {
       throw new Error("only_create and only_update cannot be both set to true")
-    }
-
-    if (hideOldComment && hideAndRecreate) {
-      throw new Error("hide and hide_and_recreate cannot be both set to true")
     }
 
     const octokit = github.getOctokit(githubToken)

@@ -115,7 +115,7 @@ describe("run", () => {
     mockConfig.recreate = true
     const {core} = await runMain()
     expect(core.setFailed).toHaveBeenCalledWith(
-      "delete and recreate cannot be both set to true",
+      "delete and recreate cannot be set to true simultaneously",
     )
   })
 
@@ -124,7 +124,7 @@ describe("run", () => {
     mockConfig.onlyCreateComment = true
     const {core} = await runMain()
     expect(core.setFailed).toHaveBeenCalledWith(
-      "delete and only_create cannot be both set to true",
+      "delete and only_create cannot be set to true simultaneously",
     )
   })
 
@@ -133,7 +133,7 @@ describe("run", () => {
     mockConfig.hideOldComment = true
     const {core} = await runMain()
     expect(core.setFailed).toHaveBeenCalledWith(
-      "delete and hide cannot be both set to true",
+      "delete and hide cannot be set to true simultaneously",
     )
   })
 
@@ -151,7 +151,16 @@ describe("run", () => {
     mockConfig.hideAndRecreate = true
     const {core} = await runMain()
     expect(core.setFailed).toHaveBeenCalledWith(
-      "hide and hide_and_recreate cannot be both set to true",
+      "hide and hide_and_recreate cannot be set to true simultaneously",
+    )
+  })
+
+  test("fails when deleteOldComment and hideAndRecreate are both true", async () => {
+    mockConfig.deleteOldComment = true
+    mockConfig.hideAndRecreate = true
+    const {core} = await runMain()
+    expect(core.setFailed).toHaveBeenCalledWith(
+      "delete and hide_and_recreate cannot be set to true simultaneously",
     )
   })
 
