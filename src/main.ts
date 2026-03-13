@@ -36,14 +36,6 @@ async function run(): Promise<undefined> {
   }
 
   try {
-    const body = await getBody()
-
-    if (!body && ignoreEmpty) {
-      core.info("no body given: skip step by ignoreEmpty")
-      return
-    }
-
-    validateBody(body, deleteOldComment, hideOldComment)
     validateExclusiveModes(
       deleteOldComment,
       recreate,
@@ -52,6 +44,15 @@ async function run(): Promise<undefined> {
       hideOldComment,
       hideAndRecreate,
     )
+
+    const body = await getBody()
+
+    if (!body && ignoreEmpty) {
+      core.info("no body given: skip step by ignoreEmpty")
+      return
+    }
+
+    validateBody(body, deleteOldComment, hideOldComment)
 
     const octokit = github.getOctokit(githubToken)
     const previous = await findPreviousComment(octokit, repo, pullRequestNumber, header)
