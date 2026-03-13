@@ -12,10 +12,10 @@ export default defineConfig({
     include: ['**/__tests__/**/*.test.ts'],
     globals: true,
     testTimeout: 10000,
-    poolOptions: {
-      threads: {
-        maxThreads: 10,
-      },
+  },
+  poolOptions: {
+    threads: {
+      maxThreads: 10,
     },
   },
-}); 
+});

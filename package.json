@@ -1,6 +1,6 @@
 {
   "name": "sticky-pull-request-comment",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "private": true,
   "description": "Create comment on pull request, if exists update that comment.",
   "main": "lib/main.js",
@@ -30,16 +30,16 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "@actions/github": "^6.0.1",
+    "@actions/github": "^7.0.0",
     "@actions/glob": "^0.5.0",
-    "@octokit/graphql-schema": "^15.26.0"
+    "@octokit/graphql-schema": "^15.26.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.4",
-    "@types/node": "^24.3.0",
+    "@biomejs/biome": "2.3.11",
+    "@types/node": "^24.5.2",
     "@vercel/ncc": "^0.38.4",
     "js-yaml": "^4.1.0",
     "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   }
 }
