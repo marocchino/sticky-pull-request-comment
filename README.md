@@ -112,16 +112,20 @@ with:
   path: path-to-comment-contents.txt
 ```
 
-### Wrap file output in a code block
+### Embed file content inside a message template
 
-Use `prefix` and `suffix` to wrap the comment body with arbitrary text, such as triple backticks for a code block.
+Use `{path}` as a placeholder in the `message` to insert file content at that position.
 
 ````yaml
-uses: marocchino/sticky-pull-request-comment@v3
-with:
-  path: path-to-comment-contents.txt
-  prefix: "```"
-  suffix: "```"
+- name: Run Test
+  run: rake test > result.txt
+- uses: marocchino/sticky-pull-request-comment@v3
+  with:
+    path: result.txt
+    message: |
+      ```
+      {path}
+      ```
 ````
 
 ### Delete the previous comment and add a comment at the end
@@ -232,19 +236,11 @@ For more detailed information about permissions, you can read from the link belo
 
 ### `message`
 
-**Optional** Comment message
-
-### `prefix`
-
-**Optional** Text to prepend to the comment body (before `message` or `path` content). Useful for opening a code block with ` ``` `.
-
-### `suffix`
-
-**Optional** Text to append to the comment body (after `message` or `path` content). Useful for closing a code block with ` ``` `.
+**Optional** Comment message. When used together with `path`, use `{path}` as a placeholder in the message where the file content should be inserted.
 
 ### `path`
 
-**Optional** Path to file containing comment message
+**Optional** Path to file containing comment message. When `message` is also provided and contains `{path}`, the file content is embedded at that placeholder position.
 
 ### `number`
 

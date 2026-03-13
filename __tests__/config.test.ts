@@ -211,23 +211,11 @@ describe("getBody", () => {
     expect(core.setFailed).toHaveBeenCalledWith("glob error")
   })
 
-  test("wraps message with prefix and suffix", async () => {
-    const {config, core} = await loadConfig()
-    vi.mocked(core.getInput).mockImplementation(name => {
-      if (name === "message") return "hello there"
-      if (name === "prefix") return "```"
-      if (name === "suffix") return "```"
-      return ""
-    })
-    expect(await config.getBody()).toBe("```\nhello there\n```")
-  })
-
-  test("wraps file content with prefix and suffix", async () => {
+  test("embeds file content in message when {path} placeholder is used", async () => {
     const {config, core} = await loadConfig()
     vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
     vi.mocked(core.getInput).mockImplementation(name => {
-      if (name === "prefix") return "```"
-      if (name === "suffix") return "```"
+      if (name === "message") return "```\n{path}\n```"
       return ""
     })
     mockGlobCreate.mockResolvedValue({
@@ -236,44 +224,11 @@ describe("getBody", () => {
     expect(await config.getBody()).toBe("```\nhi there\n\n```")
   })
 
-  test("applies only prefix when suffix is not provided", async () => {
-    const {config, core} = await loadConfig()
-    vi.mocked(core.getInput).mockImplementation(name => {
-      if (name === "message") return "hello there"
-      if (name === "prefix") return "```"
-      return ""
-    })
-    expect(await config.getBody()).toBe("```\nhello there")
-  })
-
-  test("applies only suffix when prefix is not provided", async () => {
-    const {config, core} = await loadConfig()
-    vi.mocked(core.getInput).mockImplementation(name => {
-      if (name === "message") return "hello there"
-      if (name === "suffix") return "```"
-      return ""
-    })
-    expect(await config.getBody()).toBe("hello there\n```")
-  })
-
-  test("embeds file content in message when $path placeholder is used", async () => {
+  test("replaces all {path} occurrences in message with file content", async () => {
     const {config, core} = await loadConfig()
     vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
     vi.mocked(core.getInput).mockImplementation(name => {
-      if (name === "message") return "```\n$path\n```"
-      return ""
-    })
-    mockGlobCreate.mockResolvedValue({
-      glob: vi.fn().mockResolvedValue([resolve("__tests__/assets/result")]),
-    })
-    expect(await config.getBody()).toBe("```\nhi there\n\n```")
-  })
-
-  test("replaces all $path occurrences in message with file content", async () => {
-    const {config, core} = await loadConfig()
-    vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
-    vi.mocked(core.getInput).mockImplementation(name => {
-      if (name === "message") return "$path\n---\n$path"
+      if (name === "message") return "{path}\n---\n{path}"
       return ""
     })
     mockGlobCreate.mockResolvedValue({
@@ -282,7 +237,7 @@ describe("getBody", () => {
     expect(await config.getBody()).toBe("hi there\n\n---\nhi there\n")
   })
 
-  test("uses file content as body when path is provided but message has no $path placeholder", async () => {
+  test("uses file content as body when path is provided but message has no {path} placeholder", async () => {
     const {config, core} = await loadConfig()
     vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
     vi.mocked(core.getInput).mockImplementation(name => {
@@ -295,11 +250,11 @@ describe("getBody", () => {
     expect(await config.getBody()).toBe("hi there\n")
   })
 
-  test("embeds multiple files content in message when $path placeholder is used", async () => {
+  test("embeds multiple files content in message when {path} placeholder is used", async () => {
     const {config, core} = await loadConfig()
     vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/*"])
     vi.mocked(core.getInput).mockImplementation(name => {
-      if (name === "message") return "```\n$path\n```"
+      if (name === "message") return "```\n{path}\n```"
       return ""
     })
     mockGlobCreate.mockResolvedValue({

@@ -52,16 +52,10 @@ inputs:
     default: "OUTDATED"
     required: false
   message:
-    description: "comment message. When used together with path, use `$path` as a placeholder in the message where the file content should be inserted."
-    required: false
-  prefix:
-    description: "text to prepend to the message (e.g. ` ``` ` to open a code block)"
-    required: false
-  suffix:
-    description: "text to append to the message (e.g. ` ``` ` to close a code block)"
+    description: "comment message. When used together with path, use `{path}` as a placeholder in the message where the file content should be inserted."
     required: false
   path:
-    description: "glob path to file(s) containing comment message. When message is also provided and contains `$path`, the file content is embedded at that placeholder position."
+    description: "glob path to file(s) containing comment message. When message is also provided and contains `{path}`, the file content is embedded at that placeholder position."
     required: false
   ignore_empty:
     description: "Indicates whether to ignore missing or empty messages"
