@@ -112,6 +112,18 @@ with:
   path: path-to-comment-contents.txt
 ```
 
+### Wrap file output in a code block
+
+Use `prefix` and `suffix` to wrap the comment body with arbitrary text, such as triple backticks for a code block.
+
+````yaml
+uses: marocchino/sticky-pull-request-comment@v3
+with:
+  path: path-to-comment-contents.txt
+  prefix: "```"
+  suffix: "```"
+````
+
 ### Delete the previous comment and add a comment at the end
 
 ```yaml
@@ -221,6 +233,14 @@ For more detailed information about permissions, you can read from the link belo
 ### `message`
 
 **Optional** Comment message
+
+### `prefix`
+
+**Optional** Text to prepend to the comment body (before `message` or `path` content). Useful for opening a code block with ` ``` `.
+
+### `suffix`
+
+**Optional** Text to append to the comment body (after `message` or `path` content). Useful for closing a code block with ` ``` `.
 
 ### `path`
 

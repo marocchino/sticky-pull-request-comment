@@ -50,13 +50,17 @@ export async function getBody(): Promise<string> {
   const followSymbolicLinks = core.getBooleanInput("follow_symbolic_links", {
     required: true,
   })
+  const prefixInput = core.getInput("prefix", {required: false})
+  const suffixInput = core.getInput("suffix", {required: false})
+
+  let body: string
   if (pathInput && pathInput.length > 0) {
     try {
       const globber = await create(pathInput.join("\n"), {
         followSymbolicLinks,
         matchDirectories: false,
       })
-      return (await globber.glob()).map(path => readFileSync(path, "utf-8")).join("\n")
+      body = (await globber.glob()).map(path => readFileSync(path, "utf-8")).join("\n")
     } catch (error) {
       if (error instanceof Error) {
         core.setFailed(error.message)
@@ -64,6 +68,16 @@ export async function getBody(): Promise<string> {
       return ""
     }
   } else {
-    return core.getInput("message", {required: false})
+    body = core.getInput("message", {required: false})
   }
+
+  if (prefixInput || suffixInput) {
+    const parts: string[] = []
+    if (prefixInput) parts.push(prefixInput)
+    parts.push(body)
+    if (suffixInput) parts.push(suffixInput)
+    return parts.join("\n")
+  }
+
+  return body
 }
