@@ -88,5 +88,5 @@ outputs:
   created_comment_id:
     description: "ID of newly created comment, if any"
 runs:
-  using: "node20"
+  using: "node24"
   main: "dist/index.js"
