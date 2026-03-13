@@ -411,7 +411,7 @@
   dependencies:
     undici-types "~7.16.0"
 
-"@vercel/ncc@^0.38.3":
+"@vercel/ncc@^0.38.4":
   version "0.38.4"
   resolved "https://registry.yarnpkg.com/@vercel/ncc/-/ncc-0.38.4.tgz#e1fb8be9e7ed33bf44c121131d4c6e95f784afac"
   integrity sha512-8LwjnlP39s08C08J5NstzriPvW1SP8Zfpp1BvC2sI35kPeZnHfxVkCwu4/+Wodgnd60UtT1n8K8zw+Mp7J9JmQ==
