@@ -6,6 +6,7 @@
     "declarationMap": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
     "lib": ["ES2022"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
@@ -13,13 +14,13 @@
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,
+    "outDir": "./dist",
     "pretty": true,
     "resolveJsonModule": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "ES2022",
-    "outDir": "./lib",
-    "rootDir": "./src"
+    "target": "ES2022"
   },
-  "exclude": ["node_modules", "**/*.test.ts", "vitest.config.ts", "rollup.config.ts", "rollup.config.js"]
+  "exclude": ["node_modules", "**/*.test.ts", "dist"],
+  "include": ["src"]
 }
