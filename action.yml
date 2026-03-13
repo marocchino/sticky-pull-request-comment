@@ -72,6 +72,9 @@ inputs:
   number:
     description: "pull request number for push event"
     required: false
+  number_force:
+    description: "pull request number for any event"
+    required: false
   owner:
     description: "Another repo owner, If not set, the current repo owner is used by default. Note that when you trying changing a repo, be aware that GITHUB_TOKEN should also have permission for that repository."
     required: false

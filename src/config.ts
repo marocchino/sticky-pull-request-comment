@@ -5,7 +5,9 @@ import {create} from "@actions/glob"
 import type {ReportedContentClassifiers} from "@octokit/graphql-schema"
 
 export const pullRequestNumber =
-  context?.payload?.pull_request?.number || +core.getInput("number", {required: false})
+  +core.getInput("number_force", {required: false}) ||
+  context?.payload?.pull_request?.number ||
+  +core.getInput("number", {required: false})
 
 export const repo = buildRepo()
 export const header = core.getInput("header", {required: false})
