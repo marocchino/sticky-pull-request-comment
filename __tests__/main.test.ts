@@ -119,6 +119,24 @@ describe("run", () => {
     )
   })
 
+  test("fails when deleteOldComment and onlyCreateComment are both true", async () => {
+    mockConfig.deleteOldComment = true
+    mockConfig.onlyCreateComment = true
+    const {core} = await runMain()
+    expect(core.setFailed).toHaveBeenCalledWith(
+      "delete and only_create cannot be both set to true",
+    )
+  })
+
+  test("fails when deleteOldComment and hideOldComment are both true", async () => {
+    mockConfig.deleteOldComment = true
+    mockConfig.hideOldComment = true
+    const {core} = await runMain()
+    expect(core.setFailed).toHaveBeenCalledWith(
+      "delete and hide cannot be both set to true",
+    )
+  })
+
   test("fails when onlyCreateComment and onlyUpdateComment are both true", async () => {
     mockConfig.onlyCreateComment = true
     mockConfig.onlyUpdateComment = true
@@ -137,7 +155,7 @@ describe("run", () => {
     )
   })
 
-  test("deletes previous comment when deleteOldComment is true and previous exists", async () => {
+  test("deletes previous comment when deleteOldComment is true and previous comment exists", async () => {
     mockConfig.deleteOldComment = true
     const previous = {id: "existing-id", body: "old body"}
     const {comment, core} = await runMain(({comment}) => {
@@ -146,6 +164,7 @@ describe("run", () => {
     expect(core.setOutput).toHaveBeenCalledWith("previous_comment_id", "existing-id")
     expect(comment.deleteComment).toHaveBeenCalledWith(expect.anything(), "existing-id")
     expect(comment.createComment).not.toHaveBeenCalled()
+    expect(comment.updateComment).not.toHaveBeenCalled()
   })
 
   test("skips delete when deleteOldComment is true but no previous comment exists", async () => {
@@ -153,12 +172,33 @@ describe("run", () => {
     const {comment, core} = await runMain()
     expect(core.setOutput).toHaveBeenCalledWith("previous_comment_id", undefined)
     expect(comment.deleteComment).not.toHaveBeenCalled()
+    expect(comment.createComment).not.toHaveBeenCalled()
+    expect(comment.updateComment).not.toHaveBeenCalled()
   })
 
-  test("skips creating comment when onlyUpdateComment is true and no previous exists", async () => {
+  test("Updates previous comment when onlyUpdateComment is true and previous comment exists", async () => {
+    mockConfig.onlyUpdateComment = true
+    const previous = {id: "existing-id", body: "old body"}
+    const {comment, core} = await runMain(({comment}) => {
+      vi.mocked(comment.findPreviousComment).mockResolvedValue(previous as any)
+      vi.mocked(comment.getBodyOf).mockReturnValue("previous body content")
+    })
+    expect(comment.updateComment).toHaveBeenCalledWith(
+      expect.anything(),
+      "existing-id",
+      "test body",
+      "",
+      "previous body content",
+    )
+    expect(comment.createComment).not.toHaveBeenCalled()
+    expect(core.setOutput).toHaveBeenCalledWith("previous_comment_id", "existing-id")
+  })
+
+  test("skips creating comment when onlyUpdateComment is true and no previous comment exists", async () => {
     mockConfig.onlyUpdateComment = true
     const {comment} = await runMain()
     expect(comment.createComment).not.toHaveBeenCalled()
+    expect(comment.updateComment).not.toHaveBeenCalled()
   })
 
   test("creates comment when no previous comment exists", async () => {
@@ -173,7 +213,7 @@ describe("run", () => {
     expect(core.setOutput).toHaveBeenCalledWith("created_comment_id", 456)
   })
 
-  test("skips update when onlyCreateComment is true and previous exists", async () => {
+  test("skips update when onlyCreateComment is true and previous comment exists", async () => {
     mockConfig.onlyCreateComment = true
     const previous = {id: "existing-id", body: "old body"}
     const {comment} = await runMain(({comment}) => {
@@ -194,6 +234,14 @@ describe("run", () => {
       "existing-id",
       "OUTDATED",
     )
+    expect(comment.updateComment).not.toHaveBeenCalled()
+  })
+
+  test("skips when hideOldComment is true and no previous comment exists", async () => {
+    mockConfig.hideOldComment = true
+    const {comment} = await runMain()
+    expect(comment.minimizeComment).not.toHaveBeenCalled()
+    expect(comment.createComment).not.toHaveBeenCalled()
     expect(comment.updateComment).not.toHaveBeenCalled()
   })
 
