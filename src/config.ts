@@ -52,6 +52,7 @@ export async function getBody(): Promise<string> {
   })
   const prefixInput = core.getInput("prefix", {required: false})
   const suffixInput = core.getInput("suffix", {required: false})
+  const messageInput = core.getInput("message", {required: false})
 
   let body: string
   if (pathInput && pathInput.length > 0) {
@@ -60,7 +61,14 @@ export async function getBody(): Promise<string> {
         followSymbolicLinks,
         matchDirectories: false,
       })
-      body = (await globber.glob()).map(path => readFileSync(path, "utf-8")).join("\n")
+      const fileContent = (await globber.glob())
+        .map(path => readFileSync(path, "utf-8"))
+        .join("\n")
+      if (messageInput && messageInput.includes("$path")) {
+        body = messageInput.replace(/\$path/g, fileContent)
+      } else {
+        body = fileContent
+      }
     } catch (error) {
       if (error instanceof Error) {
         core.setFailed(error.message)
@@ -68,7 +76,7 @@ export async function getBody(): Promise<string> {
       return ""
     }
   } else {
-    body = core.getInput("message", {required: false})
+    body = messageInput
   }
 
   if (prefixInput || suffixInput) {
