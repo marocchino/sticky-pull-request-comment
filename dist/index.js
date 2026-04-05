@@ -27925,7 +27925,7 @@ function requireUndici () {
 var undiciExports = requireUndici();
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -27986,7 +27986,7 @@ var MediaTypes;
     HttpCodes.GatewayTimeout
 ];
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -27996,7 +27996,7 @@ var MediaTypes;
     });
 };
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28006,7 +28006,7 @@ var MediaTypes;
     });
 };
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28017,7 +28017,7 @@ var MediaTypes;
 };
 const { access, appendFile, writeFile } = fs.promises;
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28031,7 +28031,7 @@ const { chmod, copyFile, lstat, mkdir, open, readdir, rename, rm, rmdir, stat, s
 process.platform === 'win32';
 fs__namespace.constants.O_RDONLY;
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28041,7 +28041,7 @@ fs__namespace.constants.O_RDONLY;
     });
 };
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28053,7 +28053,7 @@ fs__namespace.constants.O_RDONLY;
 /* eslint-disable @typescript-eslint/unbound-method */
 process.platform === 'win32';
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28063,7 +28063,7 @@ process.platform === 'win32';
     });
 };
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28075,7 +28075,7 @@ process.platform === 'win32';
 os.platform();
 os.arch();
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -29114,7 +29114,7 @@ function requireLib () {
 
 var libExports = requireLib();
 
-var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$2 = (globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -33728,7 +33728,7 @@ function requireBraceExpansion () {
 	    var y = numeric(n[1]);
 	    var width = Math.max(n[0].length, n[1].length);
 	    var incr = n.length == 3
-	      ? Math.abs(numeric(n[2]))
+	      ? Math.max(Math.abs(numeric(n[2])), 1)
 	      : 1;
 	    var test = lte;
 	    var reverse = y < x;
@@ -35108,7 +35108,7 @@ class SearchState {
     }
 }
 
-var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$1 = (globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -35117,15 +35117,15 @@ var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _argu
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __asyncValues = (undefined && undefined.__asyncValues) || function (o) {
+var __asyncValues = (globalThis && globalThis.__asyncValues) || function (o) {
     if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
     var m = o[Symbol.asyncIterator], i;
     return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
     function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
-var __await = (undefined && undefined.__await) || function (v) { return this instanceof __await ? (this.v = v, this) : new __await(v); };
-var __asyncGenerator = (undefined && undefined.__asyncGenerator) || function (thisArg, _arguments, generator) {
+var __await = (globalThis && globalThis.__await) || function (v) { return this instanceof __await ? (this.v = v, this) : new __await(v); };
+var __asyncGenerator = (globalThis && globalThis.__asyncGenerator) || function (thisArg, _arguments, generator) {
     if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
     var g = generator.apply(thisArg, _arguments || []), i, q = [];
     return i = Object.create((typeof AsyncIterator === "function" ? AsyncIterator : Object).prototype), verb("next"), verb("throw"), verb("return", awaitReturn), i[Symbol.asyncIterator] = function () { return this; }, i;
@@ -35319,7 +35319,7 @@ class DefaultGlobber {
     }
 }
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+(globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -35328,7 +35328,7 @@ class DefaultGlobber {
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-(undefined && undefined.__asyncValues) || function (o) {
+(globalThis && globalThis.__asyncValues) || function (o) {
     if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
     var m = o[Symbol.asyncIterator], i;
     return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
@@ -35336,7 +35336,7 @@ class DefaultGlobber {
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
 
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter = (globalThis && globalThis.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -35357,7 +35357,9 @@ function create(patterns, options) {
     });
 }
 
-const pullRequestNumber = context?.payload?.pull_request?.number || +getInput("number", { required: false });
+const pullRequestNumber = +getInput("number_force", { required: false }) ||
+    context?.payload?.pull_request?.number ||
+    +getInput("number", { required: false });
 const repo = buildRepo();
 const header = getInput("header", { required: false });
 const append = getBooleanInput("append", { required: true });
@@ -35417,35 +35419,42 @@ async function getBody() {
     }
 }
 
+function validateBody(body, deleteOldComment, hideOldComment) {
+    if (!deleteOldComment && !hideOldComment && !body) {
+        throw new Error("Either message or path input is required");
+    }
+}
+function validateExclusiveModes(deleteOldComment, recreate, onlyCreateComment, onlyUpdateComment, hideOldComment, hideAndRecreate) {
+    const exclusiveModes = [
+        ["delete", deleteOldComment],
+        ["recreate", recreate],
+        ["only_create", onlyCreateComment],
+        ["only_update", onlyUpdateComment],
+        ["hide", hideOldComment],
+        ["hide_and_recreate", hideAndRecreate],
+    ];
+    const enabledModes = exclusiveModes.filter(([, flag]) => flag).map(([name]) => name);
+    if (enabledModes.length > 1) {
+        const last = enabledModes[enabledModes.length - 1];
+        const rest = enabledModes.slice(0, -1);
+        const joined = enabledModes.length === 2 ? `${rest[0]} and ${last}` : `${rest.join(", ")}, and ${last}`;
+        throw new Error(`${joined} cannot be set to true simultaneously`);
+    }
+}
+
 async function run() {
     if (Number.isNaN(pullRequestNumber) || pullRequestNumber < 1) {
         info("no pull request numbers given: skip step");
         return;
     }
     try {
+        validateExclusiveModes(deleteOldComment, recreate, onlyCreateComment, onlyUpdateComment, hideOldComment, hideAndRecreate);
         const body = await getBody();
         if (!body && ignoreEmpty) {
             info("no body given: skip step by ignoreEmpty");
             return;
         }
-        if (!deleteOldComment && !hideOldComment && !body) {
-            throw new Error("Either message or path input is required");
-        }
-        if (deleteOldComment && recreate) {
-            throw new Error("delete and recreate cannot be both set to true");
-        }
-        if (deleteOldComment && onlyCreateComment) {
-            throw new Error("delete and only_create cannot be both set to true");
-        }
-        if (deleteOldComment && hideOldComment) {
-            throw new Error("delete and hide cannot be both set to true");
-        }
-        if (onlyCreateComment && onlyUpdateComment) {
-            throw new Error("only_create and only_update cannot be both set to true");
-        }
-        if (hideOldComment && hideAndRecreate) {
-            throw new Error("hide and hide_and_recreate cannot be both set to true");
-        }
+        validateBody(body, deleteOldComment, hideOldComment);
         const octokit = getOctokit(githubToken);
         const previous = await findPreviousComment(octokit, repo, pullRequestNumber, header);
         setOutput("previous_comment_id", previous?.id);
