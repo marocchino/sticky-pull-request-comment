@@ -30,7 +30,7 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^3.0.0",
-    "@actions/github": "^9.0.0",
+    "@actions/github": "^9.1.0",
     "@actions/glob": "^0.6.1",
     "@octokit/graphql-schema": "^15.26.1"
   },
