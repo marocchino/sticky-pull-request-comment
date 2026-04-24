@@ -112,6 +112,22 @@ with:
   path: path-to-comment-contents.txt
 ```
 
+### Embed file content inside a message template
+
+Use `{{{content}}}` as a placeholder in the `message` to insert file content at that position.
+
+````yaml
+- name: Run Test
+  run: rake test > result.txt
+- uses: marocchino/sticky-pull-request-comment@v3
+  with:
+    path: result.txt
+    message: |
+      ```
+      {{{content}}}
+      ```
+````
+
 ### Delete the previous comment and add a comment at the end
 
 ```yaml
@@ -220,11 +236,11 @@ For more detailed information about permissions, you can read from the link belo
 
 ### `message`
 
-**Optional** Comment message
+**Optional** Comment message. When used together with `path`, use `{{{content}}}` as a placeholder in the message where the file content should be inserted.
 
 ### `path`
 
-**Optional** Path to file containing comment message
+**Optional** Path to file containing comment message. When `message` is also provided and contains `{{{content}}}`, the file content is embedded at that placeholder position.
 
 ### `number`
 

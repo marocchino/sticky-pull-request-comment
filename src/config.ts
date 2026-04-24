@@ -50,20 +50,27 @@ export async function getBody(): Promise<string> {
   const followSymbolicLinks = core.getBooleanInput("follow_symbolic_links", {
     required: true,
   })
+  const messageInput = core.getInput("message", {required: false})
+
   if (pathInput && pathInput.length > 0) {
     try {
       const globber = await create(pathInput.join("\n"), {
         followSymbolicLinks,
         matchDirectories: false,
       })
-      return (await globber.glob()).map(path => readFileSync(path, "utf-8")).join("\n")
+      const fileContent = (await globber.glob())
+        .map(path => readFileSync(path, "utf-8"))
+        .join("\n")
+      if (messageInput) {
+        return messageInput.replace("{{{content}}}", fileContent)
+      }
+      return fileContent
     } catch (error) {
       if (error instanceof Error) {
         core.setFailed(error.message)
       }
       return ""
     }
-  } else {
-    return core.getInput("message", {required: false})
   }
+  return messageInput
 }

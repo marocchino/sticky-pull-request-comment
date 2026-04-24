@@ -210,4 +210,61 @@ describe("getBody", () => {
     expect(await config.getBody()).toBe("")
     expect(core.setFailed).toHaveBeenCalledWith("glob error")
   })
+
+  test("embeds file content in message when {{{content}}} placeholder is used", async () => {
+    const {config, core} = await loadConfig()
+    vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
+    vi.mocked(core.getInput).mockImplementation(name => {
+      if (name === "message") return "```\n{{{content}}}\n```"
+      return ""
+    })
+    mockGlobCreate.mockResolvedValue({
+      glob: vi.fn().mockResolvedValue([resolve("__tests__/assets/result")]),
+    })
+    expect(await config.getBody()).toBe("```\nhi there\n\n```")
+  })
+
+  test("replaces {{{content}}} in message with file content", async () => {
+    const {config, core} = await loadConfig()
+    vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
+    vi.mocked(core.getInput).mockImplementation(name => {
+      if (name === "message") return "{{{content}}}\n---\n{{{content}}}"
+      return ""
+    })
+    mockGlobCreate.mockResolvedValue({
+      glob: vi.fn().mockResolvedValue([resolve("__tests__/assets/result")]),
+    })
+    expect(await config.getBody()).toBe("hi there\n\n---\n{{{content}}}")
+  })
+
+  test("uses message as body when path is provided but message has no {{{content}}} placeholder", async () => {
+    const {config, core} = await loadConfig()
+    vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
+    vi.mocked(core.getInput).mockImplementation(name => {
+      if (name === "message") return "no placeholder here"
+      return ""
+    })
+    mockGlobCreate.mockResolvedValue({
+      glob: vi.fn().mockResolvedValue([resolve("__tests__/assets/result")]),
+    })
+    expect(await config.getBody()).toBe("no placeholder here")
+  })
+
+  test("embeds multiple files content in message when {{{content}}} placeholder is used", async () => {
+    const {config, core} = await loadConfig()
+    vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/*"])
+    vi.mocked(core.getInput).mockImplementation(name => {
+      if (name === "message") return "```\n{{{content}}}\n```"
+      return ""
+    })
+    mockGlobCreate.mockResolvedValue({
+      glob: vi
+        .fn()
+        .mockResolvedValue([
+          resolve("__tests__/assets/result"),
+          resolve("__tests__/assets/result2"),
+        ]),
+    })
+    expect(await config.getBody()).toBe("```\nhi there\n\nhey there\n\n```")
+  })
 })
