@@ -61,8 +61,8 @@ export async function getBody(): Promise<string> {
       const fileContent = (await globber.glob())
         .map(path => readFileSync(path, "utf-8"))
         .join("\n")
-      if (messageInput && messageInput.includes("{path}")) {
-        return messageInput.replace(/\{path\}/g, fileContent)
+      if (messageInput && messageInput.includes("{{{content}}}")) {
+        return messageInput.replace(/\{\{\{content\}\}\}/g, fileContent)
       }
       return fileContent
     } catch (error) {

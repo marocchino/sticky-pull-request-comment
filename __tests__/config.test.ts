@@ -211,11 +211,11 @@ describe("getBody", () => {
     expect(core.setFailed).toHaveBeenCalledWith("glob error")
   })
 
-  test("embeds file content in message when {path} placeholder is used", async () => {
+  test("embeds file content in message when {{{content}}} placeholder is used", async () => {
     const {config, core} = await loadConfig()
     vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
     vi.mocked(core.getInput).mockImplementation(name => {
-      if (name === "message") return "```\n{path}\n```"
+      if (name === "message") return "```\n{{{content}}}\n```"
       return ""
     })
     mockGlobCreate.mockResolvedValue({
@@ -224,11 +224,11 @@ describe("getBody", () => {
     expect(await config.getBody()).toBe("```\nhi there\n\n```")
   })
 
-  test("replaces all {path} occurrences in message with file content", async () => {
+  test("replaces all {{{content}}} occurrences in message with file content", async () => {
     const {config, core} = await loadConfig()
     vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
     vi.mocked(core.getInput).mockImplementation(name => {
-      if (name === "message") return "{path}\n---\n{path}"
+      if (name === "message") return "{{{content}}}\n---\n{{{content}}}"
       return ""
     })
     mockGlobCreate.mockResolvedValue({
@@ -237,7 +237,7 @@ describe("getBody", () => {
     expect(await config.getBody()).toBe("hi there\n\n---\nhi there\n")
   })
 
-  test("uses file content as body when path is provided but message has no {path} placeholder", async () => {
+  test("uses file content as body when path is provided but message has no {{{content}}} placeholder", async () => {
     const {config, core} = await loadConfig()
     vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
     vi.mocked(core.getInput).mockImplementation(name => {
@@ -250,11 +250,11 @@ describe("getBody", () => {
     expect(await config.getBody()).toBe("hi there\n")
   })
 
-  test("embeds multiple files content in message when {path} placeholder is used", async () => {
+  test("embeds multiple files content in message when {{{content}}} placeholder is used", async () => {
     const {config, core} = await loadConfig()
     vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/*"])
     vi.mocked(core.getInput).mockImplementation(name => {
-      if (name === "message") return "```\n{path}\n```"
+      if (name === "message") return "```\n{{{content}}}\n```"
       return ""
     })
     mockGlobCreate.mockResolvedValue({

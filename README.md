@@ -114,7 +114,7 @@ with:
 
 ### Embed file content inside a message template
 
-Use `{path}` as a placeholder in the `message` to insert file content at that position.
+Use `{{{content}}}` as a placeholder in the `message` to insert file content at that position.
 
 ````yaml
 - name: Run Test
@@ -124,7 +124,7 @@ Use `{path}` as a placeholder in the `message` to insert file content at that po
     path: result.txt
     message: |
       ```
-      {path}
+      {{{content}}}
       ```
 ````
 
@@ -236,11 +236,11 @@ For more detailed information about permissions, you can read from the link belo
 
 ### `message`
 
-**Optional** Comment message. When used together with `path`, use `{path}` as a placeholder in the message where the file content should be inserted.
+**Optional** Comment message. When used together with `path`, use `{{{content}}}` as a placeholder in the message where the file content should be inserted.
 
 ### `path`
 
-**Optional** Path to file containing comment message. When `message` is also provided and contains `{path}`, the file content is embedded at that placeholder position.
+**Optional** Path to file containing comment message. When `message` is also provided and contains `{{{content}}}`, the file content is embedded at that placeholder position.
 
 ### `number`
 
