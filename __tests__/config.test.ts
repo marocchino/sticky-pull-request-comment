@@ -224,7 +224,7 @@ describe("getBody", () => {
     expect(await config.getBody()).toBe("```\nhi there\n\n```")
   })
 
-  test("replaces all {{{content}}} occurrences in message with file content", async () => {
+  test("replaces {{{content}}} in message with file content", async () => {
     const {config, core} = await loadConfig()
     vi.mocked(core.getMultilineInput).mockReturnValue(["__tests__/assets/result"])
     vi.mocked(core.getInput).mockImplementation(name => {
@@ -234,7 +234,7 @@ describe("getBody", () => {
     mockGlobCreate.mockResolvedValue({
       glob: vi.fn().mockResolvedValue([resolve("__tests__/assets/result")]),
     })
-    expect(await config.getBody()).toBe("hi there\n\n---\nhi there\n")
+    expect(await config.getBody()).toBe("hi there\n\n---\n{{{content}}}")
   })
 
   test("uses message as body when path is provided but message has no {{{content}}} placeholder", async () => {

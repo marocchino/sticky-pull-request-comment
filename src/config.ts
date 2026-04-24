@@ -62,10 +62,7 @@ export async function getBody(): Promise<string> {
         .map(path => readFileSync(path, "utf-8"))
         .join("\n")
       if (messageInput) {
-        if (messageInput.includes("{{{content}}}")) {
-          return messageInput.replace(/\{\{\{content\}\}\}/g, fileContent)
-        }
-        return messageInput
+        return messageInput.replace("{{{content}}}", fileContent)
       }
       return fileContent
     } catch (error) {
