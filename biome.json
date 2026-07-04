@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
   "files": {
     "includes": ["src/**/*.ts"]
   },
@@ -14,7 +14,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "preset": "recommended"
     },
     "includes": ["vitest.config.ts", "src/**/*.ts", "__tests__/**/*.ts"]
   },
