@@ -58,9 +58,7 @@ export async function getBody(): Promise<string> {
         followSymbolicLinks,
         matchDirectories: false,
       })
-      const fileContent = (await globber.glob())
-        .map(path => readFileSync(path, "utf-8"))
-        .join("\n")
+      const fileContent = (await globber.glob()).map(path => readFileSync(path, "utf-8")).join("\n")
       if (messageInput) {
         return messageInput.replace("{{{content}}}", fileContent)
       }
